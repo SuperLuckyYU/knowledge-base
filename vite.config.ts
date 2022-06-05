@@ -1,6 +1,7 @@
 
-import { UserConfig, ConfigEnv } from 'vite'
+import { UserConfig, ConfigEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import ElementPlus from 'unplugin-element-plus/vite';
 import path from "path";
 
 const port = 3000;
@@ -33,8 +34,10 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
     // plugins
-    plugins: [vue()],
-
+    plugins: [
+      vue(),
+      ElementPlus()
+    ],
     // css
     css: {
       preprocessorOptions: {
@@ -45,9 +48,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         },
       },
     },
-
-
-
     // build
     build: {
       emptyOutDir: true,

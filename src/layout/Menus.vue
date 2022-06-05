@@ -24,18 +24,17 @@
 </template>
 <script lang="ts">
 import { toRefs, defineComponent, PropType } from 'vue';
-import { SkinOutlined, ShoppingCartOutlined, CreditCardOutlined, GiftOutlined } from '@ant-design/icons-vue';
-import { RouteRecordRaw } from 'vue-router'
+import { SkinOutlined, SettingOutlined, BookOutlined } from '@ant-design/icons-vue';
+import { RouteRecordRaw } from 'vue-router';
 
 interface RouteMenusProps {
-  route: RouteRecordRaw
+  route: RouteRecordRaw;
 }
 export default defineComponent({
   components: {
     SkinOutlined,
-    ShoppingCartOutlined,
-    CreditCardOutlined,
-    GiftOutlined,
+    SettingOutlined,
+    BookOutlined,
   },
   props: {
     route: {
@@ -43,7 +42,6 @@ export default defineComponent({
       value: {},
     },
   },
-
 
   setup(props) {
     // 暴露给模板和 API 钩子的其他选项

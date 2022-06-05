@@ -213,7 +213,7 @@ const handleDelete = ({ id }: { id: string }) => {
     },
     onCancel() {
       return new Promise((resolve, reject) => {
-        resolve()
+        resolve('cancle')
       })
     }
   });

@@ -1,16 +1,15 @@
-import { createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import BasicLayout from '@/layout/BasicLayout.vue';
 import Home from '@/pages/Home/index.vue';
 import GoodsList from '@/pages/GoodsManager/index.vue';
 import GoodsCreate from '@/pages/GoodsManager/create/index.vue';
-import OrderList from '@/pages/OrderManager/index.vue';
-import OrderDetail from '@/pages/OrderManager/detail.vue';
-import InWarehouseManage from '@/pages/InventoryManager/in.vue';
-import OutWarehouseManage from '@/pages/InventoryManager/out.vue';
-import DefectManage from '@/pages/InventoryManager/defect.vue';
-import OutWarehouseDetail from '@/pages/InventoryManager/outDetail.vue';
-import MatchSuitList from '@/pages/MatchSuit/index.vue';
-import SuitCreate from '@/pages/MatchSuit/create/index.vue';
+import KnowledgeList from '@/pages/Knowledge/list.vue';
+import KnowledgeCreate from '@/pages/Knowledge/create/index.vue';
+import UserList from '@/pages/User/list.vue';
+import RoleList from '@/pages/Role/list.vue';
+import ProductList from '@/pages/Project/list.vue';
+import LabelList from '@/pages/Label/list.vue';
+import Dictionary from '@/pages/Dictionary/index.vue';
 
 //静态路由页面
 const routes: Array<RouteRecordRaw> = [
@@ -53,103 +52,85 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: '/inventoryrManage',
-    name: 'inventoryrManage',
+    path: '/myKnowledge',
+    name: 'myKnowledge',
     component: BasicLayout,
-    meta: { title: '库存管理', icon: 'ShoppingCartOutlined' },
+    meta: { title: '我的知识', icon: 'BookOutlined' },
     children: [
       {
-        path: 'in',
-        name: 'InWarehouseManage',
+        path: 'knowledge',
+        name: 'KnowledgeList',
         meta: {
-          title: '入库管理',
+          title: '我的知识',
           keepAlive: true
         },
-        component: InWarehouseManage,
+        component: KnowledgeList,
       },
       {
-        path: 'out',
-        name: 'OutWarehouseManage',
-        meta: {
-          title: '出库管理',
-          keepAlive: true,
-        },
-        component: OutWarehouseManage,
-      },
-      {
-        path: 'defect',
-        name: 'DefectManage',
-        meta: {
-          title: '次品管理',
-          keepAlive: true,
-        },
-        component: DefectManage,
-      },
-      {
-        path: 'outDetail',
-        name: 'OutWarehouseDetail',
-        meta: {
-          title: '售后出库',
-          keepAlive: false,
-          isMenu: false
-        },
-        component: OutWarehouseDetail,
-      }
-    ]
-  },
-  {
-    path: '/MatchSuit',
-    name: 'matchSuit',
-    component: BasicLayout,
-    meta: { title: '套装搭配', icon: 'GiftOutlined' },
-    children: [
-      {
-        path: 'list',
-        name: 'MatchSuitList',
-        meta: {
-          title: '搭配列表',
-          keepAlive: true
-        },
-        component: MatchSuitList,
-      }, {
         path: 'create',
-        name: 'SuitCreate',
+        name: 'KnowledgeCreate',
         meta: {
-          title: '创建套装',
+          title: '创建知识',
           isMenu: false,
           keepAlive: false
         },
-        component: SuitCreate,
+        component: KnowledgeCreate,
       },
     ]
   },
   {
-    path: '/orderManage',
-    name: 'orderManage',
+    path: '/systemSetter',
+    name: 'systemSetter',
     component: BasicLayout,
-    meta: { title: '订单管理', icon: 'CreditCardOutlined' },
+    meta: { title: '系统管理', icon: 'SettingOutlined' },
     children: [
       {
-        path: '/orderManage/list',
-        name: 'OrderList',
+        path: 'user',
+        name: 'UserList',
         meta: {
-          title: '订单列表',
-          keepAlive: true,
+          title: '用户管理',
+          keepAlive: true
         },
-        component: OrderList,
+        component: UserList,
       },
       {
-        path: '/orderManage/deatil',
-        name: 'OrderDetail',
+        path: 'role',
+        name: 'RoleList',
         meta: {
-          title: '订单详情',
-          keepAlive: false,
-          isMenu: false
+          title: '角色与权限',
+          keepAlive: true
         },
-        component: OrderDetail,
-      }
+        component: RoleList,
+      },
+      {
+        path: 'product',
+        name: 'ProductList',
+        meta: {
+          title: '项目列表',
+          keepAlive: true
+        },
+        component: ProductList,
+      },
+      {
+        path: 'label',
+        name: 'LabelList',
+        meta: {
+          title: '知识标签管理',
+          keepAlive: true
+        },
+        component: LabelList,
+      },
+      {
+        path: 'dictionary',
+        name: 'Dictionary',
+        meta: {
+          title: '数据字典',
+          keepAlive: false
+        },
+        component: Dictionary,
+      },
     ]
-  }
+  },
 ]
 
 const router = createRouter({

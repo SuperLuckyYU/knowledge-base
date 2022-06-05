@@ -9,6 +9,8 @@ import permission from '@/router/permission';
 import { setupStore } from './store';
 import './global.less';
 
+  
+
 (async () => {
   const app = createApp(App);
   setupStore(app);
