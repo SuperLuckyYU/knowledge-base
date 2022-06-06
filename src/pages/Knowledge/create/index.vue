@@ -9,10 +9,7 @@
           <a-radio-button value="2">视频</a-radio-button>
         </a-radio-group>
       </a-form-item>
-      <a-form-item
-        :label="fileType[modelRef.type as keyof typeof fileType]"
-        v-bind="validateInfos.file"
-      >
+      <a-form-item :label="fileType[modelRef.type as keyof typeof fileType]" v-bind="validateInfos.file">
         <ImgUpload v-model="modelRef.file" :max-length="8" />
       </a-form-item>
       <a-form-item label="知识条目" v-bind="validateInfos.doc_number">
@@ -37,7 +34,7 @@
       </template>
 
       <a-form-item label="知识内容" v-bind="validateInfos.content">
-        <froala :tag="'textarea'" :config="froalaConfig" v-model:value="modelRef.content"></froala>
+        <BaseEditor v-model="modelRef.content" />
       </a-form-item>
 
       <a-row v-if="type !== 'readonly'">
@@ -56,14 +53,7 @@ import { reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';
 import ImgUpload from '@/components/ImgUpload/index.vue';
-
-const froalaConfig = {
-  events: {
-    'froalaEditor.initialized': function () {
-      console.log('initialized');
-    },
-  },
-};
+import BaseEditor from '@/components/BaseEditor/index.vue';
 
 type PageType = 'update' | 'create';
 
@@ -170,6 +160,7 @@ const handleCancle = () => {
   color: #000000d9;
   font-size: 24px;
 }
+
 .ckeditor :deep(.ck-editor__editable_inline) {
   min-height: 200px;
 }
