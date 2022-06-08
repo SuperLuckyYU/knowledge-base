@@ -10,7 +10,7 @@
     @cancel="onModalClose"
   >
     <a-form v-bind="layout">
-      <a-form-item label="标签名称" v-bind="validateInfos.name">
+      <a-form-item label="名称" v-bind="validateInfos.name">
         <a-input v-model:value="modelRef.name" placeholder="请输入标签名称"></a-input>
       </a-form-item>
     </a-form>

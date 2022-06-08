@@ -29,7 +29,6 @@
         <a-button
           class="mr15"
           type="primary"
-          :disabled="!selectedRows.length"
           @click="handleCreate('create')"
           >新建</a-button
         >
