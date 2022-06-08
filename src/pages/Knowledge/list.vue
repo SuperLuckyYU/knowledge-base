@@ -5,13 +5,23 @@
         <a-row :gutter="[24, 16]">
           <a-col>
             <a-form-item label="条目标题" name="name">
-              <a-input v-model:value.trim="formState.name" placeholder="请输入条目标题" autocomplete="off" allow-clear />
+              <a-input
+                v-model:value.trim="formState.name"
+                placeholder="请输入条目标题"
+                autocomplete="off"
+                allow-clear
+              />
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="标签" name="name">
-              <a-select v-model:value="formState.label" :options="labelOptions" mode="tags" placeholder="请选择标签"
-                style="width: 200px"></a-select>
+              <a-select
+                v-model:value="formState.label"
+                :options="labelOptions"
+                mode="tags"
+                placeholder="请选择标签"
+                style="width: 200px"
+              ></a-select>
             </a-form-item>
           </a-col>
           <a-col>
@@ -27,19 +37,36 @@
     </a-card>
     <a-card class="table-box mt20">
       <a-row class="action-btn-box">
-        <a-button class="mr15" type="primary" @click="handleOperateKnowledge({ id: '' }, 'create')">新建知识</a-button>
-        <a-button class="mr15">批量上传文档</a-button>
-        <a-button>新建专题</a-button>
+        <a-button class="mr15" type="primary" @click="handleOperateKnowledge({ id: '' }, 'create')"
+          >新建知识</a-button
+        >
+        <a-button class="mr15" @click="handleClickUpload">批量上传文档</a-button>
+        <a-button @click="handleClickCreateTopic({ id: '' }, 'create')">新建专题</a-button>
       </a-row>
-      <a-table rowKey="id" :columns="columns" :data-source="dataSource" :pagination="pagination" bordered
-        @change="onTableChange">
+      <a-table
+        rowKey="id"
+        :columns="columns"
+        :data-source="dataSource"
+        :pagination="pagination"
+        bordered
+        @change="onTableChange"
+      >
         <template #bodyCell="{ column, text, record }">
           <template v-if="column.dataIndex === 'operation'">
             <a-button type="link" class="action-btn">分享</a-button>
-            <a-button type="link" class="action-btn" @click="handleOperateKnowledge({ id: record.id }, 'update')">编辑
+            <a-button
+              type="link"
+              class="action-btn"
+              @click="handleOperateKnowledge({ id: record.id }, 'update')"
+              >编辑
             </a-button>
-            <a-popconfirm title="确定要删除此项目吗？" ok-text="确定" cancel-text="取消" @confirm="handleRemove(record.id)"
-              @cancel="() => { }">
+            <a-popconfirm
+              title="确定要删除此项目吗？"
+              ok-text="确定"
+              cancel-text="取消"
+              @confirm="handleRemove(record.id)"
+              @cancel="() => {}"
+            >
               <a-button type="link" class="action-btn">删除</a-button>
             </a-popconfirm>
           </template>
@@ -47,6 +74,11 @@
       </a-table>
     </a-card>
   </div>
+  <bulk-upload-documents-dialog
+    v-if="uploadDocumentsState.visible"
+    @success="getList"
+    @cancel="handleCloseUploadDialog"
+  />
 </template>
 
 <script lang="ts">
@@ -62,6 +94,7 @@ import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
 import { getProductList } from '@/services/goods';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
+import BulkUploadDocumentsDialog from './sections/BulkUploadDocumentsDialog.vue';
 
 const router = useRouter();
 
@@ -117,7 +150,7 @@ const formState: UnwrapRef<FormStateType> = reactive({
   label: [],
 });
 
-// // 获取数据
+// 获取数据
 const {
   onSearch,
   onReset,
@@ -141,18 +174,44 @@ const handleOperateKnowledge = (record: { id: string }, type: 'create' | 'update
     name: 'KnowledgeCreate',
     query: record.id
       ? {
-        id: record.id,
-        type: type,
-      }
+          id: record.id,
+          type: type,
+        }
       : {
-        type: type,
-      },
+          type: type,
+        },
+  });
+};
+
+const handleClickCreateTopic = (record: { id: string }, type: 'create' | 'update') => {
+  router.push({
+    name: 'KnowledgeCreateTopic',
+    query: record.id
+      ? {
+          id: record.id,
+          type: type,
+        }
+      : {
+          type: type,
+        },
   });
 };
 
 const handleRemove = (id: string) => {
   message.success('删除成功！');
-}
+};
+
+const uploadDocumentsState = reactive({
+  visible: false,
+});
+
+const handleClickUpload = () => {
+  uploadDocumentsState.visible = true;
+};
+
+const handleCloseUploadDialog = () => {
+  uploadDocumentsState.visible = false;
+};
 </script>
 
 <style lang="less" scoped>

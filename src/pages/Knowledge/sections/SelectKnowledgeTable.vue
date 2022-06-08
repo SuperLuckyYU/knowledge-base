@@ -20,7 +20,7 @@ const columns = [
     title: '操作',
     dataIndex: 'operation',
     align: 'center',
-    width: 110
+    width: 110,
   },
-]
+];
 </script>

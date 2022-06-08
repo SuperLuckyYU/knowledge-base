@@ -5,6 +5,7 @@ import GoodsList from '@/pages/GoodsManager/index.vue';
 import GoodsCreate from '@/pages/GoodsManager/create/index.vue';
 import KnowledgeList from '@/pages/Knowledge/list.vue';
 import KnowledgeCreate from '@/pages/Knowledge/create/index.vue';
+import KnowledgeCreateTopic from '@/pages/Knowledge/create/topic.vue';
 import UserList from '@/pages/User/list.vue';
 import RoleList from '@/pages/Role/list.vue';
 import ProductList from '@/pages/Project/list.vue';
@@ -21,9 +22,9 @@ const routes: Array<RouteRecordRaw> = [
         path: '',
         name: 'Home',
         meta: { title: '首页', isMenu: false },
-        component: Home
-      }
-    ]
+        component: Home,
+      },
+    ],
   },
   {
     path: '/goodsManage',
@@ -36,20 +37,21 @@ const routes: Array<RouteRecordRaw> = [
         name: 'GoodsList',
         meta: {
           title: '商品列表',
-          keepAlive: true
+          keepAlive: true,
         },
         component: GoodsList,
-      }, {
+      },
+      {
         path: 'create',
         name: 'GoodsCreate',
         meta: {
           title: '创建商品',
           isMenu: false,
-          keepAlive: false
+          keepAlive: false,
         },
         component: GoodsCreate,
       },
-    ]
+    ],
   },
   {
     path: '/myKnowledge',
@@ -62,7 +64,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'KnowledgeList',
         meta: {
           title: '我的知识',
-          keepAlive: true
+          keepAlive: true,
         },
         component: KnowledgeList,
       },
@@ -72,11 +74,21 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '创建知识',
           isMenu: false,
-          keepAlive: false
+          keepAlive: false,
         },
         component: KnowledgeCreate,
       },
-    ]
+      {
+        path: 'create',
+        name: 'KnowledgeCreateTopic',
+        meta: {
+          title: '创建标题',
+          isMenu: false,
+          keepAlive: false,
+        },
+        component: KnowledgeCreateTopic,
+      },
+    ],
   },
   {
     path: '/systemSetter',
@@ -89,7 +101,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'UserList',
         meta: {
           title: '用户管理',
-          keepAlive: true
+          keepAlive: true,
         },
         component: UserList,
       },
@@ -98,7 +110,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'RoleList',
         meta: {
           title: '角色与权限',
-          keepAlive: true
+          keepAlive: true,
         },
         component: RoleList,
       },
@@ -107,7 +119,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'ProductList',
         meta: {
           title: '项目列表',
-          keepAlive: true
+          keepAlive: true,
         },
         component: ProductList,
       },
@@ -116,7 +128,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'LabelList',
         meta: {
           title: '知识标签管理',
-          keepAlive: true
+          keepAlive: true,
         },
         component: LabelList,
       },
@@ -125,17 +137,17 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Dictionary',
         meta: {
           title: '数据字典',
-          keepAlive: false
+          keepAlive: false,
         },
         component: Dictionary,
       },
-    ]
+    ],
   },
-]
+];
 
 const router = createRouter({
   history: createWebHashHistory(), // createWebHistory
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

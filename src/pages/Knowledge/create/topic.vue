@@ -1,70 +1,26 @@
 <template>
   <a-card>
-    <div class="page-title">{{ pageType[type as keyof typeof pageType] }}知识</div>
+    <div class="page-title">{{ pageType[type as keyof typeof pageType] }}专题</div>
     <a-form class="mt24" :label-col="{ span: 2 }" :wrapper-col="{ span: 14 }">
-      <a-form-item label="知识类型" v-bind="validateInfos.type">
-        <a-radio-group v-model:value="modelRef.type">
-          <a-radio-button value="0">文档</a-radio-button>
-          <a-radio-button value="1">图片</a-radio-button>
-          <a-radio-button value="2">视频</a-radio-button>
-        </a-radio-group>
+      <a-form-item label="专题标题" v-bind="validateInfos.name">
+        <a-input v-model:value="modelRef.name" placeholder="请填写专题标题" />
       </a-form-item>
-      <a-form-item
-        :label="fileType[modelRef.type as keyof typeof fileType]"
-        v-bind="validateInfos.file"
-      >
-        <ImgUpload v-model="modelRef.file" :max-length="8" />
+      <a-form-item label="分类" v-bind="validateInfos.category">
+        <a-input v-model:value="modelRef.category" placeholder="请选择分类" />
       </a-form-item>
-      <a-form-item label="知识条目" v-bind="validateInfos.doc_number">
-        <a-input v-model:value="modelRef.doc_number" placeholder="请填写知识条目" />
-      </a-form-item>
-      <a-form-item label="知识分类" v-bind="validateInfos.category">
-        <a-input v-model:value="modelRef.category" placeholder="请选择知识分类" />
-      </a-form-item>
-      <template v-if="modelRef.type === '0'">
-        <a-form-item label="文号" v-bind="validateInfos.category">
-          <a-input v-model:value="modelRef.category" placeholder="请填写文号" />
-        </a-form-item>
-        <a-form-item label="档案日期" v-bind="validateInfos.file_date">
-          <a-date-picker v-model:value="modelRef.file_date" />
-        </a-form-item>
-        <a-form-item label="页数" v-bind="validateInfos.pages_num">
-          <a-input v-model:value="modelRef.pages_num" placeholder="请填写页数" />
-        </a-form-item>
-        <a-form-item label="存放地点" v-bind="validateInfos.storage_location">
-          <a-input v-model:value="modelRef.storage_location" placeholder="请填写存放地点" />
-        </a-form-item>
-      </template>
-
-      <a-form-item label="知识内容" v-bind="validateInfos.content">
-        <BaseEditor v-model="modelRef.content" />
+      <a-form-item label="专题描述" v-bind="validateInfos.content">
+        <a-textarea
+          v-model="modelRef.content"
+          :rows="4"
+          placeholder="请填写专题描述"
+          :maxlength="6"
+        />
       </a-form-item>
       <a-form-item label="设置标签" v-bind="validateInfos.label">
         <knowledge-label v-model="modelRef.label" />
       </a-form-item>
       <a-form-item label="安全级别" v-bind="validateInfos.safe_level">
         <a-radio-group v-model:value="modelRef.safe_level" :options="safeLevelOptions" />
-      </a-form-item>
-      <a-form-item label="有效期" v-bind="validateInfos.expiration_type">
-        <a-radio-group v-model:value="modelRef.expiration_type">
-          <a-radio value="0">永久有效</a-radio>
-          <a-radio value="1">自定义有效期</a-radio>
-        </a-radio-group>
-      </a-form-item>
-      <a-form-item
-        :wrapper-col="{ offset: 2 }"
-        v-bind="validateInfos.expiration_date"
-        v-if="modelRef.expiration_type === '1'"
-      >
-        <a-date-picker v-model:value="modelRef.expiration_date" />
-      </a-form-item>
-      <a-form-item label="所属项目" v-bind="validateInfos.project">
-        <a-select
-          v-model:value="modelRef.project"
-          :options="projectOptions"
-          placeholder="请选择项目"
-        >
-        </a-select>
       </a-form-item>
       <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
         <a-row>
@@ -129,9 +85,7 @@ import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';
 import { EnvironmentOutlined } from '@ant-design/icons-vue';
-import useFormState from '../composables/useFormState';
-import ImgUpload from '@/components/ImgUpload/index.vue';
-import BaseEditor from '@/components/BaseEditor/index.vue';
+import useCreateTopicFormState from '../composables/useCreateTopicFormState';
 import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
 import LocationDialog from '../sections/LocationDialog.vue';
 import SelectKnowledgeDialog from '../sections/SelectKnowledgeDialog.vue';
@@ -149,12 +103,6 @@ enum pageType {
   create = '新增',
 }
 
-const fileType = {
-  '0': '文档',
-  '1': '图片',
-  '2': '视频',
-};
-
 const safeLevelOptions = [
   { label: '水务局内部公开', value: '0' },
   { label: '同科室公开', value: '1' },
@@ -164,7 +112,7 @@ const safeLevelOptions = [
 
 const useForm = Form.useForm;
 
-const { modelRef, rulesRef } = useFormState();
+const { modelRef, rulesRef } = useCreateTopicFormState();
 
 const LocationDialogState = reactive({
   visible: false,
@@ -194,8 +142,6 @@ const handleRemoveKnowledge = (row: KnowledgeItemType) => {
     1,
   );
 };
-
-const projectOptions = reactive([]);
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
 
