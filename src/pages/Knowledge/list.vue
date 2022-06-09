@@ -53,7 +53,7 @@
       >
         <template #bodyCell="{ column, text, record }">
           <template v-if="column.dataIndex === 'operation'">
-            <a-button type="link" class="action-btn">分享</a-button>
+            <a-button type="link" class="action-btn" @click="share">分享</a-button>
             <a-button
               type="link"
               class="action-btn"
@@ -92,6 +92,7 @@ import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
+import useShare from '@/composables/useShare';
 import { getProductList } from '@/services/goods';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
 import BulkUploadDocumentsDialog from './sections/BulkUploadDocumentsDialog.vue';
@@ -212,6 +213,8 @@ const handleClickUpload = () => {
 const handleCloseUploadDialog = () => {
   uploadDocumentsState.visible = false;
 };
+
+const { share } = useShare();
 </script>
 
 <style lang="less" scoped>
