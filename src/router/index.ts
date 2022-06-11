@@ -6,11 +6,15 @@ import GoodsCreate from '@/pages/GoodsManager/create/index.vue';
 import KnowledgeList from '@/pages/Knowledge/list.vue';
 import KnowledgeCreate from '@/pages/Knowledge/create/index.vue';
 import KnowledgeCreateTopic from '@/pages/Knowledge/create/topic.vue';
+import ArticleDetail from '@/pages/ArticleDetail/index.vue';
 import UserList from '@/pages/User/list.vue';
 import RoleList from '@/pages/Role/list.vue';
 import ProductList from '@/pages/Project/list.vue';
 import LabelList from '@/pages/Label/list.vue';
 import Dictionary from '@/pages/Dictionary/index.vue';
+import CollectionList from '@/pages/MyCollection/list.vue';
+import CorrectionList from '@/pages/MyErrorCorrection/list.vue';
+import AuditList from '@/pages/Audit/list.vue';
 
 //静态路由页面
 const routes: Array<RouteRecordRaw> = [
@@ -87,6 +91,39 @@ const routes: Array<RouteRecordRaw> = [
           keepAlive: false,
         },
         component: KnowledgeCreateTopic,
+      },
+      {
+        path: 'articleDetail',
+        name: 'ArticleDetail',
+        meta: { title: '详情', isMenu: false },
+        component: ArticleDetail,
+      },
+      {
+        path: 'collection',
+        name: 'CollectionList',
+        meta: {
+          title: '我的收藏',
+          keepAlive: true,
+        },
+        component: CollectionList,
+      },
+      {
+        path: 'correction',
+        name: 'CorrectionList',
+        meta: {
+          title: '我的纠错',
+          keepAlive: true,
+        },
+        component: CorrectionList,
+      },
+      {
+        path: 'audit',
+        name: 'AuditList',
+        meta: {
+          title: '知识审核',
+          keepAlive: true,
+        },
+        component: AuditList,
       },
     ],
   },

@@ -14,6 +14,15 @@
             </a-form-item>
           </a-col>
           <a-col>
+            <a-form-item label="状态" name="state">
+              <a-select
+                v-model:value="formState.state"
+                :options="stateOptions"
+                placeholder="请选择分类"
+              ></a-select>
+            </a-form-item>
+          </a-col>
+          <a-col>
             <a-form-item label="标签" name="label">
               <a-select
                 v-model:value="formState.label"
@@ -36,13 +45,6 @@
       </a-form>
     </a-card>
     <a-card class="table-box mt20">
-      <a-row class="action-btn-box">
-        <a-button class="mr15" type="primary" @click="handleOperateKnowledge({ id: '' }, 'create')"
-          >新建知识</a-button
-        >
-        <a-button class="mr15" @click="handleClickUpload">批量上传文档</a-button>
-        <a-button @click="handleClickCreateTopic({ id: '' }, 'create')">新建专题</a-button>
-      </a-row>
       <a-table
         rowKey="id"
         :columns="columns"
@@ -53,37 +55,20 @@
       >
         <template #bodyCell="{ column, text, record }">
           <template v-if="column.dataIndex === 'operation'">
-            <a-button type="link" class="action-btn" @click="share">分享</a-button>
-            <a-button
-              type="link"
-              class="action-btn"
-              @click="handleOperateKnowledge({ id: record.id }, 'update')"
-              >编辑
+            <a-button type="link" class="action-btn" @click="handleArchive({ id: record.id })"
+              >归档
             </a-button>
-            <a-popconfirm
-              title="确定要删除此项目吗？"
-              ok-text="确定"
-              cancel-text="取消"
-              @confirm="handleRemove(record.id)"
-              @cancel="() => {}"
-            >
-              <a-button type="link" class="action-btn">删除</a-button>
-            </a-popconfirm>
+            <a-button type="link" class="action-btn" @click="share">分享</a-button>
           </template>
         </template>
       </a-table>
     </a-card>
   </div>
-  <bulk-upload-documents-dialog
-    v-if="uploadDocumentsState.visible"
-    @success="getList"
-    @cancel="handleCloseUploadDialog"
-  />
 </template>
 
 <script lang="ts">
 export default {
-  name: 'KnowledgeList',
+  name: 'AuditList',
 };
 </script>
 
@@ -94,12 +79,26 @@ import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
 import { getProductList } from '@/services/goods';
-import { FormStateType } from '@/types/myKnowledge/knowledge';
-import BulkUploadDocumentsDialog from './sections/BulkUploadDocumentsDialog.vue';
+import { FormStateType } from '@/types/myKnowledge/audit';
 
 const router = useRouter();
 
 const labelOptions = reactive([]);
+
+const stateOptions = reactive([
+  {
+    label: '全部',
+    value: '',
+  },
+  {
+    label: '未归档',
+    value: '0',
+  },
+  {
+    label: '已归档',
+    value: '1',
+  },
+]);
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {};
@@ -123,20 +122,22 @@ const columns = computed(() => {
       align: 'center',
     },
     {
-      title: '创建时间',
-      dataIndex: 'create_time',
-      key: 'create_time',
+      title: '状态',
+      dataIndex: 'state',
+      key: 'state',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'create_time' && sorted.order,
     },
     {
-      title: '最后编辑时间',
-      dataIndex: 'last_update_time',
-      key: 'last_update_time',
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'last_update_time' && sorted.order,
+    },
+    {
+      title: '提交人',
+      dataIndex: 'submitter',
+      key: 'submitter',
+      align: 'center',
     },
     {
       title: '操作',
@@ -149,6 +150,7 @@ const columns = computed(() => {
 const formState: UnwrapRef<FormStateType> = reactive({
   name: '',
   label: [],
+  state: '',
 });
 
 // 获取数据
@@ -170,48 +172,8 @@ const {
   listFormatEnum: true,
 });
 
-const handleOperateKnowledge = (record: { id: string }, type: 'create' | 'update') => {
-  router.push({
-    name: 'KnowledgeCreate',
-    query: record.id
-      ? {
-          id: record.id,
-          type: type,
-        }
-      : {
-          type: type,
-        },
-  });
-};
-
-const handleClickCreateTopic = (record: { id: string }, type: 'create' | 'update') => {
-  router.push({
-    name: 'KnowledgeCreateTopic',
-    query: record.id
-      ? {
-          id: record.id,
-          type: type,
-        }
-      : {
-          type: type,
-        },
-  });
-};
-
-const handleRemove = (id: string) => {
-  message.success('删除成功！');
-};
-
-const uploadDocumentsState = reactive({
-  visible: false,
-});
-
-const handleClickUpload = () => {
-  uploadDocumentsState.visible = true;
-};
-
-const handleCloseUploadDialog = () => {
-  uploadDocumentsState.visible = false;
+const handleArchive = (record: { id: string }) => {
+  message.success('归档成功');
 };
 
 const { share } = useShare();
