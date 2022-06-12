@@ -4,9 +4,9 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="标签名称" name="name">
+            <a-form-item label="标签名称" name="labelName">
               <a-input
-                v-model:value.trim="formState.name"
+                v-model:value.trim="formState.labelName"
                 placeholder="请输入标签名称"
                 autocomplete="off"
                 allow-clear
@@ -26,12 +26,7 @@
     </a-card>
     <a-card>
       <a-row class="action-btn-box">
-        <a-button
-          class="mr15"
-          type="primary"
-          @click="handleCreate('create')"
-          >新建</a-button
-        >
+        <a-button class="mr15" type="primary" @click="handleCreate('create')">新建</a-button>
         <a-popconfirm
           title="确认要删除所选标签吗？"
           ok-text="确定"
@@ -81,7 +76,7 @@ import type { TableProps } from 'ant-design-vue';
 import type { FormStateType } from '@/types/systemSetter/label';
 import type { LabelItemType } from '@/services/systemSetter/label';
 import { reactive, UnwrapRef, computed, ref } from 'vue';
-import { getProductList } from '@/services/goods';
+import { getLabelList } from '@/services/systemSetter/label';
 import useSearchTableList from '@/composables/useSearchTableList';
 import CreateDialog from './sections/CreateDialog.vue';
 
@@ -92,7 +87,7 @@ interface ModelStateType {
 }
 
 const formState: UnwrapRef<FormStateType> = reactive({
-  name: '',
+  labelName: '',
 });
 
 const columns = computed(() => {
@@ -100,22 +95,22 @@ const columns = computed(() => {
   return [
     {
       title: '知识标签',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'labelName',
+      key: 'labelName',
       align: 'center',
     },
     {
       title: '创建时间',
-      dataIndex: 'create_time',
-      key: 'create_time',
+      dataIndex: 'createTime',
+      key: 'createTime',
       align: 'center',
       sorter: true,
-      sortOrder: sorted.columnKey === 'update_time' && sorted.order,
+      sortOrder: sorted.columnKey === 'createTime' && sorted.order,
     },
     {
       title: '创建人',
-      dataIndex: 'creator',
-      key: 'creator',
+      dataIndex: 'labelCreator',
+      key: 'labelCreator',
       align: 'center',
     },
     {
@@ -145,12 +140,11 @@ const {
   getList,
   sortedInfo,
 } = useSearchTableList({
-  fetchData: getProductList,
+  fetchData: getLabelList,
   formatParams() {
     const data: Record<string, any> = { ...formState };
     return data;
   },
-  listFormatEnum: true,
 });
 
 // 创建&编辑标签弹窗相关

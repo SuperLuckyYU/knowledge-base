@@ -4,9 +4,9 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="姓名" name="name">
+            <a-form-item label="姓名" name="roleName">
               <a-input
-                v-model:value.trim="formState.name"
+                v-model:value.trim="formState.roleName"
                 placeholder="请输入姓名"
                 autocomplete="off"
                 allow-clear
@@ -57,14 +57,14 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'UsersList',
+  name: 'RoleList',
 };
 </script>
 <script lang="ts" setup>
 import type { FormStateType } from '@/types/systemSetter/role';
 import type { RoleItemType } from '@/services/systemSetter/role';
 import { reactive, UnwrapRef } from 'vue';
-import { getProductList } from '@/services/goods';
+import { getRoleList } from '@/services/systemSetter/role';
 import useSearchTableList from '@/composables/useSearchTableList';
 import CreateRoleDialog from './sections/CreateRoleDialog.vue';
 
@@ -77,20 +77,20 @@ interface ModelStateType {
 const columns = [
   {
     title: '角色名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'roleName',
+    key: 'roleName',
     align: 'center',
   },
   {
     title: '模块',
-    dataIndex: 'module',
-    key: 'module',
+    dataIndex: 'roleModules',
+    key: 'roleModules',
     align: 'center',
   },
   {
     title: '描述',
-    dataIndex: 'desc',
-    key: 'desc',
+    dataIndex: 'roleDesc',
+    key: 'roleDesc',
     align: 'center',
   },
   {
@@ -101,18 +101,17 @@ const columns = [
 ];
 
 const formState: UnwrapRef<FormStateType> = reactive({
-  name: '',
+  roleName: '',
 });
 
 // 获取数据
 const { onSearch, onReset, pagination, dataSource, searchFormRef, onTableChange, getList } =
   useSearchTableList({
-    fetchData: getProductList,
+    fetchData: getRoleList,
     formatParams() {
       const data: Record<string, any> = { ...formState };
       return data;
     },
-    listFormatEnum: true,
   });
 
 const handleDelete = (row: RoleItemType) => {};

@@ -1,3 +1,3 @@
 export interface FormStateType {
-  name: string
+  itemName: string;
 }

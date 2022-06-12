@@ -4,9 +4,9 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="项目名称" name="name">
+            <a-form-item label="项目名称" name="itemName">
               <a-input
-                v-model:value.trim="formState.name"
+                v-model:value.trim="formState.itemName"
                 placeholder="请输入项目名称"
                 autocomplete="off"
                 allow-clear
@@ -45,20 +45,20 @@ export default {
 <script lang="ts" setup>
 import type { FormStateType } from '@/types/systemSetter/product';
 import { reactive, UnwrapRef } from 'vue';
-import { getProductList } from '@/services/goods';
+import { getProjectList } from '@/services/systemSetter/project';
 import useSearchTableList from '@/composables/useSearchTableList';
 
 const columns = [
   {
     title: '项目名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'itemName',
+    key: 'itemName',
     align: 'center',
   },
   {
     title: '负责科室',
-    dataIndex: 'department',
-    key: 'department',
+    dataIndex: 'departments',
+    key: 'departments',
     align: 'center',
   },
   {
@@ -69,31 +69,30 @@ const columns = [
   },
   {
     title: '项目组成员',
-    dataIndex: 'members',
-    key: 'members',
+    dataIndex: 'team',
+    key: 'team',
     align: 'center',
   },
   {
     title: '项目组周期',
-    dataIndex: 'cycle',
-    key: 'cycle',
+    dataIndex: 'endTime',
+    key: 'endTime',
     align: 'center',
   },
 ];
 
 const formState: UnwrapRef<FormStateType> = reactive({
-  name: '',
+  itemName: '',
 });
 
 // 获取数据
 const { onSearch, onReset, pagination, dataSource, searchFormRef, onTableChange, getList } =
   useSearchTableList({
-    fetchData: getProductList,
+    fetchData: getProjectList,
     formatParams() {
       const data: Record<string, any> = { ...formState };
       return data;
     },
-    listFormatEnum: true,
   });
 </script>
 

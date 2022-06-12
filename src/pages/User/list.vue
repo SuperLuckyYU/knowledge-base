@@ -4,9 +4,9 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="姓名" name="name">
+            <a-form-item label="姓名" name="userName">
               <a-input
-                v-model:value.trim="formState.name"
+                v-model:value.trim="formState.userName"
                 placeholder="请输入姓名"
                 autocomplete="off"
                 allow-clear
@@ -14,10 +14,10 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <a-form-item label="角色" name="category">
+            <a-form-item label="角色" name="rid">
               <a-cascader
                 style="min-width: 250px"
-                v-model:value="formState.role"
+                v-model:value="formState.rid"
                 :options="roleOptions"
                 placeholder="请选择角色"
                 allow-clear
@@ -40,6 +40,7 @@
         <a-card class="mr15" title="组织结构">
           <a-tree
             :tree-data="organizationData"
+            :field-names="{ title: 'deptName', key: 'id', children: 'children' }"
             defaultExpandAll
             v-model:selectedKeys="selectedNodes"
           ></a-tree>
@@ -95,15 +96,15 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'UsersList',
+  name: 'UserList',
 };
 </script>
 <script lang="ts" setup>
 import type { TableProps } from 'ant-design-vue';
 import type { FormStateType } from '@/types/systemSetter/users';
-import type { UserItemType } from '@/services/systemSetter/users';
-import { reactive, ref, UnwrapRef } from 'vue';
-import { getProductList } from '@/services/goods';
+import type { UserItemType, DeptListReturnProps } from '@/services/systemSetter/users';
+import { reactive, ref, UnwrapRef, watch } from 'vue';
+import { getUserList, getDeptList } from '@/services/systemSetter/users';
 import useSearchTableList from '@/composables/useSearchTableList';
 import SettingRoleDialog from './sections/SettingRoleDialog.vue';
 import RecycingRoleDialog from './sections/RecyclingPermissions.vue';
@@ -140,38 +141,38 @@ const columns = [
   },
   {
     title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'userName',
+    key: 'userName',
     align: 'center',
   },
   {
     title: '职务',
-    dataIndex: 'job_title',
-    key: 'job_title',
+    dataIndex: 'position',
+    key: 'position',
     align: 'center',
   },
   {
     title: '办公室电话',
-    dataIndex: 'tel',
-    key: 'tel',
+    dataIndex: 'officeTelephone',
+    key: 'officeTelephone',
     align: 'center',
   },
   {
     title: '手机号',
-    dataIndex: 'phone',
-    key: 'phone',
+    dataIndex: 'moblie',
+    key: 'moblie',
     align: 'center',
   },
   {
     title: '直接上级',
-    dataIndex: 'direct_superior',
-    key: 'direct_superior',
+    dataIndex: 'higherUp',
+    key: 'higherUp',
     align: 'center',
   },
   {
     title: '系统角色',
-    dataIndex: 'system_role',
-    key: 'system_role',
+    dataIndex: 'roleName',
+    key: 'roleName',
     align: 'center',
   },
   {
@@ -183,50 +184,21 @@ const columns = [
 
 const selectedRows = ref<UserItemType[]>([]);
 
-const organizationData = ref([
-  {
-    title: '海淀区水务局',
-    key: '1',
-    children: [
-      {
-        title: '局领导',
-        key: '2',
-      },
-      {
-        title: '局长办公会',
-        key: '3',
-      },
-      {
-        title: '局党组会',
-        key: '4',
-      },
-      {
-        title: '机关',
-        key: '5',
-        children: [
-          { title: '办公室', key: '0-0-3-0' },
-          { title: '水资源管理及行政审批科', key: '0-0-3-1' },
-          { title: '节水管理科', key: '0-0-3-2' },
-        ],
-      },
-      {
-        title: '事业单位',
-        key: '6',
-        children: [
-          { title: '海淀区水政监察大队', key: '0-0-4-0' },
-          { title: '海淀区水利工程质量监督站', key: '0-0-4-1' },
-          { title: '海淀区节约用水事务管理中心', key: '0-0-4-2' },
-        ],
-      },
-    ],
-  },
-]);
+const organizationData = reactive<DeptListReturnProps>([]);
 
 const selectedNodes = ref<string[]>([]);
 
 const formState: UnwrapRef<FormStateType> = reactive({
-  name: '',
-  role: [],
+  userName: '',
+  rid: [],
+});
+
+watch(selectedNodes, (item) => {
+  if (selectedNodes.value.length > 0) {
+    formState['deptId'] = selectedNodes.value[0];
+  } else {
+    formState['deptId'] = '';
+  }
 });
 
 const rowSelection: TableProps['rowSelection'] = {
@@ -238,13 +210,19 @@ const rowSelection: TableProps['rowSelection'] = {
 // 获取数据
 const { onSearch, onReset, pagination, dataSource, searchFormRef, onTableChange, getList } =
   useSearchTableList({
-    fetchData: getProductList,
+    fetchData: getUserList,
     formatParams() {
       const data: Record<string, any> = { ...formState };
       return data;
     },
-    listFormatEnum: true,
   });
+
+const fetchOrganizationData = async () => {
+  const res = await getDeptList();
+  Object.assign(organizationData, res);
+};
+
+fetchOrganizationData();
 
 // 回收权限弹窗相关
 const RecyclingPermissionsDialogState = reactive<ModelStateType>({

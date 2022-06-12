@@ -1,4 +1,5 @@
 export interface FormStateType {
-  name: string;
-  role: string[];
+  userName: string;
+  rid: string[];
+  deptId?: string;
 }

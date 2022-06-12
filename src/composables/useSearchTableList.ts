@@ -12,68 +12,63 @@
  */
 
 import { reactive, toRefs, computed, ref, onMounted, onActivated, unref } from 'vue';
-import type { ApiDataType } from 'axios'
-import { removeNullItem, formatEnum } from '@/utils/utils'
-import { GoodsListProps, GoodsListReturnProps } from '@/services/goods'
-import type { TableProps, TableColumnType } from 'ant-design-vue';
+import type { ApiDataType } from 'axios';
+import { removeNullItem } from '@/utils/utils';
 
 interface FomartDataType {
   list: object[];
   total: number;
 }
 
-
 interface PaginationType {
   current: number;
   pageSize: number;
-};
+}
 
 interface SorterType {
   field: string;
   order: string | undefined;
-  columnKey?: string
-};
+  columnKey?: string;
+}
 
 interface Props {
   fetchData: <T, P>(params: T) => Promise<ApiDataType<P>>;
-  formatParams: () => { [x: string]: any; };
+  formatParams: () => { [x: string]: any };
   formatResponse?: (data: any) => FomartDataType;
   paginationOption?: Array<string>;
-  listFormatEnum?: Boolean;
   pageSize?: number;
-  firstLoaded?: boolean
+  firstLoaded?: boolean;
 }
 
 interface BaseReturnProps {
-  list: [];
-  num: number;
+  records: [];
+  current: number;
   page: number;
-  page_size: number;
-  total_num: number;
+  size: number;
+  total: number;
 }
 
 interface StateType {
   dataSource: Record<string, any> | undefined;
   tableLoading: boolean;
   total: number;
-  pageNumber: number;
-  page_size: number;
-  selectedRowKeys: string[]
+  current: number;
+  size: number;
+  selectedRowKeys: string[];
 }
 const defaultSortedInfo = {
   field: '',
   order: undefined,
-  columnKey: ''
-}
+  columnKey: '',
+};
 export default function useSearchTableList(props: Props) {
   const {
     fetchData,
     formatParams,
     formatResponse,
-    paginationOption = ['page', 'page_size'],
-    listFormatEnum = false,
+    paginationOption = ['current', 'size'],
     pageSize = 20,
-    firstLoaded = true
+    firstLoaded = true,
   } = props;
 
   const searchFormRef = ref();
@@ -84,25 +79,25 @@ export default function useSearchTableList(props: Props) {
     dataSource: [],
     tableLoading: false,
     total: 0,
-    pageNumber: 1,
-    page_size: pageSize,
-    selectedRowKeys: []
+    current: 1,
+    size: pageSize,
+    selectedRowKeys: [],
   });
 
   // 分页配置
   const pagination = computed(() => ({
     total: STATE.total,
-    current: STATE.pageNumber,
-    pageSize: STATE.page_size,
+    current: STATE.current,
+    pageSize: STATE.size,
     showTotal: (total: number) => `共${total}条`,
     showSizeChanger: true,
     pageSizeOptions: ['10', '20', '50', '100'],
     onChange: (page: number) => {
-      STATE.pageNumber = page;
+      STATE.current = page;
     },
     onShowSizeChange: (current: number, pageSize: number) => {
-      STATE.pageNumber = 1;
-      STATE.page_size = pageSize;
+      STATE.current = 1;
+      STATE.size = pageSize;
     },
   }));
 
@@ -111,9 +106,9 @@ export default function useSearchTableList(props: Props) {
       selectedRowKeys: unref(STATE.selectedRowKeys),
       onChange: (selectedRowKeys: string[]) => {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, selectedRowKeys);
-        STATE.selectedRowKeys=selectedRowKeys
-      }
-    }
+        STATE.selectedRowKeys = selectedRowKeys;
+      },
+    };
   });
 
   /**
@@ -121,8 +116,8 @@ export default function useSearchTableList(props: Props) {
    */
   const onSearch = () => {
     _checkSearchField().then(() => {
-      STATE.pageNumber = 1;
-      resertTable()
+      STATE.current = 1;
+      resertTable();
       getList();
     });
   };
@@ -132,8 +127,8 @@ export default function useSearchTableList(props: Props) {
    */
   const onReset = () => {
     searchFormRef.value.resetFields();
-    STATE.pageNumber = 1;
-    resertTable()
+    STATE.current = 1;
+    resertTable();
     getList();
   };
 
@@ -144,10 +139,10 @@ export default function useSearchTableList(props: Props) {
     STATE.tableLoading = true;
     try {
       const newParams = formatParams();
-      let [page, page_size] = paginationOption;
+      let [current, size] = paginationOption;
       const data = removeNullItem({
-        [page]: STATE.pageNumber,
-        [page_size]: STATE.page_size,
+        [current]: STATE.current,
+        [size]: STATE.size,
         sort_field: sortedInfo.value.field,
         sort_value: sortedInfo.value.order,
         ...newParams,
@@ -156,12 +151,12 @@ export default function useSearchTableList(props: Props) {
       STATE.tableLoading = false;
       if (formatResponse) {
         const { list, total } = await formatResponse(res);
-        STATE.dataSource = listFormatEnum ? formatEnum(list) : list;
+        STATE.dataSource = list;
         STATE.total = total;
         return;
       }
-      STATE.dataSource = listFormatEnum ? formatEnum(res.result.list) : res.result.list;
-      STATE.total = res.result.total_num;
+      STATE.dataSource = res.records;
+      STATE.total = res.total;
     } catch (err) {
       throw err;
     }
@@ -186,19 +181,18 @@ export default function useSearchTableList(props: Props) {
     });
   };
 
-
   /**
    * 表格排序，筛选
    */
   const onTableChange = (page: PaginationType, filters: any, sorter: SorterType) => {
-    sortedInfo.value = sorter
+    sortedInfo.value = sorter;
     getList();
-  }
+  };
 
   const resertTable = () => {
     sortedInfo.value = defaultSortedInfo;
-    STATE.selectedRowKeys = []
-  }
+    STATE.selectedRowKeys = [];
+  };
 
   onActivated(() => {
     firstLoaded && getList();
@@ -213,8 +207,6 @@ export default function useSearchTableList(props: Props) {
     searchFormRef,
     onTableChange,
     sortedInfo,
-    rowSelection
+    rowSelection,
   };
 }
-
-

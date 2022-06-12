@@ -167,7 +167,6 @@ const {
     const data: Record<string, any> = { ...formState };
     return data;
   },
-  listFormatEnum: true,
 });
 
 const handleOperateKnowledge = (record: { id: string }, type: 'create' | 'update') => {

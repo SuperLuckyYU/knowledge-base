@@ -140,7 +140,6 @@ const {
     const data: Record<string, any> = { ...formState };
     return data;
   },
-  listFormatEnum: true,
 });
 
 const handleCollect = (record: { id: string }) => {

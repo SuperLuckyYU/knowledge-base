@@ -76,7 +76,6 @@ const { onSearch, onReset, pagination, dataSource, getList, searchFormRef, onTab
     formatParams() {
       return formState;
     },
-    listFormatEnum: false,
     pageSize: 10,
     formatResponse(res) {
       const { list, total_num } = res.result;

@@ -1,10 +1,10 @@
 export const CATEGORY_OPTIONS = [
   {
     label: '知识分类',
-    value: '0'
+    value: '1',
   },
   {
     label: '知识类型',
-    value: '1'
+    value: '2',
   },
-]
+];

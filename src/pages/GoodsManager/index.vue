@@ -5,23 +5,43 @@
         <a-row :gutter="[24, 16]">
           <a-col>
             <a-form-item label="商品编码" name="sku">
-              <a-input v-model:value.trim="formState.sku" placeholder="请输入商品编码" autocomplete="off" allow-clear />
+              <a-input
+                v-model:value.trim="formState.sku"
+                placeholder="请输入商品编码"
+                autocomplete="off"
+                allow-clear
+              />
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="商品名称" name="name">
-              <a-input v-model:value.trim="formState.name" placeholder="请输入商品名称" autocomplete="off" allow-clear />
+              <a-input
+                v-model:value.trim="formState.name"
+                placeholder="请输入商品名称"
+                autocomplete="off"
+                allow-clear
+              />
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="商品类目" name="category">
-              <a-cascader style="min-width: 250px" v-model:value="formState.category" :options="CATEGORY_OPTIONS"
-                placeholder="请选择商品类目" allow-clear />
+              <a-cascader
+                style="min-width: 250px"
+                v-model:value="formState.category"
+                :options="CATEGORY_OPTIONS"
+                placeholder="请选择商品类目"
+                allow-clear
+              />
             </a-form-item>
           </a-col>
           <a-col>
             <a-form-item label="保存时间" name="date">
-              <a-range-picker v-model:value="formState.date" :format="dateFormat" allow-clear @change="handleChange" />
+              <a-range-picker
+                v-model:value="formState.date"
+                :format="dateFormat"
+                allow-clear
+                @change="handleChange"
+              />
             </a-form-item>
           </a-col>
           <a-col>
@@ -37,10 +57,18 @@
     </a-card>
     <a-card class="table-box mt20">
       <a-row class="action-btn-box">
-        <a-button type="primary" @click="handleOperateGoods({ sku: '' }, 'create')">添加商品</a-button>
+        <a-button type="primary" @click="handleOperateGoods({ sku: '' }, 'create')"
+          >添加商品</a-button
+        >
       </a-row>
-      <a-table rowKey="id" :columns="columns" :data-source="dataSource" :pagination="pagination" bordered
-        @change="onTableChange">
+      <a-table
+        rowKey="id"
+        :columns="columns"
+        :data-source="dataSource"
+        :pagination="pagination"
+        bordered
+        @change="onTableChange"
+      >
         <template #bodyCell="{ column, text, record }">
           <template v-if="column.dataIndex === 'cover_img_url'">
             <img :src="text" class="cover-img-wrap" />
@@ -49,16 +77,26 @@
             <a-typography-text :type="text <= 1 ? 'danger' : ''">{{ text }}</a-typography-text>
           </template>
           <template v-if="column.dataIndex === 'operation'">
-            <a-button type="link" class="action-btn" @click="handleOperateGoods(record, 'readonly')">详情</a-button>
-            <a-button type="link" class="action-btn" @click="handleOperateGoods(record, 'copy')">复制</a-button>
-            <a-button type="link" class="action-btn" @click="handleOperateGoods(record, 'edit')">编辑</a-button>
+            <a-button type="link" class="action-btn" @click="handleOperateGoods(record, 'readonly')"
+              >详情</a-button
+            >
+            <a-button type="link" class="action-btn" @click="handleOperateGoods(record, 'copy')"
+              >复制</a-button
+            >
+            <a-button type="link" class="action-btn" @click="handleOperateGoods(record, 'edit')"
+              >编辑</a-button
+            >
             <a-button type="link" class="action-btn" @click="handleDelete(record)">删除</a-button>
             <!-- <a-button type="link" class="action-btn" @click="handlePrint(record)">打印条形码</a-button> -->
           </template>
         </template>
       </a-table>
     </a-card>
-    <print-modal v-model:visible="STATE.printVisible" :goods-info="STATE.printCurrentRow" @success="getList" />
+    <print-modal
+      v-model:visible="STATE.printVisible"
+      :goods-info="STATE.printCurrentRow"
+      @success="getList"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -193,7 +231,6 @@ const {
     delete data['date'];
     return data;
   },
-  listFormatEnum: true,
 });
 
 // 删除商品
@@ -213,9 +250,9 @@ const handleDelete = ({ id }: { id: string }) => {
     },
     onCancel() {
       return new Promise((resolve, reject) => {
-        resolve('cancle')
-      })
-    }
+        resolve('cancle');
+      });
+    },
   });
 };
 
@@ -225,12 +262,12 @@ const handleOperateGoods = (record: { sku: string }, type: string) => {
     name: 'GoodsCreate',
     query: record.sku
       ? {
-        sku: record.sku,
-        type: type,
-      }
+          sku: record.sku,
+          type: type,
+        }
       : {
-        type: type,
-      },
+          type: type,
+        },
   });
 };
 

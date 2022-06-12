@@ -1,14 +1,18 @@
 import { message } from 'ant-design-vue';
 import axios from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ApiDataType } from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ApiDataType } from 'axios';
 import Cookies from 'js-cookie';
 import qs from 'qs';
 
 interface IAxiosGet {
-  <T = any>(url: string, params?: Record<string, any>, config?: AxiosRequestConfig | null): Promise<ApiDataType<T>>
+  <T = any>(url: string, params?: Record<string, any>, config?: AxiosRequestConfig | null): Promise<
+    ApiDataType<T>
+  >;
 }
 interface IAxiosPostOrPutOrDelete {
-  <T = any>(url: string, data?: Record<string, any>, config?: AxiosRequestConfig): Promise<ApiDataType<T>>
+  <T = any>(url: string, data?: Record<string, any>, config?: AxiosRequestConfig): Promise<
+    ApiDataType<T>
+  >;
 }
 
 /**
@@ -23,9 +27,9 @@ const showErrorMessage = (msg: string) => {
  * 默认的请求配置
  */
 export const defaultConfig = {
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.MODE === 'development' ? '' : import.meta.env.VITE_APP_API_URL,
   timeout: 10000,
-  showMsg: true  //是否显示默认提示，false用来配置特殊情况的提示弹窗
+  showMsg: false, //是否显示默认提示，false用来配置特殊情况的提示弹窗
 };
 
 /**
@@ -34,9 +38,7 @@ export const defaultConfig = {
  */
 export const getDefaultParams = () => {
   const userName = Cookies.get('username') || '';
-  return {
-    op_user: userName.split('@')[0]
-  };
+  return {};
 };
 
 /**
@@ -44,7 +46,7 @@ export const getDefaultParams = () => {
  * @type {AxiosInstance}
  */
 const service: AxiosInstance = axios.create(defaultConfig);
-service.defaults.withCredentials = true
+service.defaults.withCredentials = true;
 
 /**
  * axios的实例请求拦截器
@@ -67,8 +69,7 @@ service.interceptors.request.use(
         ...config.data,
         ...getDefaultParams(),
       };
-      config.data =
-        config.data instanceof FormData ? config.data : data; // 转为formdata数据格式
+      config.data = config.data instanceof FormData ? config.data : data; // 转为formdata数据格式
     }
 
     return config;
@@ -76,7 +77,7 @@ service.interceptors.request.use(
   function (error) {
     // 对请求错误做些什么
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -95,38 +96,37 @@ service.interceptors.response.use(
     }
 
     const code = data.code ?? -1;
-    if (code !== 0) {
-      const msg = data.msg || '未定义错误';
-      showErrorMessage(data.msg);
-      return Promise.reject({ code, msg });
+    if (code !== 1000) {
+      const message = data.message || '未定义错误';
+      showErrorMessage(data.message);
+      return Promise.reject({ code, message });
     }
-    if (config['showMsg' as keyof typeof config] && data.msg) {
-      message.info(data.msg);
+    if (config['showMsg' as keyof typeof config] && data.message) {
+      message.info(data.message);
     }
-    return data;
+    return data.data;
   },
   function (error) {
-    if (!(error.code && error.code === -1))
-      error.message = '接口请求错误，请联系管理员';
+    if (!(error.code && error.code === -1)) error.message = '接口请求错误，请联系管理员';
     showErrorMessage(error.message);
     return Promise.reject(error);
-  }
+  },
 );
 
 export const get: IAxiosGet = (url, params, config) => {
-  return service.get(url, { params, ...config })
-}
+  return service.get(url, { params, ...config });
+};
 
 export const post: IAxiosPostOrPutOrDelete = (url, data, config) => {
-  return service.post(url, data, config)
-}
+  return service.post(url, data, config);
+};
 
 export const put: IAxiosPostOrPutOrDelete = (url, data, config) => {
-  return service.put(url, data, config)
-}
+  return service.put(url, data, config);
+};
 
 export const deleteRequest: IAxiosPostOrPutOrDelete = (url, data, config) => {
-  return service.delete(url, { data, ...config })
-}
+  return service.delete(url, { data, ...config });
+};
 
 export default service;

@@ -25,6 +25,7 @@
         node-key="id"
         default-expand-all
         :expand-on-click-node="false"
+        :props="{ label: 'dictName' }"
       >
         <template #default="{ node, data }">
           <span class="custom-tree-node">
@@ -71,6 +72,8 @@ import { CATEGORY_OPTIONS } from '@/constants/dictionary';
 import { PlusSquareOutlined, MinusSquareOutlined, EditOutlined } from '@ant-design/icons-vue';
 import 'element-plus/es/components/tree/style/css';
 import { ElTree, ElEmpty } from 'element-plus';
+import { getDictionaryList } from '@/services/systemSetter/dictionary';
+import type { DictionaryReturnProps } from '@/services/systemSetter/dictionary';
 import CreateDialog from './sections/Create.vue';
 
 interface ModelStateType {
@@ -82,59 +85,17 @@ interface ModelStateType {
 }
 
 const formState = reactive({
-  status: '0',
+  status: '1',
 });
 
-const dataSource = ref([
-  {
-    id: '1',
-    label: 'Level one 1',
-    children: [
-      {
-        id: '4',
-        label: 'Level two 1-1',
-        children: [
-          {
-            id: '9',
-            label: 'Level three 1-1-1',
-          },
-          {
-            id: '10',
-            label: 'Level three 1-1-2',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2',
-    label: 'Level one 2',
-    children: [
-      {
-        id: '5',
-        label: 'Level two 2-1',
-      },
-      {
-        id: '6',
-        label: 'Level two 2-2',
-      },
-    ],
-  },
-  {
-    id: '3',
-    label: 'Level one 3',
-    children: [
-      {
-        id: '7',
-        label: 'Level two 3-1',
-      },
-      {
-        id: '8',
-        label: 'Level two 3-2',
-      },
-    ],
-  },
-]);
+const dataSource = ref<DictionaryReturnProps>([]);
+
+const fetchData = async () => {
+  const res = await getDictionaryList({ type: formState.status });
+  dataSource.value = res;
+};
+
+fetchData();
 
 const CreateDialogState = reactive<ModelStateType>({
   visible: false,
