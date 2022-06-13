@@ -21,11 +21,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: BasicLayout,
+    meta: { title: '知识首页', icon: 'HomeOutlined', level: '1', key: 'home' },
     children: [
       {
         path: '',
-        name: 'Home',
-        meta: { title: '首页', isMenu: false },
+        name: 'home',
         component: Home,
       },
     ],

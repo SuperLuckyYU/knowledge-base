@@ -1,6 +1,6 @@
 <template>
   <!-- 如果存在子路由 -->
-  <template v-if="route?.children">
+  <template v-if="route?.children && route?.meta?.level !== '1'">
     <a-sub-menu :key="route.name" :title="route.meta?.title || '未命名'">
       <template #icon>
         <component :is="route.meta?.icon"></component>
@@ -14,7 +14,7 @@
     </a-sub-menu>
   </template>
   <template v-else>
-    <a-menu-item :key="route?.name">
+    <a-menu-item :key="key">
       <template #icon>
         <component :is="route?.meta?.icon"></component>
       </template>
@@ -23,8 +23,8 @@
   </template>
 </template>
 <script lang="ts">
-import { toRefs, defineComponent, PropType } from 'vue';
-import { SkinOutlined, SettingOutlined, BookOutlined } from '@ant-design/icons-vue';
+import { toRefs, defineComponent, PropType, computed } from 'vue';
+import { SkinOutlined, SettingOutlined, BookOutlined, HomeOutlined } from '@ant-design/icons-vue';
 import { RouteRecordRaw } from 'vue-router';
 
 interface RouteMenusProps {
@@ -35,6 +35,7 @@ export default defineComponent({
     SkinOutlined,
     SettingOutlined,
     BookOutlined,
+    HomeOutlined,
   },
   props: {
     route: {
@@ -45,8 +46,16 @@ export default defineComponent({
 
   setup(props) {
     // 暴露给模板和 API 钩子的其他选项
+    const { route } = toRefs(props)
+    const key = computed(() => {
+      if (route.value?.meta?.level === '1') {
+        return route.value?.meta?.key
+      }
+      return route.value?.name
+    })
     return {
       ...toRefs(props),
+      key
     };
   },
 });

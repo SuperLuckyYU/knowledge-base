@@ -7,7 +7,7 @@
       <a-menu :selectedKeys="STATE.selectedKeys" v-model:openKeys="STATE.openKeys" theme="dark" mode="inline"
         @select="handleSelectMenu">
         <template v-for="route of routerList">
-          <Menus :route="route" v-if="route.path !== '/'" />
+          <Menus :route="route" />
         </template>
       </a-menu>
     </a-layout-sider>
