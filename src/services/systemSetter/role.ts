@@ -22,5 +22,5 @@ interface RoleListReturnProps {
 }
 
 export const getRoleList = <RoleListProps, RoleListReturnProps>(data: RoleListProps) => {
-  return get<RoleListReturnProps>('/api/role/query', data);
+  return get<RoleListReturnProps>('/role/query', data);
 };

@@ -19,5 +19,5 @@ interface ProjectListReturnProps {
 export const getProjectList = <ProjectListProps, ProjectListReturnProps>(
   data: ProjectListProps,
 ) => {
-  return get<ProjectListReturnProps>('/api/item/query', data);
+  return get<ProjectListReturnProps>('/item/query', data);
 };

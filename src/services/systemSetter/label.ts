@@ -20,5 +20,5 @@ interface LabelListReturnProps {
 }
 
 export const getLabelList = <LabelListProps, LabelListReturnProps>(data: LabelListProps) => {
-  return get<LabelListReturnProps>('/api/label/query', data);
+  return get<LabelListReturnProps>('/label/query', data);
 };

@@ -30,10 +30,10 @@ export interface DeptListItemType {
 }
 
 export const getUserList = <UserListProps, UserListReturnProps>(data: UserListProps) => {
-  return get<UserListReturnProps>('/api/user/query', data);
+  return get<UserListReturnProps>('/user/query', data);
 };
 
 export type DeptListReturnProps = DeptListItemType[];
 export const getDeptList = <T, UserListReturnProps>() => {
-  return get<DeptListReturnProps>('/api/dept/tree/query');
+  return get<DeptListReturnProps>('/dept/tree/query');
 };

@@ -27,7 +27,7 @@ const showErrorMessage = (msg: string) => {
  * 默认的请求配置
  */
 export const defaultConfig = {
-  baseURL: import.meta.env.MODE === 'development' ? '' : import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 10000,
   showMsg: false, //是否显示默认提示，false用来配置特殊情况的提示弹窗
 };

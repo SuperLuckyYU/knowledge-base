@@ -16,5 +16,5 @@ export type DictionaryReturnProps = DictionaryListItemType[];
 export const getDictionaryList = <DictionaryListProps, DictionaryReturnProps>(
   data: DictionaryListProps,
 ) => {
-  return get<DictionaryReturnProps>('/api/dict/tree/query', data);
+  return get<DictionaryReturnProps>('/dict/tree/query', data);
 };
