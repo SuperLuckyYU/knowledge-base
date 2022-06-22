@@ -1,10 +1,10 @@
 import request, { get, post } from '@/utils/request';
 
-interface DictionaryListProps {
+export interface DictionaryListProps {
   type: string;
 }
 
-interface DictionaryListItemType {
+export interface DictionaryListItemType {
   children?: DictionaryListItemType[];
   deptName: string;
   id: string;

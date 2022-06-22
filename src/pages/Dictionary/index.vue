@@ -6,6 +6,7 @@
         type="card"
         :tabBarGutter="6"
         class="search-tabs"
+        @change="handleTabChange"
       >
         <a-tab-pane
           v-for="item in CATEGORY_OPTIONS"
@@ -73,7 +74,10 @@ import { PlusSquareOutlined, MinusSquareOutlined, EditOutlined } from '@ant-desi
 import 'element-plus/es/components/tree/style/css';
 import { ElTree, ElEmpty } from 'element-plus';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
-import type { DictionaryReturnProps } from '@/services/systemSetter/dictionary';
+import type {
+  DictionaryReturnProps,
+  DictionaryListProps,
+} from '@/services/systemSetter/dictionary';
 import CreateDialog from './sections/Create.vue';
 
 interface ModelStateType {
@@ -91,11 +95,17 @@ const formState = reactive({
 const dataSource = ref<DictionaryReturnProps>([]);
 
 const fetchData = async () => {
-  const res = await getDictionaryList({ type: formState.status });
-  dataSource.value = res;
+  const res = await getDictionaryList<DictionaryListProps, DictionaryReturnProps>({
+    type: formState.status,
+  });
+  dataSource.value = res as unknown as DictionaryReturnProps;
 };
 
 fetchData();
+
+const handleTabChange = () => {
+  fetchData();
+};
 
 const CreateDialogState = reactive<ModelStateType>({
   visible: false,
