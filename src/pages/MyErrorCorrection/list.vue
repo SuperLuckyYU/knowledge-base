@@ -4,9 +4,9 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="条目标题" name="name">
+            <a-form-item label="条目标题" name="knowledgeName">
               <a-input
-                v-model:value.trim="formState.name"
+                v-model:value.trim="formState.knowledgeName"
                 placeholder="请输入条目标题"
                 autocomplete="off"
                 allow-clear
@@ -14,9 +14,9 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <a-form-item label="标签" name="label">
+            <a-form-item label="标签" name="labelId">
               <a-select
-                v-model:value="formState.label"
+                v-model:value="formState.labelId"
                 :options="labelOptions"
                 mode="tags"
                 placeholder="请选择标签"
@@ -73,7 +73,7 @@ import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
-import { getProductList } from '@/services/goods';
+import { getMyErrorCorrectionList } from '@/services/myKnowledge/errorCorrection';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
 import ViewCorrectionDialog from './sections/ViewCorrectionDialog.vue';
 
@@ -86,29 +86,29 @@ const columns = computed(() => {
   return [
     {
       title: '类型',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'knowledgeFlag',
+      key: 'knowledgeFlag',
       align: 'center',
     },
     {
       title: '知识条目',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'knowledgeName',
+      key: 'knowledgeName',
       align: 'center',
     },
     {
       title: '分类',
-      dataIndex: 'categoyr',
-      key: 'categoyr',
+      dataIndex: 'knowledgeType',
+      key: 'knowledgeType',
       align: 'center',
     },
     {
       title: '纠错时间',
-      dataIndex: 'create_time',
-      key: 'create_time',
+      dataIndex: 'createTime',
+      key: 'createTime',
       align: 'center',
       sorter: true,
-      sortOrder: sorted.columnKey === 'create_time' && sorted.order,
+      sortOrder: sorted.columnKey === 'createTime' && sorted.order,
     },
     {
       title: '操作',
@@ -119,8 +119,8 @@ const columns = computed(() => {
 });
 
 const formState: UnwrapRef<FormStateType> = reactive({
-  name: '',
-  label: [],
+  knowledgeName: '',
+  labelId: [],
 });
 
 // 获取数据
@@ -134,7 +134,7 @@ const {
   onTableChange,
   sortedInfo,
 } = useSearchTableList({
-  fetchData: getProductList,
+  fetchData: getMyErrorCorrectionList,
   formatParams() {
     const data: Record<string, any> = { ...formState };
     return data;

@@ -27,7 +27,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       cors: true, // 类型： boolean | CorsOptions 为开发服务器配置 CORS。默认启用并允许任何源
       proxy: {
         '/api': {
-          target: 'http://192.168.1.16:8662/',
+          target: 'http://47.98.251.91:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

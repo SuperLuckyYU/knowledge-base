@@ -1,5 +1,5 @@
 export interface FormStateType {
-  name: string;
-  label: string[];
-  state: string;
+  knowledgeName: string;
+  labelId: string[];
+  // state: string;
 }

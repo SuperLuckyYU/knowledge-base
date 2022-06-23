@@ -1,6 +1,6 @@
 export interface FormStateType {
-  name: string;
-  label: string[];
+  knowledgeName: string;
+  labelId: string[];
 }
 
 export interface KnowledgeItemType {
