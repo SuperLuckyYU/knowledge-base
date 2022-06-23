@@ -38,7 +38,9 @@ export const defaultConfig = {
  */
 export const getDefaultParams = () => {
   const userName = Cookies.get('username') || '';
-  return {};
+  return {
+    userId: '23897438221123',
+  };
 };
 
 /**
