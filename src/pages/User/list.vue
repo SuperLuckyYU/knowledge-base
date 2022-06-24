@@ -52,11 +52,11 @@
             <a-button
               class="mr15"
               type="primary"
-              :disabled="!selectedRows.length"
+              :disabled="!selectedRowsRef.length"
               @click="handleSettingRole"
               >设置角色</a-button
             >
-            <a-button danger @click="handleRecyclingPermissions" :disabled="!selectedRows.length"
+            <a-button danger @click="handleRecyclingPermissions" :disabled="!selectedRowsRef.length"
               >回收权限</a-button
             >
           </a-row>
@@ -82,13 +82,13 @@
     </a-row>
     <setting-role-dialog
       v-if="settingRoleDialogState.visible"
-      :info="selectedRows"
+      :info="selectedRowsRef"
       @success="getList"
       @cancel="handleCancelSettingRoleDialog"
     />
     <recycing-role-dialog
       v-if="RecyclingPermissionsDialogState.visible"
-      :info="selectedRows"
+      :info="selectedRowsRef"
       @success="getList"
       @cancel="handleCancelRecyclingPermissionsDialog"
     />
@@ -182,7 +182,7 @@ const columns = [
   },
 ];
 
-const selectedRows = ref<UserItemType[]>([]);
+const selectedRowsRef = ref<UserItemType[]>([]);
 
 const organizationData = reactive<DeptListReturnProps>([]);
 
@@ -193,7 +193,7 @@ const formState: UnwrapRef<FormStateType> = reactive({
   rid: [],
 });
 
-watch(selectedNodes, (item) => {
+watch(selectedNodes, _ => {
   if (selectedNodes.value.length > 0) {
     formState['deptId'] = selectedNodes.value[0];
   } else {
@@ -203,7 +203,7 @@ watch(selectedNodes, (item) => {
 
 const rowSelection: TableProps['rowSelection'] = {
   onChange: (selectedRowKeys: (string | number)[], selectedRows: UserItemType[]) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    selectedRowsRef.value = selectedRows;
   },
 };
 

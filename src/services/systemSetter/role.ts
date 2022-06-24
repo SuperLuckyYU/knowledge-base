@@ -6,11 +6,11 @@ export interface RoleItemType {
   desc: string;
 }
 
-interface RoleListProps {
+export interface RoleListProps {
   roleName?: string;
 }
 
-interface RoleListReturnProps {
+export interface RoleListReturnProps {
   createTime: string;
   id: string;
   roleCode: string;

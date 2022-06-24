@@ -68,8 +68,8 @@ service.interceptors.request.use(
     }
     if (config.method == 'post') {
       const data = {
-        ...config.data,
         ...getDefaultParams(),
+        ...config.data,
       };
       config.data = config.data instanceof FormData ? config.data : data; // 转为formdata数据格式
     }
