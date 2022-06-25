@@ -17,16 +17,23 @@
         <a-textarea v-model:value="modelRef.desc" :rows="4" :maxlength="6" />
       </a-form-item>
       <a-form-item label="菜单列表" v-bind="validateInfos.menu">
-        <a-tree v-model:checkedKeys="modelRef.menu" checkable :tree-data="menuData"> </a-tree>
+        <a-tree
+          v-model:checkedKeys="menuCheckedIds"
+          checkable
+          :tree-data="menuData"
+          :fieldNames="{ children: 'children', title: 'menuName', key: 'id' }"
+        >
+        </a-tree>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script lang="ts" setup>
-import type { RoleItemType } from '@/services/systemSetter/role';
-import { reactive } from 'vue';
+import type { RoleItemType, MenuReturnProps } from '@/services/systemSetter/role';
+import { ref, reactive, toRefs } from 'vue';
 import { message, Form } from 'ant-design-vue';
+import { getMenuTree, createRole, getRoleDetail, updateRole } from '@/services/systemSetter/role';
 
 interface Props {
   type: 'create' | 'update';
@@ -36,10 +43,10 @@ interface Props {
 interface FormState {
   name: string;
   desc?: string;
-  menu: string[];
 }
 
 const props = defineProps<Props>();
+const { type, info } = toRefs(props);
 const emit = defineEmits(['success', 'cancel']);
 
 const useForm = Form.useForm;
@@ -56,8 +63,9 @@ const layout = reactive({
 const modelRef = reactive<FormState>({
   name: '',
   desc: '',
-  menu: [],
 });
+
+const menuCheckedIds = ref<string[]>([]);
 
 const rulesRef = reactive({
   name: [
@@ -79,91 +87,68 @@ const rulesRef = reactive({
   ],
 });
 
-const menuData = reactive([
-  {
-    title: '知识库',
-    key: '0-0',
-    children: [
-      {
-        title: '知识首页',
-        key: '0-0-0',
-        children: [
-          { title: '查看', key: '0-0-0-0' },
-          { title: '编辑', key: '0-0-0-1' },
-        ],
-      },
-      {
-        title: '知识地图',
-        key: '0-0-1',
-        children: [
-          { title: '查看', key: '0-0-1-0' },
-          { title: '编辑', key: '0-0-1-1' },
-        ],
-      },
-      {
-        title: '我的',
-        key: '0-0-2',
-        children: [
-          {
-            title: '我的知识',
-            key: '0-0-2-0',
-            children: [
-              { title: '查看', key: '0-0-2-0-0' },
-              { title: '编辑', key: '0-0-2-0-1' },
-            ],
-          },
-          {
-            title: '我的收藏',
-            key: '0-0-2-1',
-            children: [
-              { title: '查看', key: '0-0-2-1-0' },
-              { title: '编辑', key: '0-0-2-1-1' },
-            ],
-          },
-          {
-            title: '我的纠错',
-            key: '0-0-2-2',
-            children: [
-              { title: '查看', key: '0-0-2-2-0' },
-              { title: '编辑', key: '0-0-2-2-1' },
-            ],
-          },
-          {
-            title: '知识归档',
-            key: '0-0-2-3',
-            children: [
-              { title: '查看', key: '0-0-2-3-0' },
-              { title: '编辑', key: '0-0-2-3-1' },
-            ],
-          },
-        ],
-      },
-      {
-        title: '统计报表',
-        key: '0-0-3',
-        children: [
-          { title: '查看', key: '0-0-3-0' },
-          { title: '编辑', key: '0-0-3-1' },
-        ],
-      },
-      {
-        title: '系统管理',
-        key: '0-0-4',
-        children: [
-          { title: '查看', key: '0-0-4-0' },
-          { title: '编辑', key: '0-0-4-1' },
-        ],
-      },
-    ],
-  },
-]);
+const menuData = reactive<MenuReturnProps>([]);
+const menuDataObj: Record<string, string> = {};
+
+const fetchMeunData = async () => {
+  const res = await getMenuTree();
+  Object.assign(menuData, res);
+  const fn = (data: MenuReturnProps) => {
+    data.forEach(({ id, menuName, children }) => {
+      menuDataObj[id as keyof typeof menuDataObj] = menuName;
+      if (children && children.length) fn(children);
+    });
+  };
+  fn(res);
+};
+
+fetchMeunData();
+
+const fetchDetial = async () => {
+  const { roleName, roleDesc, menuIds } = await getRoleDetail({ id: info?.value?.id ?? '' });
+  modelRef.desc = roleDesc;
+  modelRef.name = roleName;
+  menuCheckedIds.value = menuIds ?? [];
+};
+
+if (type.value === 'update') {
+  fetchDetial();
+}
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
+
+const sendRequest = async (params: FormState) => {
+  const { name, desc } = params;
+  const menuNames: string[] = [];
+  menuCheckedIds.value.forEach((item: string) => {
+    if (menuDataObj[item] !== '可编辑' && menuDataObj[item] !== '仅查看')
+      menuNames.push(menuDataObj[item]);
+  });
+  const menuIds = menuCheckedIds.value.map((item: string) => {
+    return item;
+  });
+
+  const commonProps = {
+    roleName: name,
+    roleDesc: desc,
+    menuIds: menuIds.join(','),
+    roleModules: menuNames.join(','),
+  };
+
+  if (type.value === 'create') {
+    return await createRole(commonProps);
+  }
+  const updataProps = {
+    ...commonProps,
+    id: info?.value?.id ?? '',
+  };
+  return await updateRole(updataProps);
+};
 
 const handleSubmit = async () => {
   try {
     const params = await validate();
-    console.log('🚀 ~ file: CreateRoleDialog.vue ~ line 74 ~ handleSubmit ~ params', params);
+    await sendRequest(params);
     message.success('成功!');
     emit('success');
     onModalClose();

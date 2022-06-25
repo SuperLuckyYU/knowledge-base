@@ -64,9 +64,10 @@ export default {
 import type { FormStateType } from '@/types/systemSetter/role';
 import type { RoleItemType } from '@/services/systemSetter/role';
 import { reactive, UnwrapRef } from 'vue';
-import { getRoleList } from '@/services/systemSetter/role';
+import { getRoleList, delRole } from '@/services/systemSetter/role';
 import useSearchTableList from '@/composables/useSearchTableList';
 import CreateRoleDialog from './sections/CreateRoleDialog.vue';
+import { message } from 'ant-design-vue';
 
 interface ModelStateType {
   visible: boolean;
@@ -114,7 +115,11 @@ const { onSearch, onReset, pagination, dataSource, searchFormRef, onTableChange,
     },
   });
 
-const handleDelete = (row: RoleItemType) => {};
+const handleDelete = async ({ id }: RoleItemType) => {
+  await delRole({ roleId: id });
+  message.success('删除成功！');
+  getList();
+};
 
 const CreateRoleDialogState = reactive<ModelStateType>({
   visible: false,

@@ -5,14 +5,14 @@ import Cookies from 'js-cookie';
 import qs from 'qs';
 
 interface IAxiosGet {
-  <T = any>(url: string, params?: Record<string, any>, config?: AxiosRequestConfig | null): Promise<
-    ApiDataType<T>
-  >;
+  <T = any>(
+    url: string,
+    params?: Record<string, any>,
+    config?: AxiosRequestConfig | null,
+  ): Promise<T>;
 }
 interface IAxiosPostOrPutOrDelete {
-  <T = any>(url: string, data?: Record<string, any>, config?: AxiosRequestConfig): Promise<
-    ApiDataType<T>
-  >;
+  <T = any>(url: string, data?: Record<string, any>, config?: AxiosRequestConfig): Promise<T>;
 }
 
 /**
@@ -40,6 +40,7 @@ export const getDefaultParams = () => {
   const userName = Cookies.get('username') || '';
   return {
     userId: '23897438221123',
+    opUser: 'Admin',
   };
 };
 

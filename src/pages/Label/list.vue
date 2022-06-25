@@ -31,11 +31,11 @@
           title="确认要删除所选标签吗？"
           ok-text="确定"
           cancel-text="取消"
-          @confirm="handleDelete(selectedRows)"
+          @confirm="handleDelete(selectedRowsRef)"
           @cancel="() => {}"
-          :disabled="!selectedRows.length"
+          :disabled="!selectedRowsRef.length"
         >
-          <a-button danger :disabled="!selectedRows.length">删除</a-button>
+          <a-button danger :disabled="!selectedRowsRef.length">删除</a-button>
         </a-popconfirm>
       </a-row>
       <a-table
@@ -72,11 +72,11 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import type { TableProps } from 'ant-design-vue';
+import { message, TableProps } from 'ant-design-vue';
 import type { FormStateType } from '@/types/systemSetter/label';
 import type { LabelItemType } from '@/services/systemSetter/label';
 import { reactive, UnwrapRef, computed, ref } from 'vue';
-import { getLabelList } from '@/services/systemSetter/label';
+import { getLabelList, delLabel } from '@/services/systemSetter/label';
 import useSearchTableList from '@/composables/useSearchTableList';
 import CreateDialog from './sections/CreateDialog.vue';
 
@@ -121,11 +121,11 @@ const columns = computed(() => {
   ];
 });
 
-const selectedRows = ref<LabelItemType[]>([]);
+const selectedRowsRef = ref<LabelItemType[]>([]);
 
 const rowSelection: TableProps['rowSelection'] = {
   onChange: (selectedRowKeys: (string | number)[], selectedRows: LabelItemType[]) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    selectedRowsRef.value = selectedRows;
   },
 };
 
@@ -164,11 +164,15 @@ const handleCancelCreateDialog = () => {
   CreateDialogState.visible = false;
 };
 
-const handleDelete = (selectedRows: LabelItemType[]) => {
-  const ids = selectedRows.map((item) => {
-    return item.id;
-  });
-  console.log('🚀 ~ file: list.vue ~ line 178 ~ ids ~ ids', ids);
+const handleDelete = async (selectedRows: LabelItemType[]) => {
+  const ids = selectedRows
+    .map((item) => {
+      return item.id;
+    })
+    .join(',');
+  await delLabel({ ids });
+  message.success('删除成功！');
+  getList();
 };
 </script>
 

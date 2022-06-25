@@ -193,7 +193,7 @@ const formState: UnwrapRef<FormStateType> = reactive({
   rid: [],
 });
 
-watch(selectedNodes, _ => {
+watch(selectedNodes, (_) => {
   if (selectedNodes.value.length > 0) {
     formState['deptId'] = selectedNodes.value[0];
   } else {

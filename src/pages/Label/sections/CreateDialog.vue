@@ -10,17 +10,23 @@
     @cancel="onModalClose"
   >
     <a-form v-bind="layout">
-      <a-form-item label="名称" v-bind="validateInfos.name">
-        <a-input v-model:value="modelRef.name" placeholder="请输入标签名称"></a-input>
+      <a-form-item label="名称" v-bind="validateInfos.labelName">
+        <a-input v-model:value="modelRef.labelName" placeholder="请输入标签名称"></a-input>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script lang="ts" setup>
-import type { LabelItemType } from '@/services/systemSetter/label';
+import type {
+  LabelItemType,
+  CreateLabelProps,
+  UpdateLabelProps,
+  CommonOpreateReturnType,
+} from '@/services/systemSetter/label';
 import { reactive, toRefs } from 'vue';
 import { message, Form } from 'ant-design-vue';
+import { createLabel, updateLabel } from '@/services/systemSetter/label';
 
 interface Props {
   type: 'create' | 'update';
@@ -28,7 +34,7 @@ interface Props {
 }
 
 interface FormState {
-  name: string;
+  labelName: string;
 }
 
 const props = defineProps<Props>();
@@ -47,11 +53,11 @@ const layout = reactive({
 });
 
 const modelRef = reactive<FormState>({
-  name: type.value === 'update' ? info.value.name : '',
+  labelName: type.value === 'update' ? info.value.labelName : '',
 });
 
 const rulesRef = reactive({
-  name: [
+  labelName: [
     {
       required: true,
       message: '请填写标签名称！',
@@ -61,10 +67,17 @@ const rulesRef = reactive({
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
 
+const fetchRequest = async (params: CreateLabelProps | UpdateLabelProps) => {
+  if (type.value === 'create') {
+    return await createLabel(params);
+  }
+  return await updateLabel(params as UpdateLabelProps);
+};
+
 const handleSubmit = async () => {
   try {
     const params = await validate();
-    console.log('🚀 ~ file: CreateRoleDialog.vue ~ line 74 ~ handleSubmit ~ params', params);
+    await fetchRequest(params);
     message.success('成功!');
     emit('success');
     onModalClose();

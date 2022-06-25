@@ -73,12 +73,13 @@ import { CATEGORY_OPTIONS } from '@/constants/dictionary';
 import { PlusSquareOutlined, MinusSquareOutlined, EditOutlined } from '@ant-design/icons-vue';
 import 'element-plus/es/components/tree/style/css';
 import { ElTree, ElEmpty } from 'element-plus';
-import { getDictionaryList } from '@/services/systemSetter/dictionary';
+import { getDictionaryList, delDictionary } from '@/services/systemSetter/dictionary';
 import type {
   DictionaryReturnProps,
   DictionaryListProps,
 } from '@/services/systemSetter/dictionary';
 import CreateDialog from './sections/Create.vue';
+import { message } from 'ant-design-vue';
 
 interface ModelStateType {
   visible: boolean;
@@ -95,7 +96,7 @@ const formState = reactive({
 const dataSource = ref<DictionaryReturnProps>([]);
 
 const fetchData = async () => {
-  const res = await getDictionaryList<DictionaryListProps, DictionaryReturnProps>({
+  const res = await getDictionaryList({
     type: formState.status,
   });
   dataSource.value = res as unknown as DictionaryReturnProps;
@@ -121,21 +122,21 @@ const append = (type: 'create' | 'update', data?: Tree) => {
     id: data?.id ?? '',
     type: type,
     category: formState.status,
-    name: type === 'update' ? data?.label : '',
+    name: type === 'update' ? data && data['dictName' as keyof typeof data] : '',
   };
   Object.assign(CreateDialogState, newValue);
+  fetchData();
 };
 
-const remove = (node: Node, data: Tree) => {
-  const parent = node.parent;
-  const children: Tree[] = parent.data.children || parent.data;
-  const index = children.findIndex((d) => d.id === data.id);
-  children.splice(index, 1);
-  dataSource.value = [...dataSource.value];
+const remove = async (node: Node, data: Tree) => {
+  await delDictionary({ id: data.id + '' });
+  message.success('删除成功！');
+  fetchData();
 };
 
 const handleCancelCreateDialog = () => {
   CreateDialogState.visible = false;
+  fetchData();
 };
 </script>
 

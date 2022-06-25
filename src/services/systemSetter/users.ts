@@ -35,17 +35,28 @@ export const getUserList = <UserListProps, UserListReturnProps>(data: UserListPr
 
 export type DeptListReturnProps = DeptListItemType[];
 
-export const getDeptList = <T, UserListReturnProps>() => {
+export const getDeptList = () => {
   return get<DeptListReturnProps>('/dept/tree/query');
 };
 
-interface SetRoleParams {
-  userId: string;
-  roleIds: string[];
+interface DelRoleParams {
+  userIds: string;
 }
 
-type SetRoleReturnType = boolean;
+interface SetRoleParams extends DelRoleParams {
+  roleIds: string;
+}
 
-export const setRole = <SetRoleParams, SetRoleReturnType>(data: SetRoleParams) => {
-  return post<SetRoleReturnType>('/user/set/role', data);
+type CommonReturnType = boolean;
+
+export const setRole: {
+  (data: SetRoleParams): Promise<CommonReturnType>;
+} = (data) => {
+  return post('/user/set/role', data);
+};
+
+export const delRole: {
+  (data: DelRoleParams): Promise<CommonReturnType>;
+} = (data) => {
+  return get('/user/del/role', data);
 };

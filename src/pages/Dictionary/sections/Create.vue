@@ -20,6 +20,7 @@
 <script lang="ts" setup>
 import { reactive, toRefs } from 'vue';
 import { message, Form } from 'ant-design-vue';
+import { createDictionary, updateDictionary } from '@/services/systemSetter/dictionary';
 
 interface Props {
   type: 'create' | 'update';
@@ -33,7 +34,7 @@ interface FormState {
 }
 
 const props = defineProps<Props>();
-const { type, name } = toRefs(props);
+const { type, name, category, id } = toRefs(props);
 const emit = defineEmits(['success', 'cancel']);
 
 const useForm = Form.useForm;
@@ -62,11 +63,26 @@ const rulesRef = reactive({
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
 
+const sendRequest = async (params: FormState) => {
+  if (type.value === 'create') {
+    return await createDictionary({
+      dictName: params.name,
+      dictPid: id.value,
+      dictType: category.value,
+    });
+  }
+  return await updateDictionary({
+    dictName: params.name,
+    id: id.value,
+    dictType: category.value,
+  });
+};
+
 const handleSubmit = async () => {
   try {
     const params = await validate();
-    console.log('🚀 ~ file: CreateRoleDialog.vue ~ line 74 ~ handleSubmit ~ params', params);
-    message.success('成功!');
+    await sendRequest(params);
+    message.success('成功！');
     emit('success');
     onModalClose();
   } catch (error) {
