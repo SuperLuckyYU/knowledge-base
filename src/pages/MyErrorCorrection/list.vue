@@ -45,11 +45,24 @@
         @change="onTableChange"
       >
         <template #bodyCell="{ column, text, record }">
+          <template v-if="column.dataIndex === 'knowledgeName'">
+            <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+              text
+            }}</router-link>
+          </template>
           <template v-if="column.dataIndex === 'operation'">
             <a-button type="link" class="action-btn" @click="handleView({ id: record.id })"
               >查看
             </a-button>
-            <a-button type="link" class="action-btn" @click="handleRemove">删除</a-button>
+            <a-popconfirm
+              title="确定要删除该条目吗?"
+              ok-text="确认"
+              cancel-text="取消"
+              @confirm="handleRemove({ id: record.id })"
+              @cancel="() => {}"
+            >
+              <a-button type="link" class="action-btn">删除</a-button>
+            </a-popconfirm>
           </template>
         </template>
       </a-table>
@@ -73,7 +86,10 @@ import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
-import { getMyErrorCorrectionList } from '@/services/myKnowledge/errorCorrection';
+import {
+  getMyErrorCorrectionList,
+  delErrorCorrection,
+} from '@/services/myKnowledge/errorCorrection';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
 import ViewCorrectionDialog from './sections/ViewCorrectionDialog.vue';
 
@@ -155,8 +171,10 @@ const handleCancelViewDialog = () => {
   viewState.visible = false;
 };
 
-const handleRemove = (record: { id: string }) => {
+const handleRemove = async (record: { id: string }) => {
+  await delErrorCorrection({ knowledgeId: record.id });
   message.success('删除成功');
+  getList();
 };
 </script>
 

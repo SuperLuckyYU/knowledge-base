@@ -2,25 +2,39 @@
   <a-card>
     <div class="page-title">{{ pageType[type as keyof typeof pageType] }}专题</div>
     <a-form class="mt24" :label-col="{ span: 2 }" :wrapper-col="{ span: 14 }">
-      <a-form-item label="专题标题" v-bind="validateInfos.name">
-        <a-input v-model:value="modelRef.name" placeholder="请填写专题标题" />
+      <a-form-item label="专题标题" v-bind="validateInfos.knowledgeName">
+        <a-input v-model:value="modelRef.knowledgeName" placeholder="请填写专题标题" />
       </a-form-item>
-      <a-form-item label="分类" v-bind="validateInfos.category">
-        <a-input v-model:value="modelRef.category" placeholder="请选择分类" />
+      <a-form-item label="分类" v-bind="validateInfos.knowledgeType">
+        <a-tree-select
+          v-model:value="modelRef.knowledgeType"
+          style="width: 100%"
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+          :fieldNames="{
+            children: 'children',
+            label: 'dictName',
+            value: 'id',
+          }"
+          placeholder="请选择知识分类"
+          allow-clear
+          tree-default-expand-all
+          :tree-data="categoryData"
+        >
+        </a-tree-select>
       </a-form-item>
       <a-form-item label="专题描述" v-bind="validateInfos.content">
         <a-textarea
-          v-model="modelRef.content"
+          v-model:value="modelRef.content"
           :rows="4"
           placeholder="请填写专题描述"
           :maxlength="6"
         />
       </a-form-item>
-      <a-form-item label="设置标签" v-bind="validateInfos.label">
-        <knowledge-label v-model="modelRef.label" />
+      <a-form-item label="设置标签" v-bind="validateInfos.labels">
+        <knowledge-label v-model="modelRef.labels" />
       </a-form-item>
-      <a-form-item label="安全级别" v-bind="validateInfos.safe_level">
-        <a-radio-group v-model:value="modelRef.safe_level" :options="safeLevelOptions" />
+      <a-form-item label="安全级别" v-bind="validateInfos.securityLevel">
+        <a-radio-group v-model:value="modelRef.securityLevel" :options="safeLevelOptions" />
       </a-form-item>
       <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
         <a-row>
@@ -74,17 +88,30 @@
   />
   <select-knowledge-dialog
     v-if="LinkKnowledgeState.visible"
+    :selected-rows="LinkKnowledgeState.knowledgeList"
     @success="handleKnowledgeSelected"
     @cancel="LinkKnowledgeState.visible = false"
   />
 </template>
 
 <script lang="ts" setup>
-import type { KnowledgeItemType } from '@/types/myKnowledge/knowledge';
-import { reactive } from 'vue';
+import type { KnowledgeItemType, CreateTopicFormState } from '@/types/myKnowledge/knowledge';
+import type {
+  CreateMyKnowledgeProps,
+  UpdateMyKnowledgeProps,
+} from '@/services/myKnowledge/knowledge';
+import type { DictionaryReturnProps } from '@/services/systemSetter/dictionary';
+import { reactive, toRaw, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';
 import { EnvironmentOutlined } from '@ant-design/icons-vue';
+import {
+  createMyKnowledge,
+  updateMyKnowledge,
+  getKnowledgeDetail,
+} from '@/services/myKnowledge/knowledge';
+import { getDictionaryList } from '@/services/systemSetter/dictionary';
+import { removeNullItem } from '@/utils/utils';
 import useCreateTopicFormState from '../composables/useCreateTopicFormState';
 import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
 import LocationDialog from '../sections/LocationDialog.vue';
@@ -113,6 +140,37 @@ const safeLevelOptions = [
 const useForm = Form.useForm;
 
 const { modelRef, rulesRef } = useCreateTopicFormState();
+
+const updateVerision = ref('');
+
+const fetchDetail = async () => {
+  const res = await getKnowledgeDetail({ id: id as string });
+  const {
+    knowledgeName,
+    knowledgeType,
+    content,
+    labels,
+    securityLevel,
+    longitude,
+    latitude,
+    relateds,
+    version,
+  } = res;
+  modelRef.knowledgeName = knowledgeName;
+  modelRef.knowledgeType = knowledgeType;
+  modelRef.content = content;
+  modelRef.labels = labels ?? [];
+  modelRef.securityLevel = securityLevel ?? '0';
+  modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
+  LinkKnowledgeState.knowledgeList = relateds;
+  updateVerision.value = version;
+};
+
+onMounted(async () => {
+  if (type === 'update') {
+    await fetchDetail();
+  }
+});
 
 const LocationDialogState = reactive({
   visible: false,
@@ -143,12 +201,58 @@ const handleRemoveKnowledge = (row: KnowledgeItemType) => {
   );
 };
 
+const categoryData = ref<DictionaryReturnProps>([]);
+
+const fetchCategoryData = async () => {
+  const res = await getDictionaryList({ type: '1' });
+  categoryData.value = res;
+};
+
+fetchCategoryData();
+
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
+
+const genParams = (formState: CreateTopicFormState) => {
+  const { knowledgeName, knowledgeType, content, labels, securityLevel, location } = formState;
+  const locationArr = location ? location.split(', ') : [];
+  const labelIds = toRaw(labels).join(',');
+  const relateds = LinkKnowledgeState.knowledgeList
+    .map((item: any) => {
+      return item.id;
+    })
+    .join(',');
+  const parmas = {
+    knowledgeFlag: '3',
+    knowledgeName,
+    knowledgeType,
+    content,
+    labels: labelIds,
+    securityLevel,
+    longitude: locationArr.length && locationArr[0],
+    latitude: locationArr.length && locationArr[1],
+    relateds,
+  };
+  return removeNullItem(parmas);
+};
+
+const sendRequest = async (params: CreateMyKnowledgeProps | UpdateMyKnowledgeProps) => {
+  if (type === 'create') {
+    return await createMyKnowledge(params);
+  }
+  return await updateMyKnowledge({
+    ...params,
+    id: id as string,
+    version: updateVerision.value,
+  });
+};
 
 const onSubmit = async () => {
   try {
     const formState = await validate();
-    console.log('🚀 ~ file: index.vue ~ line 85 ~ onSubmit ~ formState', formState);
+    const parmas = genParams(formState);
+    await sendRequest(parmas);
+    message.success('操作成功！');
+    handleCancle();
   } catch (error) {
     console.log(error);
   }

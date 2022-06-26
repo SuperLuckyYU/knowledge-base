@@ -1,23 +1,24 @@
+import type { CreateTopicFormState } from '@/types/myKnowledge/knowledge';
 import { reactive, computed } from 'vue';
 
 export default function useFormState() {
-  const modelRef = reactive({
-    name: '',
-    category: '',
+  const modelRef = reactive<CreateTopicFormState>({
+    knowledgeName: '',
+    knowledgeType: '',
     content: '',
-    label: [],
-    safe_level: '0',
+    labels: [],
+    securityLevel: '0',
     location: '',
   });
 
   const rulesRef = computed(() => ({
-    name: [
+    knowledgeName: [
       {
         required: true,
         message: '请填写标题',
       },
     ],
-    category: [
+    knowledgeType: [
       {
         required: true,
         message: '请选择分类',
@@ -29,12 +30,12 @@ export default function useFormState() {
         message: '请填写专题描述',
       },
     ],
-    label: [
+    labels: [
       {
         required: false,
       },
     ],
-    safe_level: [
+    securityLevel: [
       {
         required: false,
       },

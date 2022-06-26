@@ -54,6 +54,11 @@
         @change="onTableChange"
       >
         <template #bodyCell="{ column, text, record }">
+          <template v-if="column.dataIndex === 'knowledgeName'">
+            <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+              text
+            }}</router-link>
+          </template>
           <template v-if="column.dataIndex === 'operation'">
             <a-button type="link" class="action-btn" @click="handleArchive({ id: record.id })"
               >归档
@@ -78,7 +83,7 @@ import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
-import { getAudiList } from '@/services/myKnowledge/audi';
+import { getAudiList, AudieKnowledge } from '@/services/myKnowledge/audi';
 import { FormStateType } from '@/types/myKnowledge/audit';
 
 const router = useRouter();
@@ -165,8 +170,10 @@ const {
   },
 });
 
-const handleArchive = (record: { id: string }) => {
+const handleArchive = async (record: { id: string }) => {
+  await AudieKnowledge({ knowledgeId: record.id });
   message.success('归档成功');
+  getList();
 };
 
 const { share } = useShare();

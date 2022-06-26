@@ -1,10 +1,9 @@
 import request, { get, post } from '@/utils/request';
-
+import type { ListBaseReturnProps } from '@/services/common';
 interface ProjectListProps {
   itemName?: string;
 }
-
-interface ProjectListReturnProps {
+export interface ProjectListReturnProps {
   createTime: string;
   departments: string;
   endTime: string;
@@ -16,8 +15,6 @@ interface ProjectListReturnProps {
   updateTime: string;
 }
 
-export const getProjectList = <ProjectListProps, ProjectListReturnProps>(
-  data: ProjectListProps,
-) => {
-  return get<ProjectListReturnProps>('/item/query', data);
+export const getProjectList = (data?: ProjectListProps) => {
+  return get<ListBaseReturnProps<ProjectListReturnProps>>('/item/query', data);
 };

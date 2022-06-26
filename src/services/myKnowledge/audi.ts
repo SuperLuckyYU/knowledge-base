@@ -1,3 +1,4 @@
+import type { ListBaseReturnProps } from '@/services/common';
 import request, { get, post } from '@/utils/request';
 
 interface listProps {
@@ -35,6 +36,10 @@ interface listReturnProps {
   userName: string;
 }
 
-export const getAudiList = <listProps, listReturnProps>(data: listProps) => {
-  return get<listReturnProps>('/base/archive/query', data);
+export const getAudiList = (data: listProps) => {
+  return get<ListBaseReturnProps<listReturnProps>>('/base/archive/query', data);
+};
+
+export const AudieKnowledge = (data: { knowledgeId: string }) => {
+  return get<boolean>('/base/archive/status', data);
 };

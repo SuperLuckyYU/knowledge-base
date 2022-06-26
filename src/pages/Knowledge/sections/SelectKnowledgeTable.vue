@@ -12,8 +12,8 @@
 const columns = [
   {
     title: '条目标题',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'knowledgeName',
+    key: 'knowledgeName',
     align: 'center',
   },
   {

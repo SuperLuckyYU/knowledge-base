@@ -3,7 +3,7 @@
     <div class="page-title">{{ pageType[type as keyof typeof pageType] }}知识</div>
     <a-form class="mt24" :label-col="{ span: 2 }" :wrapper-col="{ span: 14 }">
       <a-form-item label="知识类型" v-bind="validateInfos.type">
-        <a-radio-group v-model:value="modelRef.type">
+        <a-radio-group v-model:value="modelRef.type" @change="handleTabChange">
           <a-radio-button value="0">文档</a-radio-button>
           <a-radio-button value="1">图片</a-radio-button>
           <a-radio-button value="2">视频</a-radio-button>
@@ -13,20 +13,34 @@
         :label="fileType[modelRef.type as keyof typeof fileType]"
         v-bind="validateInfos.file"
       >
-        <ImgUpload v-model="modelRef.file" :max-length="8" />
+        <ImgUpload v-model="modelRef.file" :max-length="8" :type="modelRef.type" />
       </a-form-item>
-      <a-form-item label="知识条目" v-bind="validateInfos.doc_number">
-        <a-input v-model:value="modelRef.doc_number" placeholder="请填写知识条目" />
+      <a-form-item label="知识条目" v-bind="validateInfos.entry">
+        <a-input v-model:value="modelRef.entry" placeholder="请填写知识条目" />
       </a-form-item>
       <a-form-item label="知识分类" v-bind="validateInfos.category">
-        <a-input v-model:value="modelRef.category" placeholder="请选择知识分类" />
+        <a-tree-select
+          v-model:value="modelRef.category"
+          style="width: 100%"
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+          :fieldNames="{
+            children: 'children',
+            label: 'dictName',
+            value: 'id',
+          }"
+          placeholder="请选择知识分类"
+          allow-clear
+          tree-default-expand-all
+          :tree-data="categoryData"
+        >
+        </a-tree-select>
       </a-form-item>
       <template v-if="modelRef.type === '0'">
-        <a-form-item label="文号" v-bind="validateInfos.category">
-          <a-input v-model:value="modelRef.category" placeholder="请填写文号" />
+        <a-form-item label="文号" v-bind="validateInfos.doc_number">
+          <a-input v-model:value="modelRef.doc_number" placeholder="请填写文号" />
         </a-form-item>
         <a-form-item label="档案日期" v-bind="validateInfos.file_date">
-          <a-date-picker v-model:value="modelRef.file_date" />
+          <a-date-picker v-model:value="modelRef.file_date" valueFormat="YYYY-MM-DD" />
         </a-form-item>
         <a-form-item label="页数" v-bind="validateInfos.pages_num">
           <a-input v-model:value="modelRef.pages_num" placeholder="请填写页数" />
@@ -40,7 +54,7 @@
         <BaseEditor v-model="modelRef.content" />
       </a-form-item>
       <a-form-item label="设置标签" v-bind="validateInfos.label">
-        <knowledge-label v-model="modelRef.label" />
+        <knowledge-label v-model="modelRef.label" type="create" />
       </a-form-item>
       <a-form-item label="安全级别" v-bind="validateInfos.safe_level">
         <a-radio-group v-model:value="modelRef.safe_level" :options="safeLevelOptions" />
@@ -56,13 +70,16 @@
         v-bind="validateInfos.expiration_date"
         v-if="modelRef.expiration_type === '1'"
       >
-        <a-date-picker v-model:value="modelRef.expiration_date" />
+        <a-date-picker v-model:value="modelRef.expiration_date" valueFormat="YYYY-MM-DD" />
       </a-form-item>
       <a-form-item label="所属项目" v-bind="validateInfos.project">
         <a-select
           v-model:value="modelRef.project"
+          :filter-option="false"
           :options="projectOptions"
+          showSearch
           placeholder="请选择项目"
+          @search="fetchProject"
         >
         </a-select>
       </a-form-item>
@@ -118,6 +135,7 @@
   />
   <select-knowledge-dialog
     v-if="LinkKnowledgeState.visible"
+    :selected-rows="LinkKnowledgeState.knowledgeList"
     @success="handleKnowledgeSelected"
     @cancel="LinkKnowledgeState.visible = false"
   />
@@ -125,7 +143,13 @@
 
 <script lang="ts" setup>
 import type { KnowledgeItemType } from '@/types/myKnowledge/knowledge';
-import { reactive } from 'vue';
+import type { DictionaryReturnProps } from '@/services/systemSetter/dictionary';
+import type {
+  CreateMyKnowledgeProps,
+  UpdateMyKnowledgeProps,
+} from '@/services/myKnowledge/knowledge';
+import { debounce } from 'lodash';
+import { reactive, ref, toRaw, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';
 import { EnvironmentOutlined } from '@ant-design/icons-vue';
@@ -136,6 +160,14 @@ import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
 import LocationDialog from '../sections/LocationDialog.vue';
 import SelectKnowledgeDialog from '../sections/SelectKnowledgeDialog.vue';
 import SelectKnowledgeTable from '../sections/SelectKnowledgeTable.vue';
+import { getDictionaryList } from '@/services/systemSetter/dictionary';
+import { getProjectList } from '@/services/systemSetter/project';
+import {
+  createMyKnowledge,
+  getKnowledgeDetail,
+  updateMyKnowledge,
+} from '@/services/myKnowledge/knowledge';
+import { removeNullItem, mockImgUrl } from '@/utils/utils';
 
 type PageType = 'update' | 'create';
 
@@ -162,9 +194,71 @@ const safeLevelOptions = [
   { label: '私有', value: '3' },
 ];
 
+const updateVerision = ref('');
+
+const fetchDetail = async () => {
+  const res = await getKnowledgeDetail({ id: id as string });
+  const {
+    knowledgeFlag,
+    knowledgeName,
+    knowledgeType,
+    accessory,
+    documentNum,
+    archiveTime,
+    pagination,
+    location,
+    content,
+    labels,
+    securityLevel,
+    expirationType,
+    endTime,
+    itemId,
+    longitude,
+    latitude,
+    relateds,
+    version,
+  } = res;
+  modelRef.entry = knowledgeName;
+  modelRef.type = knowledgeFlag + '';
+  modelRef.category = knowledgeType;
+  modelRef.doc_number = documentNum;
+  modelRef.file_date = archiveTime;
+  modelRef.pages_num = pagination;
+  modelRef.storage_location = location;
+  modelRef.content = content;
+  modelRef.label = labels ?? [];
+  modelRef.safe_level = securityLevel ?? '0';
+  modelRef.expiration_type = expirationType ?? '0';
+  modelRef.expiration_date = endTime;
+  modelRef.project = itemId;
+  modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
+  modelRef.file = mockImgUrl(accessory.split(','));
+  LinkKnowledgeState.knowledgeList = relateds;
+  updateVerision.value = version;
+};
+
+onMounted(async () => {
+  if (type === 'update') {
+    await fetchDetail();
+  }
+});
+
 const useForm = Form.useForm;
 
-const { modelRef, rulesRef } = useFormState();
+let { modelRef, rulesRef } = useFormState();
+
+const handleTabChange = () => {
+  modelRef.file = [];
+};
+
+const categoryData = ref<DictionaryReturnProps>([]);
+
+const fetchCategoryData = async () => {
+  const res = await getDictionaryList({ type: '1' });
+  categoryData.value = res;
+};
+
+fetchCategoryData();
 
 const LocationDialogState = reactive({
   visible: false,
@@ -195,14 +289,96 @@ const handleRemoveKnowledge = (row: KnowledgeItemType) => {
   );
 };
 
-const projectOptions = reactive([]);
+const projectOptions = ref<{ label: string; value: string }[]>([]);
+
+const fetchProjectList = async (name?: string) => {
+  const data: Record<string, any> = {};
+  if (name) data['itemName'] = name;
+  const { records } = await getProjectList(data);
+  projectOptions.value = records.map(({ itemName, id }) => ({
+    label: itemName,
+    value: id,
+  }));
+};
+
+const fetchProject = debounce((name: string) => {
+  fetchProjectList(name);
+}, 300);
+
+fetchProjectList();
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
+
+const genParmas = (formState: Record<string, any>) => {
+  const {
+    category,
+    content,
+    doc_number,
+    entry,
+    expiration_date,
+    expiration_type,
+    file,
+    file_date,
+    label,
+    location,
+    pages_num,
+    project,
+    safe_level,
+    storage_location,
+    type,
+  } = formState;
+  const locationArr = location ? location.split(', ') : [];
+  const labels = toRaw(label).join(',');
+  const accessory = toRaw(file)
+    .map((item: any) => {
+      return item.response;
+    })
+    .join(',');
+  const relateds = LinkKnowledgeState.knowledgeList
+    .map((item: any) => {
+      return item.id;
+    })
+    .join(',');
+  const parmas = {
+    knowledgeFlag: type,
+    knowledgeName: entry,
+    knowledgeType: category,
+    accessory,
+    documentNum: doc_number,
+    archiveTime: file_date,
+    pagination: pages_num,
+    location: storage_location,
+    content,
+    labels,
+    securityLevel: safe_level,
+    endTime: expiration_date,
+    itemId: project,
+    longitude: locationArr.length && locationArr[0],
+    latitude: locationArr.length && locationArr[1],
+    expirationType: expiration_type,
+    relateds,
+  };
+  return removeNullItem(parmas);
+};
+
+const sendRequest = async (params: CreateMyKnowledgeProps | UpdateMyKnowledgeProps) => {
+  if (type === 'create') {
+    return await createMyKnowledge(params);
+  }
+  return await updateMyKnowledge({
+    ...params,
+    id: id as string,
+    version: updateVerision.value,
+  });
+};
 
 const onSubmit = async () => {
   try {
     const formState = await validate();
-    console.log('🚀 ~ file: index.vue ~ line 85 ~ onSubmit ~ formState', formState);
+    const params = genParmas(formState);
+    await sendRequest(params);
+    message.success('操作成功！');
+    handleCancle();
   } catch (error) {
     console.log(error);
   }

@@ -1,5 +1,5 @@
 // import { getImgTokenFromCookie, decodeToken } from '@/utils/auth.js';
-import { uploadImg } from '@/services/goods';
+import { updalodFile } from '@/services/myKnowledge/knowledge';
 
 /**
  * 上传图片
@@ -9,8 +9,8 @@ import { uploadImg } from '@/services/goods';
 
 export const UploadImage = (file: File) => {
   const formData = new FormData();
-  formData.append('pic', file);
-  return uploadImg(formData);
+  formData.append('file', file);
+  return updalodFile(formData);
 };
 
 /**

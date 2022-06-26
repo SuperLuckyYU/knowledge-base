@@ -12,9 +12,11 @@
             <span class="ant-rate-text">{{ rateValue }}分</span>
           </a-col>
           <a-col :span="12">
-            <a-button type="link" class="mr10">收藏</a-button>
+            <a-button type="link" class="mr10" @click="handleCollecte">{{
+              state.collectStatus === 1 ? '取消收藏' : '收藏'
+            }}</a-button>
             <a-button type="link" class="mr10">分享</a-button>
-            <a-button type="link" class="mr10">纠错</a-button>
+            <a-button type="link" class="mr10" @click="handleOpenCorrectDialog">纠错</a-button>
             <a-button type="link">评价</a-button>
           </a-col>
         </a-row>
@@ -31,11 +33,16 @@
         <a-row class="mb15">
           <a-col :span="12">
             <span class="label">有效时间: </span>
-            <span class="value">2000.8.7-2025.7.9</span>
+            <span class="value">{{
+              state.expirationType === '0' ? '永久有效' : state.endTime
+            }}</span>
           </a-col>
           <a-col :span="12">
-            <span class="label">修订版本: </span>
-            <span class="value">1.3</span>
+            <span class="label">标签: </span>
+            <span class="value">
+              <a-tag class="mr10" color="blue">职责</a-tag>
+              <a-tag class="mr10" color="blue">水务</a-tag>
+            </span>
           </a-col>
         </a-row>
         <a-row class="mb15">
@@ -45,35 +52,31 @@
           </a-col>
           <a-col :span="12">
             <span class="label">创建时间: </span>
-            <span class="value">2020-9-13 14:09</span>
+            <span class="value">{{ state.createTime }}</span>
           </a-col>
         </a-row>
         <a-row class="mb15">
           <a-col :span="12">
             <span class="label">状态: </span>
-            <span class="value">被退回</span>
+            <span class="value">{{ state.archiveStatus === 0 ? '未归档' : '已归档' }}</span>
           </a-col>
         </a-row>
-        <a-row class="mb15">
-          <a-col :span="12">
-            <span class="label">标签: </span>
-            <span class="value">
-              <a-tag class="mr10" color="blue">职责</a-tag>
-              <a-tag class="mr10" color="blue">水务</a-tag>
-            </span>
-          </a-col>
-        </a-row>
-        <div class="mb15" v-html="'<h1>Hello World</h1>'"></div>
+        <div class="mb15" v-html="state.content"></div>
         <a-row class="mb15">
           <a-col :span="5">
             <span class="label">附件列表: </span>
           </a-col>
-          <a-col :span="8">
-            <div class="file">海淀区水务局法定职责调整.pdf</div>
-            <div class="file">海淀区水务局法定职责调整.pdf</div>
-          </a-col>
-          <a-col :span="2">
-            <a-button type="link">下载</a-button>
+          <a-col :span="19">
+            <a-row v-for="(item, index) in fileList">
+              <a-col :span="17">
+                <div class="file">{{ item }}</div>
+              </a-col>
+              <a-col :span="2">
+                <a-button class="link-btn" type="link" @click="handleUploadFile(index)"
+                  >下载</a-button
+                >
+              </a-col>
+            </a-row>
           </a-col>
         </a-row>
         <a-row class="mb15">
@@ -124,6 +127,11 @@
       </a-col>
     </a-row>
   </a-card>
+  <correct-dialog
+    v-if="correctState.visible"
+    :id="(id as string)"
+    @cancel="handleCloseCorrectDialog"
+  />
 </template>
 <script lang="ts">
 export default {
@@ -131,9 +139,20 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
-import appConfig from '@/config/app.config';
+import { reactive, ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { ElDivider } from 'element-plus';
+import { message } from 'ant-design-vue';
+import { getKnowledgeDetail } from '@/services/myKnowledge/knowledge';
+import { collecteKnowledge, cancelCollecteKnowledge } from '@/services/myKnowledge/collection';
+import { download } from '@/utils/downloadFile';
+import appConfig from '@/config/app.config';
+import CorrectDialog from './sections/CorrectDialog.vue';
+
+const route = useRoute();
+const router = useRouter();
+
+const { id = '' } = route.query;
 
 const STATE = reactive({
   DEFAULT_AVATAR: appConfig.miscellaneous?.defaultAvatar,
@@ -158,8 +177,71 @@ const columns = [
   },
 ];
 
+const fileList = ref<string[]>([]);
+
+const state = ref({
+  accessory: '',
+  archiveStatus: 0,
+  content: '',
+  createTime: '',
+  knowledgeName: '',
+  knowledgeType: '',
+  labels: [''],
+  relateds: [''],
+  securityLevel: '',
+  expirationType: '',
+  endTime: '',
+  collectStatus: 0,
+});
+
+const fetchDetailData = async () => {
+  const res = await getKnowledgeDetail({ id: id as string });
+  state.value = res;
+  const accessoryList = res.accessory.split(',');
+  fileList.value = accessoryList.map((item) => {
+    const arr = item.split('/');
+    return arr[arr.length - 1];
+  });
+};
+
+onMounted(async () => {
+  await fetchDetailData();
+});
+
+const handleUploadFile = (index: number) => {
+  const fileUrlList = state.value.accessory.split(',');
+  download(fileUrlList[index], fileList.value[index]);
+};
+
+const handleCollecte = async () => {
+  const params = { knowledgeId: id as string };
+  if (state.value.collectStatus === 1) {
+    await cancelCollecteKnowledge(params);
+    message.success('取消收藏成功！');
+    state.value.collectStatus = 0;
+    return;
+  }
+  await collecteKnowledge(params);
+  message.success('收藏成功！');
+  state.value.collectStatus = 1;
+};
+
+const correctState = reactive({
+  visible: false,
+  id,
+});
+
+const handleOpenCorrectDialog = () => {
+  correctState.visible = true;
+};
+
+const handleCloseCorrectDialog = () => {
+  correctState.visible = false;
+};
+
 const rateValue = ref<number>(2.5);
 </script>
+
 <style lang="less" scoped>
 .title {
   flex: auto;
@@ -183,5 +265,9 @@ const rateValue = ref<number>(2.5);
   line-height: 1.5715;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.link-btn {
+  height: auto;
+  padding: 0;
 }
 </style>

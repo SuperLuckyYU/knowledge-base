@@ -1,8 +1,14 @@
 import { message } from 'ant-design-vue';
 import axios from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ApiDataType } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
+import { isArray } from 'lodash';
 import qs from 'qs';
+
+interface IAxiosRequestConfig extends AxiosRequestConfig {
+  useDefaultParms?: boolean;
+  useGenParams?: boolean;
+}
 
 interface IAxiosGet {
   <T = any>(
@@ -12,7 +18,7 @@ interface IAxiosGet {
   ): Promise<T>;
 }
 interface IAxiosPostOrPutOrDelete {
-  <T = any>(url: string, data?: Record<string, any>, config?: AxiosRequestConfig): Promise<T>;
+  <T = any>(url: string, data?: Record<string, any>, config?: IAxiosRequestConfig): Promise<T>;
 }
 
 /**
@@ -36,8 +42,11 @@ export const defaultConfig = {
  * 默认请求参数
  * @returns {{"app-code": string, "yd-login-token": any}}
  */
-export const getDefaultParams = () => {
+export const getDefaultParams = (config: IAxiosRequestConfig) => {
   const userName = Cookies.get('username') || '';
+  if (config.useDefaultParms === false) {
+    return {};
+  }
   return {
     userId: '23897438221123',
     opUser: 'Admin',
@@ -65,13 +74,22 @@ service.interceptors.request.use(
      * 合并参数
      */
     if (config.method == 'get') {
-      config.params = { ...getDefaultParams(), ...config.params };
+      config.params = { ...getDefaultParams(config as IAxiosRequestConfig), ...config.params };
     }
     if (config.method == 'post') {
       const data = {
-        ...getDefaultParams(),
+        ...getDefaultParams(config as IAxiosRequestConfig),
         ...config.data,
       };
+      if (config['useGenParams' as keyof typeof config] === false) {
+        if (isArray(config.data)) {
+          config.data = config.data.map((item) => {
+            return { ...item, ...getDefaultParams(config) };
+          });
+          return config;
+        }
+        return config;
+      }
       config.data = config.data instanceof FormData ? config.data : data; // 转为formdata数据格式
     }
 

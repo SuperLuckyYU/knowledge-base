@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie';
-import * as C from '@/constants/index'
-
+import * as C from '@/constants/index';
 
 /**
  * @param {Date|Number} 日期对象或时间戳
@@ -11,10 +10,7 @@ export const formatDate = (date: string | number | Date, layout = 'yyyy-MM-dd hh
   if (!date) return null;
   date = new Date(date);
   let d = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-  let M =
-    date.getMonth() + 1 < 10
-      ? '0' + (date.getMonth() + 1)
-      : date.getMonth() + 1;
+  let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
   let y: string = date.getFullYear() + '';
   let h = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
@@ -28,12 +24,11 @@ export const formatDate = (date: string | number | Date, layout = 'yyyy-MM-dd hh
     .replace('ss', s as string);
 };
 
-
 /**
  * 移除对象中的 undefined null 空字符串
  * @param obj
  */
-export const removeNullItem = (obj: { [x: string]: any; }, removeNullString = true) => {
+export const removeNullItem = (obj: any, removeNullString = true) => {
   Object.keys(obj).forEach((key) => {
     if (obj[key] === undefined || obj[key] === null) {
       delete obj[key];
@@ -47,7 +42,6 @@ export const removeNullItem = (obj: { [x: string]: any; }, removeNullString = tr
   });
   return obj;
 };
-
 
 /**
  * @param {File} file对象
@@ -135,17 +129,18 @@ export const mockImgUrl = (fileList: string[] | string) => {
   }
   if (typeof fileList === 'object') {
     return fileList.map((item: string, index) => {
+      const fileNameArr = item.split('/');
       return {
         uid: -(index + 1),
         status: 'done',
         thumbUrl: item,
         type: 'image/png',
-        response: {
-          url: item
-        },
+        name: fileNameArr[fileNameArr.length - 1],
+        response: item,
       };
     });
   }
+  return [];
 };
 
 // 获取用户信息
@@ -159,12 +154,12 @@ export const getUserInfo = () => {
 
 // 格式化枚举
 export const formatEnum = (data: Record<string, any> | Record<string, any>[]) => {
-  if (!data) return
+  if (!data) return;
   type OptionType = {
     label: string;
     value: string;
-    children?: OptionType[]
-  }
+    children?: OptionType[];
+  };
 
   function assignFn(data: Record<string, any>, originField: string, options: OptionType[]) {
     const originValue = data[originField as keyof typeof data];
@@ -181,19 +176,19 @@ export const formatEnum = (data: Record<string, any> | Record<string, any>[]) =>
                 topIndex++;
                 recursion(children, topIndex);
               }
-              break
+              break;
             }
           }
         }
         recursion(options, 0);
-        data[(originField + '_origin') as keyof typeof data] = data[originField]
-        data[(originField as keyof typeof data)] = str
+        data[(originField + '_origin') as keyof typeof data] = data[originField];
+        data[originField as keyof typeof data] = str;
       }
       if (typeof originValue === 'string') {
         options.forEach(({ label, value }: OptionType) => {
           if (originValue === value) {
-            data[(originField + '_origin') as keyof typeof data] = data[originField]
-            data[(originField as keyof typeof data)] = label
+            data[(originField + '_origin') as keyof typeof data] = data[originField];
+            data[originField as keyof typeof data] = label;
           }
         });
       }
@@ -205,14 +200,14 @@ export const formatEnum = (data: Record<string, any> | Record<string, any>[]) =>
     const originField = key.toLowerCase().substring(0, key.length - 8);
     if (Array.isArray(data)) {
       data.forEach((item: Record<string, any>) => {
-        assignFn(item, originField, options)
+        assignFn(item, originField, options);
       });
     } else {
-      assignFn(data, originField, options)
+      assignFn(data, originField, options);
     }
   }
   return data;
-}
+};
 
 /**
  * 获取首页的route
@@ -227,7 +222,7 @@ export const getRouteList = (routers: any, route = []) => {
       let res: any = getRouteList(item.children, routeList);
       if (res.name) return res;
     } else {
-      if (item.path) routeList.push(item)
+      if (item.path) routeList.push(item);
     }
   }
   return routeList;

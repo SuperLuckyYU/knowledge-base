@@ -42,10 +42,8 @@ onMounted(() => {
     const marker = new BMapGL.Marker(new BMapGL.Point(pt.lng, pt.lat));
     map.addOverlay(marker);
     geoc.getLocation(pt, function (rs: any) {
-      console.log('🚀 ~ file: LocationDialog.vue ~ line 39 ~ geoc.getLocation ~ rs', rs.point);
       const { lng, lat } = rs.point;
       emit('update:modelValue', `${lng}, ${lat}`);
-      // const addComp = rs.addressComponents;
     });
   });
 });

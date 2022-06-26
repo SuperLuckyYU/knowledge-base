@@ -1,4 +1,5 @@
 import request, { get, post } from '@/utils/request';
+import type { ListBaseReturnProps } from '@/services/common';
 export interface LabelItemType {
   id: string;
   labelName: string;
@@ -7,10 +8,10 @@ export interface LabelItemType {
 }
 
 interface LabelListProps {
-  itemName?: string;
+  labelName?: string;
 }
 
-interface LabelListReturnProps {
+export interface LabelListReturnProps {
   createTime: string;
   id: string;
   knowledgeNum: string;
@@ -21,8 +22,8 @@ interface LabelListReturnProps {
 
 export type CommonOpreateReturnType = boolean;
 
-export const getLabelList = <LabelListProps, LabelListReturnProps>(data: LabelListProps) => {
-  return get<LabelListReturnProps>('/label/query', data);
+export const getLabelList = (data: LabelListProps) => {
+  return get<ListBaseReturnProps<LabelListReturnProps>>('/label/query', data);
 };
 
 export interface CreateLabelProps {

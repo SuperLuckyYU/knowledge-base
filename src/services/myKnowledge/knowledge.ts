@@ -1,13 +1,14 @@
+import type { ListBaseReturnProps } from '@/services/common';
 import request, { get, post } from '@/utils/request';
 
-interface listProps {
+export interface listProps {
   labelId?: string;
   knowledgeName?: string;
 }
 
-interface listReturnProps {
+export interface listReturnProps {
   accessory: string;
-  archiveStatus: string;
+  archiveStatus: number;
   archiveTime: string;
   browseNum: string;
   content: string;
@@ -22,7 +23,8 @@ interface listReturnProps {
   knowledgeFlagName: string;
   knowledgeName: string;
   knowledgeType: string;
-  labelId: string;
+  expirationType: string;
+  labels: string[];
   latitude: string;
   location: string;
   longitude: string;
@@ -33,8 +35,71 @@ interface listReturnProps {
   updateTime: string;
   userId: string;
   userName: string;
+  relateds: any[];
+  collectStatus: number;
+  version: string;
 }
 
-export const getMyKnowledgeList = <listProps, listReturnProps>(data: listProps) => {
-  return get<listReturnProps>('/base/query', data);
+export const getMyKnowledgeList = (data: listProps) => {
+  return get<ListBaseReturnProps<listReturnProps>>('/base/query', data);
+};
+
+export const updalodFile = (data: FormData) => {
+  return post<string>('/file/upload', data, {
+    headers: {
+      'Content-type': 'multipart/form-data',
+    },
+  });
+};
+
+export interface CreateMyKnowledgeProps {
+  knowledgeFlag: string;
+  knowledgeName: string;
+  types: string;
+  accessory: string;
+  documentNum: string;
+  archiveTime: string;
+  pagination: string;
+  location: string;
+  content: string;
+  labels: string;
+  securityLevel: string;
+  endTime: string;
+  itemId: string;
+  longitude: string;
+  latitude: string;
+  expirationType: string;
+}
+
+export interface UpdateMyKnowledgeProps extends CreateMyKnowledgeProps {
+  id: string;
+  version: string;
+}
+
+export const createMyKnowledge = (data: CreateMyKnowledgeProps) => {
+  return post<boolean>('/base/save', data);
+};
+
+export const updateMyKnowledge = (data: UpdateMyKnowledgeProps) => {
+  return post<boolean>('/base/update', data);
+};
+
+export const getKnowledgeDetail = (data: { id: string }) => {
+  return get<listReturnProps>('/base/detail', data);
+};
+
+export const delKnowledge = (data: { id: string }) => {
+  return get<boolean>('/base/del', data);
+};
+
+interface CreateDocKnowledgeProps {
+  accessory: string;
+  knowledgeType: string;
+  knowledgeName: string;
+  knowledgeFlag: string;
+  labels: string;
+}
+
+export const createDocKnowledge = (data: CreateDocKnowledgeProps[]) => {
+  return post<boolean>('base/batch/save', data, { useGenParams: false });
 };

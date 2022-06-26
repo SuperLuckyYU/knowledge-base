@@ -45,9 +45,14 @@
         @change="onTableChange"
       >
         <template #bodyCell="{ column, text, record }">
+          <template v-if="column.dataIndex === 'knowledgeName'">
+            <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+              text
+            }}</router-link>
+          </template>
           <template v-if="column.dataIndex === 'operation'">
-            <a-button type="link" class="action-btn" @click="handleCollect({ id: record.id })"
-              >收藏
+            <a-button type="link" class="action-btn" @click="handleCancelCollect({ id: record.id })"
+              >取消收藏
             </a-button>
             <a-button type="link" class="action-btn" @click="share">分享</a-button>
           </template>
@@ -67,10 +72,10 @@ export default {
 import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
+import { getMyCollectionList, cancelCollecteKnowledge } from '@/services/myKnowledge/collection';
+import { FormStateType } from '@/types/myKnowledge/knowledge';
 import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
-import { getMyCollectionList } from '@/services/myKnowledge/collection';
-import { FormStateType } from '@/types/myKnowledge/knowledge';
 
 const router = useRouter();
 
@@ -142,8 +147,10 @@ const {
   },
 });
 
-const handleCollect = (record: { id: string }) => {
-  message.success('收藏成功');
+const handleCancelCollect = async (record: { id: string }) => {
+  await cancelCollecteKnowledge({ knowledgeId: record.id });
+  message.success('取消收藏成功');
+  getList();
 };
 
 const { share } = useShare();

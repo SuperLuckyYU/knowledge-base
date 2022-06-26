@@ -83,7 +83,7 @@ const routes: Array<RouteRecordRaw> = [
         component: KnowledgeCreate,
       },
       {
-        path: 'create',
+        path: 'create-topic',
         name: 'KnowledgeCreateTopic',
         meta: {
           title: '创建标题',

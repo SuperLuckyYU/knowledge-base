@@ -1,16 +1,27 @@
 <template>
   <a-modal
     width="600px"
-    title="批量上传文档"
+    title="内容纠错"
     :visible="true"
     destroyOnClose
     @ok="handleSubmit"
     @cancel="onModalClose"
   >
     <a-form v-bind="layout">
-      <a-form-item label="文档" v-bind="validateInfos.fileList">
+      <a-form-item label="内容" v-bind="validateInfos.content">
+        <a-textarea
+          v-model:value="modelRef.content"
+          :rows="4"
+          placeholder="请填写描述"
+          :maxlength="6"
+        />
+      </a-form-item>
+      <a-form-item label="补充图片" v-bind="validateInfos.picture">
+        <ImgUpload v-model="modelRef.picture" :max-length="8" type="1" />
+      </a-form-item>
+      <a-form-item label="补充附件" v-bind="validateInfos.accessory">
         <a-upload-dragger
-          v-model:fileList="modelRef.fileList"
+          v-model:fileList="modelRef.accessory"
           name="file"
           :multiple="true"
           :custom-request="customUpload"
@@ -25,44 +36,29 @@
           <p class="ant-upload-hint">支持单次或批量上传</p>
         </a-upload-dragger>
       </a-form-item>
-      <a-form-item label="知识分类" v-bind="validateInfos.category">
-        <a-tree-select
-          v-model:value="modelRef.category"
-          style="width: 100%"
-          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-          :fieldNames="{
-            children: 'children',
-            label: 'dictName',
-            value: 'id',
-          }"
-          placeholder="请选择知识分类"
-          allow-clear
-          tree-default-expand-all
-          :tree-data="categoryData"
-        >
-        </a-tree-select>
-      </a-form-item>
-      <a-form-item label="设置标签" v-bind="validateInfos.label">
-        <knowledge-label v-model="modelRef.label" />
-      </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script lang="ts" setup>
 import type { UploadChangeParam } from 'ant-design-vue';
-import type { UploadDocumentFormState } from '@/types/myKnowledge/knowledge';
+import type { CorrecteFormState } from '@/types/myKnowledge/errorCorrection';
 import type { UploadFile, FileType, UploadRequestOption } from '@/components/ImgUpload/interface';
-import type { DictionaryReturnProps } from '@/services/systemSetter/dictionary';
-import { reactive, createVNode, ref } from 'vue';
+import { reactive, createVNode, ref, toRefs } from 'vue';
 import { InboxOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Form, Modal } from 'ant-design-vue';
 import { UploadImage } from '@/utils/uploadFile';
-import { createDocKnowledge } from '@/services/myKnowledge/knowledge';
-import { getDictionaryList } from '@/services/systemSetter/dictionary';
-import KnowledgeLabel from './KnowledgeLabel.vue';
+import { correctKnowledge } from '@/services/myKnowledge/errorCorrection';
+import ImgUpload from '@/components/ImgUpload/index.vue';
 
+interface Props {
+  id: string;
+}
+
+const props = defineProps<Props>();
 const emit = defineEmits(['success', 'cancel']);
+
+const { id } = toRefs(props);
 
 const useForm = Form.useForm;
 
@@ -75,47 +71,37 @@ const layout = reactive({
   },
 });
 
-const modelRef = reactive<UploadDocumentFormState>({
-  fileList: [],
-  category: '',
-  label: [],
+const modelRef = reactive<CorrecteFormState>({
+  content: '',
+  picture: [],
+  accessory: [],
 });
 
 const rulesRef = reactive({
-  fileList: [
+  content: [
     {
       required: true,
-      message: '请选择文件！',
+      message: '请选择纠错内容！',
     },
   ],
-  category: [
+  picture: [
     {
-      required: true,
-      message: '请选择知识分类！',
+      required: false,
     },
   ],
-  label: [
+  accessory: [
     {
       required: false,
     },
   ],
 });
 
-const categoryData = ref<DictionaryReturnProps>([]);
-
-const fetchCategoryData = async () => {
-  const res = await getDictionaryList({ type: '1' });
-  categoryData.value = res;
-};
-
-fetchCategoryData();
-
 const handleChange = ({ file }: UploadChangeParam<UploadFile<any>>) => {
   if (!file.status) {
-    const index = modelRef.fileList.indexOf(file);
-    const newFileList = modelRef.fileList.slice();
+    const index = modelRef.accessory.indexOf(file);
+    const newFileList = modelRef.accessory.slice();
     newFileList.splice(index, 1);
-    modelRef.fileList = newFileList;
+    modelRef.accessory = newFileList;
   }
 };
 
@@ -133,7 +119,7 @@ const customUpload = async (
     if (res) {
       onSuccess && onSuccess(res);
       // Tip：Compatible with picture preview on Safari browser
-      modelRef.fileList[modelRef.fileList.length - 1].thumbUrl = res;
+      modelRef.accessory[modelRef.accessory.length - 1].thumbUrl = res;
     } else {
       const msg = '上传失败';
       onError && onError(msg as any);
@@ -155,8 +141,8 @@ const handleRemoveCallBack = (file: UploadFile<any>) => {
     okType: 'danger',
     cancelText: '取消',
     onOk: () => {
-      const targetIndex = modelRef.fileList.indexOf(file);
-      modelRef.fileList.splice(targetIndex, 1);
+      const targetIndex = modelRef.accessory.indexOf(file);
+      modelRef.accessory.splice(targetIndex, 1);
     },
     onCancel() {
       console.log('Cancel');
@@ -166,21 +152,28 @@ const handleRemoveCallBack = (file: UploadFile<any>) => {
 };
 
 const genParams = ({
-  fileList,
-  category,
-  label,
+  content,
+  picture,
+  accessory,
 }: {
-  fileList: UploadFile<string>[];
-  category: string;
-  label: string[];
+  content: string;
+  picture: UploadFile<string>[];
+  accessory: UploadFile<string>[];
 }) => {
-  return fileList.map((item) => ({
-    accessory: item.response || '',
-    knowledgeName: item.name,
-    knowledgeType: category,
-    knowledgeFlag: '0',
-    labels: label.join(','),
-  }));
+  return {
+    knowledgeId: id.value,
+    content,
+    picture: picture
+      .map((item) => {
+        return item.response;
+      })
+      .join(','),
+    accessory: accessory
+      .map((item) => {
+        return item.response;
+      })
+      .join(','),
+  };
 };
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
@@ -188,7 +181,7 @@ const handleSubmit = async () => {
   try {
     const formState = await validate();
     const parmas = genParams(formState);
-    await createDocKnowledge(parmas);
+    await correctKnowledge(parmas);
     message.success('成功!');
     emit('success');
     onModalClose();

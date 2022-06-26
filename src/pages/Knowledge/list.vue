@@ -52,12 +52,22 @@
         @change="onTableChange"
       >
         <template #bodyCell="{ column, text, record }">
+          <template v-if="column.dataIndex === 'knowledgeName'">
+            <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+              text
+            }}</router-link>
+          </template>
           <template v-if="column.dataIndex === 'operation'">
             <a-button type="link" class="action-btn" @click="share">分享</a-button>
             <a-button
               type="link"
               class="action-btn"
-              @click="handleOperateKnowledge({ id: record.id }, 'update')"
+              @click="
+                handleOperateKnowledge(
+                  { id: record.id, knowledgeFlag: record.knowledgeFlag },
+                  'update',
+                )
+              "
               >编辑
             </a-button>
             <a-popconfirm
@@ -93,7 +103,7 @@ import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
-import { getMyKnowledgeList } from '@/services/myKnowledge/knowledge';
+import { getMyKnowledgeList, delKnowledge } from '@/services/myKnowledge/knowledge';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
 import BulkUploadDocumentsDialog from './sections/BulkUploadDocumentsDialog.vue';
 
@@ -169,7 +179,23 @@ const {
   },
 });
 
-const handleOperateKnowledge = (record: { id: string }, type: 'create' | 'update') => {
+const handleOperateKnowledge = (
+  record: { id: string; knowledgeFlag?: number },
+  type: 'create' | 'update',
+) => {
+  if (record.knowledgeFlag === 3) {
+    return router.push({
+      name: 'KnowledgeCreateTopic',
+      query: record.id
+        ? {
+            id: record.id,
+            type: type,
+          }
+        : {
+            type: type,
+          },
+    });
+  }
   router.push({
     name: 'KnowledgeCreate',
     query: record.id
@@ -197,8 +223,10 @@ const handleClickCreateTopic = (record: { id: string }, type: 'create' | 'update
   });
 };
 
-const handleRemove = (id: string) => {
+const handleRemove = async (id: string) => {
+  await delKnowledge({ id });
   message.success('删除成功！');
+  getList();
 };
 
 const uploadDocumentsState = reactive({

@@ -1,3 +1,4 @@
+import type { ListBaseReturnProps } from '@/services/common';
 import request, { get, post } from '@/utils/request';
 
 interface listProps {
@@ -35,6 +36,18 @@ interface listReturnProps {
   userName: string;
 }
 
-export const getMyCollectionList = <listProps, listReturnProps>(data: listProps) => {
-  return get<listReturnProps>('/base/collection/query', data);
+export const getMyCollectionList = (data: listProps) => {
+  return get<ListBaseReturnProps<listReturnProps>>('/base/collection/query', data);
+};
+
+interface CollectionKnowledgeProps {
+  knowledgeId: string;
+}
+
+export const collecteKnowledge = (data: CollectionKnowledgeProps) => {
+  return get<boolean>('/base/collection', data);
+};
+
+export const cancelCollecteKnowledge = (data: CollectionKnowledgeProps) => {
+  return get<boolean>('/base/cancel/collection', data);
 };

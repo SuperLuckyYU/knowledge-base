@@ -1,8 +1,14 @@
 <template>
   <div class="base-editor border">
     <Toolbar class="border-bt" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-    <Editor class="editor" :defaultConfig="editorConfig" :mode="mode" v-model="valueHtml" @onCreated="handleCreated"
-      @onChange="handleChange" />
+    <Editor
+      class="editor"
+      :defaultConfig="editorConfig"
+      :mode="mode"
+      v-model="valueHtml"
+      @onCreated="handleCreated"
+      @onChange="handleChange"
+    />
   </div>
 </template>
 
@@ -34,7 +40,9 @@ const mode = ref('default');
 
 // 内容 HTML
 const valueHtml = ref('');
-valueHtml.value = cloneDeep(modelValue.value);
+setTimeout(() => {
+  valueHtml.value = cloneDeep(modelValue.value);
+}, 1000);
 
 const toolbarConfig = {};
 const editorConfig = { placeholder: '请输入内容...' };
@@ -59,15 +67,15 @@ const handleChange = (editor: Editor) => {
 @border-option: 1px solid #ccc;
 
 .border {
-  border: @border-option
+  border: @border-option;
 }
 
 .border-bt {
-  border-bottom: @border-option
+  border-bottom: @border-option;
 }
 
 .base-editor :deep(.editor) {
   height: 400px !important;
-  overflow-y: hidden
+  overflow-y: hidden;
 }
 </style>

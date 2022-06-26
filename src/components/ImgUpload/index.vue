@@ -1,8 +1,35 @@
 <template>
   <div class="upload-wrapper clearfix">
-    <a-upload v-model:file-list="fileList" list-type="picture-card" :custom-request="customUpload"
-      :before-upload="beforeUpload" @remove="handleRemoveCallBack" @preview="handlePreviewCallBack"
-      @change="handleChange" :isImageUrl="() => { return true }" :disabled="disabled">
+    <a-upload
+      v-if="type === '0'"
+      v-model:file-list="fileList"
+      :custom-request="customUpload"
+      :before-upload="beforeUpload"
+      @remove="handleRemoveCallBack"
+      @change="handleChange"
+      :disabled="disabled"
+    >
+      <a-button>
+        <upload-outlined></upload-outlined>
+        点击上传
+      </a-button>
+    </a-upload>
+    <a-upload
+      v-else
+      v-model:file-list="fileList"
+      list-type="picture-card"
+      :custom-request="customUpload"
+      :before-upload="beforeUpload"
+      @remove="handleRemoveCallBack"
+      @preview="handlePreviewCallBack"
+      @change="handleChange"
+      :isImageUrl="
+        () => {
+          return true;
+        }
+      "
+      :disabled="disabled"
+    >
       <div v-if="fileList.length < maxLength">
         <plus-outlined class="upload-icon" />
         <div class="ant-upload-text">上传</div>
@@ -12,30 +39,37 @@
       <img v-if="previewImage" alt="example" style="width: 100%" :src="previewImage" />
     </a-modal>
   </div>
-  <a-modal title="裁剪图片" :visible="showImgCropper" :width="800" @ok="handleCropImg" @cancel="handleCancleCut">
-    <div style="width:100%;height:450px">
-      <vue-cropper autoCrop :img="originImg" ref="cropper" centerBox fixed :canMove="false" :fixedNumber="[20, 13]" />
+  <a-modal
+    title="裁剪图片"
+    :visible="showImgCropper"
+    :width="800"
+    @ok="handleCropImg"
+    @cancel="handleCancleCut"
+  >
+    <div style="width: 100%; height: 450px">
+      <vue-cropper
+        autoCrop
+        :img="originImg"
+        ref="cropper"
+        centerBox
+        fixed
+        :canMove="false"
+        :fixedNumber="[20, 13]"
+      />
     </div>
   </a-modal>
 </template>
 <script lang="ts" setup>
-import Compressor from 'compressorjs';
-import { PlusOutlined } from '@ant-design/icons-vue';
-import {
-  ref,
-  toRaw,
-  watch,
-  toRefs,
-  createVNode,
-} from 'vue';
+import type { UploadFile, UploadChangeParam, FileType, UploadRequestOption } from './interface';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons-vue';
+import { ref, toRaw, watch, toRefs, createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Modal } from 'ant-design-vue';
 import { UploadImage } from '@/utils/uploadFile';
 import { cloneDeep } from 'lodash';
-import { UploadFile, UploadChangeParam, FileType, UploadRequestOption } from './interface'
 import { getBase64, genBase64ToFile } from '@/utils/utils';
 import 'vue-cropper/dist/index.css';
-import { VueCropper } from "vue-cropper";
+import { VueCropper } from 'vue-cropper';
 
 const props = defineProps({
   modelValue: {
@@ -57,7 +91,12 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false,
-  }
+  },
+  // 0 文档 1 图片 2视频
+  type: {
+    type: String,
+    default: '0',
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'onBeforeUpload']);
@@ -81,7 +120,6 @@ const handleCancel = () => {
   previewImage.value = '';
 };
 
-
 const handlePreviewCallBack = (file: UploadFile<any>) => {
   previewImage.value = file.thumbUrl as string;
   previewVisible.value = true;
@@ -90,7 +128,7 @@ const handlePreviewCallBack = (file: UploadFile<any>) => {
 const handleChange = ({ file }: UploadChangeParam<UploadFile<any>>) => {
   // tip: stateless or crop operations do not throw file value for now
   if (!file.status || crop.value) {
-    if (crop.value) targetCropFile.value = file
+    if (crop.value) targetCropFile.value = file;
     const index = fileList.value.indexOf(file);
     const newFileList = fileList.value.slice();
     newFileList.splice(index, 1);
@@ -119,10 +157,10 @@ const beforeUpload = (file: FileType) => {
     return false;
   }
 
-  if (!isImage) {
-    message.error('请上传图片类型的文件！');
-    return false;
-  }
+  // if (!isImage) {
+  //   message.error('请上传图片类型的文件！');
+  //   return false;
+  // }
 
   if (isImage && imgTypeList.indexOf(subType) === -1) {
     message.error('文件格式错误，支持文件格式为：jpg、jpeg、png、gif、bmp');
@@ -132,67 +170,48 @@ const beforeUpload = (file: FileType) => {
   return true;
 };
 
-const customUpload = async ({ onSuccess, onError, file }: UploadRequestOption<any>, resend: boolean) => {
+const customUpload = async (
+  { onSuccess, onError, file }: UploadRequestOption<any>,
+  resend: boolean,
+) => {
   // Whether to enable the clipping function
   if (crop.value && !resend) {
-    currentFileName.value = (file as File).name
+    currentFileName.value = (file as File).name;
     showImgCropper.value = true;
     const base64Str = await getBase64(file as File);
-    originImg.value = base64Str as string
-    return
+    originImg.value = base64Str as string;
+    return;
   }
-  const type = (file as Blob).type.split('/')[0];
-  const isImage = type === 'image';
   const uploadImage = async (file: File) => {
     const res = await UploadImage(file);
-    if (res['code' as keyof typeof res] === 0) {
-      onSuccess && onSuccess(res.result);
+    if (res) {
+      onSuccess && onSuccess(res);
       // Tip：The file value is thrown here following the change operation described above
-      if (crop.value) fileList.value.push(targetCropFile.value)
+      if (crop.value) fileList.value.push(targetCropFile.value);
       // Tip：Compatible with picture preview on Safari browser
-      fileList.value[fileList.value.length - 1].thumbUrl = res.result.url;
+      fileList.value[fileList.value.length - 1].thumbUrl = res;
       // manual trigger
       if (resend) {
         fileList.value[fileList.value.length - 1].status = 'success';
-        fileList.value[fileList.value.length - 1]['response'] = res.result;
+        fileList.value[fileList.value.length - 1]['response'] = res;
       }
       emit('update:modelValue', toRaw(fileList.value));
     } else {
-      onError && onError(res['reason' as keyof typeof res]);
+      const msg = '上传失败';
+      onError && onError(msg as any);
       if (resend) fileList.value[fileList.value.length - 1].status = 'error';
     }
   };
 
-  // Image Upload
-  if (isImage) {
-    try {
-      // GIF pictures are not compressed to prevent changing the original file type
-      if ((file as File).type.split('/')[1] === 'gif') {
-        uploadImage(file as File);
-        return;
-      }
-      new Compressor((file as Blob), {
-        quality: 0.6,
-        success: async (result) => {
-          uploadImage(result as File);
-        },
-        error(err) {
-          console.log(err.message);
-        },
-      });
-    } catch (error: any) {
-      console.log('Eroor: ', error);
-      onError && onError(error);
-    }
-    return;
-  }
+  // Send Upload Request
+  uploadImage(file as File);
 };
 
 // Remove Image/Video CallBack
 const handleRemoveCallBack = (file: UploadFile<any>) => {
   if (file.status === 'error') return true;
   Modal.confirm({
-    title: '确定删除这张图片吗?',
+    title: '确定删除吗?',
     icon: createVNode(ExclamationCircleOutlined),
     content: '',
     okText: '确定',
@@ -213,13 +232,13 @@ const handleRemoveCallBack = (file: UploadFile<any>) => {
 // crop image
 const handleCropImg = () => {
   cropper.value.getCropData((data: string) => {
-    const file = genBase64ToFile(data, currentFileName.value)
+    const file = genBase64ToFile(data, currentFileName.value);
     // Manually trigger the request again
     emit('update:modelValue', toRaw(fileList.value));
-    customUpload({ file, action: '', method: 'POST' }, true)
+    customUpload({ file, action: '', method: 'POST' }, true);
   });
   showImgCropper.value = false;
-}
+};
 
 const handleCancleCut = () => {
   showImgCropper.value = false;
@@ -228,7 +247,7 @@ const handleCancleCut = () => {
   newFileList.splice(lastLength, 1);
   fileList.value = newFileList;
   emit('update:modelValue', newFileList);
-}
+};
 
 watch(modelValue, (item) => {
   if (!toRaw(item).length) {
@@ -248,5 +267,4 @@ defineExpose({
   hasPendingTask,
 });
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

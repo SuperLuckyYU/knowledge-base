@@ -1,7 +1,8 @@
+import type { CreateFormState } from '@/types/myKnowledge/knowledge';
 import { reactive, computed } from 'vue';
 
 export default function useFormState() {
-  const modelRef = reactive({
+  const modelRef = reactive<CreateFormState>({
     type: '0',
     file: [],
     entry: '',

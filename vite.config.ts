@@ -25,8 +25,10 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       port: port, // 类型： number 指定服务器端口;
       open: true, // 类型： boolean | string在服务器启动时自动在浏览器中打开应用程序；
       cors: true, // 类型： boolean | CorsOptions 为开发服务器配置 CORS。默认启用并允许任何源
+      host: '0.0.0.0',
       proxy: {
         '/api': {
+          // target: 'http://47.98.251.91:8662/',
           target: 'http://192.168.1.16:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),

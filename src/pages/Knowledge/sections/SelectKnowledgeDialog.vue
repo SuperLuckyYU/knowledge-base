@@ -15,9 +15,9 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="标题" name="name">
+            <a-form-item label="标题" name="knowledgeName">
               <a-input
-                v-model:value.trim="formState.name"
+                v-model:value.trim="formState.knowledgeName"
                 placeholder="请输入知识条目标题"
                 autocomplete="off"
                 allow-clear
@@ -53,35 +53,49 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { reactive, onMounted, toRefs, UnwrapRef } from 'vue';
+import { reactive, onMounted, UnwrapRef, toRefs } from 'vue';
 import useSearchTableList from '@/composables/useSearchTableList';
-import { getProductList } from '@/services/goods';
+import { getMyKnowledgeList } from '@/services/myKnowledge/knowledge';
 import SelectKnowledgeTable from './SelectKnowledgeTable.vue';
 interface StateType {
   selectedRow: Record<string, any>[];
 }
+interface Props {
+  selectedRows: Record<string, any>[];
+}
+
+const props = defineProps<Props>();
 const emit = defineEmits(['success', 'cancel']);
 
+const { selectedRows } = toRefs(props);
 const state: UnwrapRef<StateType> = reactive({
   selectedRow: [],
 });
 const formState = reactive({
-  name: '',
+  knowledgeName: '',
 });
 
 // 获取数据
 const { onSearch, onReset, pagination, dataSource, getList, searchFormRef, onTableChange } =
   useSearchTableList({
-    fetchData: getProductList,
+    fetchData: getMyKnowledgeList,
     formatParams() {
       return formState;
     },
     pageSize: 10,
     formatResponse(res) {
-      const { list, total_num } = res.result;
+      const { records, total } = res;
+      selectedRows.value.forEach((selectedItem) => {
+        records.forEach((listItem: Record<string, any>) => {
+          if (selectedItem.id === listItem.id) {
+            listItem.checked = true;
+          }
+        });
+      });
+
       return {
-        list: list,
-        total: total_num,
+        list: records,
+        total: total,
       };
     },
   });

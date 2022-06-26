@@ -11,8 +11,7 @@
  * 其他功能可查看代码使用
  */
 
-import { reactive, toRefs, computed, ref, onMounted, onActivated, unref } from 'vue';
-import type { ApiDataType } from 'axios';
+import { reactive, toRefs, computed, ref, onActivated, unref } from 'vue';
 import { removeNullItem } from '@/utils/utils';
 
 interface FomartDataType {
@@ -32,7 +31,7 @@ interface SorterType {
 }
 
 interface Props {
-  fetchData: <T, P>(params: T) => Promise<ApiDataType<P>>;
+  fetchData: (params: Record<string, any>) => Promise<BaseReturnProps<Record<string, any>>>;
   formatParams: () => { [x: string]: any };
   formatResponse?: (data: any) => FomartDataType;
   paginationOption?: Array<string>;
@@ -40,8 +39,8 @@ interface Props {
   firstLoaded?: boolean;
 }
 
-interface BaseReturnProps {
-  records: [];
+interface BaseReturnProps<T> {
+  records: T[];
   current: number;
   page: number;
   size: number;
@@ -147,7 +146,7 @@ export default function useSearchTableList(props: Props) {
         sort_value: sortedInfo.value.order,
         ...newParams,
       });
-      const res = await fetchData<Record<string, any>, BaseReturnProps>(data);
+      const res = await fetchData(data);
       STATE.tableLoading = false;
       if (formatResponse) {
         const { list, total } = await formatResponse(res);
