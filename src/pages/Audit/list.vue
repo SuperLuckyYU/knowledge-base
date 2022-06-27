@@ -24,13 +24,7 @@
           </a-col> -->
           <a-col>
             <a-form-item label="标签" name="labelId">
-              <a-select
-                v-model:value="formState.labelId"
-                :options="labelOptions"
-                mode="tags"
-                placeholder="请选择标签"
-                style="width: 200px"
-              ></a-select>
+              <search-label-select v-model:value="formState.labelId" />
             </a-form-item>
           </a-col>
           <a-col>
@@ -85,10 +79,9 @@ import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
 import { getAudiList, AudieKnowledge } from '@/services/myKnowledge/audi';
 import { FormStateType } from '@/types/myKnowledge/audit';
+import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 
 const router = useRouter();
-
-const labelOptions = reactive([]);
 
 const stateOptions = reactive([
   {
@@ -148,7 +141,7 @@ const columns = computed(() => {
 
 const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeName: '',
-  labelId: [],
+  labelId: '',
   // state: '',
 });
 

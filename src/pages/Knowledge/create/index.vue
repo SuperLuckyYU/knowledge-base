@@ -148,7 +148,7 @@ import type {
   CreateMyKnowledgeProps,
   UpdateMyKnowledgeProps,
 } from '@/services/myKnowledge/knowledge';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 import { reactive, ref, toRaw, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';

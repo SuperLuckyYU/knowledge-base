@@ -33,9 +33,10 @@
 
 <script lang="ts" setup>
 import type { SetupContext } from 'vue';
+import type { LabelItemType } from '@/services/systemSetter/label';
 import { toRefs, ref } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import { cloneDeep, debounce } from 'lodash';
+import { cloneDeep, debounce } from 'lodash-es';
 import useLabelState from '../composables/useLabelState';
 import CreateLabelDialog from '../../Label/sections/CreateDialog.vue';
 

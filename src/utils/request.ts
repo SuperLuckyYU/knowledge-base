@@ -2,7 +2,7 @@ import { message } from 'ant-design-vue';
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
-import { isArray } from 'lodash';
+import { isArray } from 'lodash-es';
 import qs from 'qs';
 
 interface IAxiosRequestConfig extends AxiosRequestConfig {

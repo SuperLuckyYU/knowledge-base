@@ -44,7 +44,7 @@
 import { toRaw, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { FORMDATA } from './constants';
 import { createGoods, editGoods, getProductInfo } from '@/services/goods';
 import type { GoodsItemType } from '@/services/goods';

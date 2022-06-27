@@ -16,7 +16,7 @@
 import '@wangeditor/editor/dist/css/style.css';
 import { onBeforeUnmount, ref, shallowRef, toRefs } from 'vue';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 interface Editor {
   getHtml(): string;

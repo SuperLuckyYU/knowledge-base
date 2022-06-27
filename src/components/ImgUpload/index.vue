@@ -66,7 +66,7 @@ import { ref, toRaw, watch, toRefs, createVNode } from 'vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { message, Modal } from 'ant-design-vue';
 import { UploadImage } from '@/utils/uploadFile';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { getBase64, genBase64ToFile } from '@/utils/utils';
 import 'vue-cropper/dist/index.css';
 import { VueCropper } from 'vue-cropper';
