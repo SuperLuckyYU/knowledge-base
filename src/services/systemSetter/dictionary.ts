@@ -6,7 +6,7 @@ export interface DictionaryListProps {
 
 export interface DictionaryListItemType {
   children?: DictionaryListItemType[];
-  deptName: string;
+  dictName: string;
   id: string;
   parentId: string;
 }

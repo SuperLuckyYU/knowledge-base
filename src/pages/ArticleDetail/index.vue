@@ -4,11 +4,11 @@
       <!-- 知识内容 -->
       <a-col :span="16">
         <a-row class="mb24">
-          <a-col :span="12" class="title">海淀区水务局法定职责</a-col>
+          <a-col :span="12" class="title">{{ state.knowledgeName }}</a-col>
         </a-row>
         <a-row class="mb15">
           <a-col :span="12">
-            <a-rate v-model:value="rateValue" allow-half />
+            <a-rate v-model:value="rateValue" allow-half disabled />
             <span class="ant-rate-text">{{ rateValue }}分</span>
           </a-col>
           <a-col :span="12">
@@ -23,11 +23,11 @@
         <a-row class="mb15">
           <a-col :span="12">
             <span class="label">分类: </span>
-            <span class="value">法律法规~部门规章</span>
+            <span class="value">{{ state.knowledgeTypeName }}</span>
           </a-col>
           <a-col :span="12">
             <span class="label">安全级别: </span>
-            <span class="value">海淀区水务局局内公开</span>
+            <span class="value">{{ state.securityLevelName }}</span>
           </a-col>
         </a-row>
         <a-row class="mb15">
@@ -40,15 +40,16 @@
           <a-col :span="12">
             <span class="label">标签: </span>
             <span class="value">
-              <a-tag class="mr10" color="blue">职责</a-tag>
-              <a-tag class="mr10" color="blue">水务</a-tag>
+              <a-tag v-for="item in state.labels" class="mr10" color="blue">{{
+                item.labelName
+              }}</a-tag>
             </span>
           </a-col>
         </a-row>
         <a-row class="mb15">
           <a-col :span="12">
             <span class="label">创建人: </span>
-            <span class="value">李元</span>
+            <span class="value">{{ state.creator }}</span>
           </a-col>
           <a-col :span="12">
             <span class="label">创建时间: </span>
@@ -84,8 +85,7 @@
             <span class="label">相关知识: </span>
           </a-col>
           <a-col :span="19">
-            <div class="file">2021年海淀区水务局法定职责调整</div>
-            <div class="file">2021年海淀区水务局法定职责调整</div>
+            <div class="file" v-for="item in state.relateds">{{ item.knowledgeName }}</div>
           </a-col>
         </a-row>
       </a-col>
@@ -93,7 +93,7 @@
       <a-col :span="8">
         <div class="user-info">
           <a-avatar :src="STATE.DEFAULT_AVATAR"></a-avatar>
-          <div class="user-name">马燕</div>
+          <div class="user-name">{{ state.archiveUserName }}</div>
           <div class="role">审核人员</div>
         </div>
         <el-divider />
@@ -101,28 +101,46 @@
           <div class="title mb15">基本信息</div>
           <a-row class="mb10">
             <a-col :span="12"><span class="label">科室</span></a-col>
-            <a-col :span="12"><span class="value">知识管理部门</span></a-col>
+            <a-col :span="12"
+              ><span class="value">{{ state.user.deptName }}</span></a-col
+            >
           </a-row>
           <a-row class="mb10">
             <a-col :span="12"><span class="label">性别</span></a-col>
-            <a-col :span="12"><span class="value">女</span></a-col>
+            <a-col :span="12"
+              ><span class="value">{{ state.user.sex === 0 ? '男' : '女' }}</span></a-col
+            >
           </a-row>
           <a-row class="mb10">
             <a-col :span="12"><span class="label">联系电话</span></a-col>
-            <a-col :span="12"><span class="value">13809234589</span></a-col>
+            <a-col :span="12"
+              ><span class="value">{{ state.user.moblie }}</span></a-col
+            >
           </a-row>
           <a-row class="mb10">
-            <a-col :span="12"><span class="label">最后会话时间</span></a-col>
-            <a-col :span="12"><span class="value">2019/04/13 15:21:45</span></a-col>
+            <a-col :span="12"><span class="label">最后修改时间</span></a-col>
+            <a-col :span="12"
+              ><span class="value">{{ state.user.updateTime }}</span></a-col
+            >
           </a-row>
           <a-row class="mb10">
             <a-col :span="12"><span class="label">直接领导</span></a-col>
-            <a-col :span="12"><span class="value">孙松岩</span></a-col>
+            <a-col :span="12"
+              ><span class="value">{{ state.user.higherUp }}</span></a-col
+            >
           </a-row>
         </div>
         <div class="version">
           <div class="version-title">条目版本</div>
-          <a-table :columns="columns" :data-source="[]" bordered> </a-table>
+          <a-table :columns="columns" :data-source="state.logs" bordered>
+            <template #bodyCell="{ column, text, record }">
+              <template v-if="column.dataIndex === 'operation'">
+                <a-button type="link" class="action-btn" @click="handleViewContent(record.content)"
+                  >查看</a-button
+                >
+              </template>
+            </template>
+          </a-table>
         </div>
       </a-col>
     </a-row>
@@ -132,6 +150,11 @@
     :id="(id as string)"
     @cancel="handleCloseCorrectDialog"
   />
+  <view-content-dialog
+    v-if="viewContentState.visible"
+    :content="viewContentState.content"
+    @cancel="handleCloseViewContentDialog"
+  />
 </template>
 <script lang="ts">
 export default {
@@ -139,6 +162,8 @@ export default {
 };
 </script>
 <script lang="ts" setup>
+import type { UserType } from '@/services/myKnowledge/knowledge';
+import type { LabelListReturnProps } from '@/services/systemSetter/label';
 import { reactive, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElDivider } from 'element-plus';
@@ -148,6 +173,7 @@ import { collecteKnowledge, cancelCollecteKnowledge } from '@/services/myKnowled
 import { download } from '@/utils/downloadFile';
 import appConfig from '@/config/app.config';
 import CorrectDialog from './sections/CorrectDialog.vue';
+import ViewContentDialog from './sections/ViewContentDialog.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -165,33 +191,58 @@ const columns = [
   },
   {
     title: '修订人',
-    dataIndex: 'name',
-  },
-  {
-    title: '修订内容',
-    dataIndex: 'content',
+    dataIndex: 'creator',
   },
   {
     title: '修订时间',
-    dataIndex: 'time',
+    dataIndex: 'createTime',
+  },
+  {
+    title: '操作',
+    dataIndex: 'operation',
   },
 ];
 
 const fileList = ref<string[]>([]);
 
-const state = ref({
+const rateValue = ref<number>(0);
+
+const state = ref<{
+  evaluate: number;
+  accessory: string;
+  archiveStatus: number;
+  content: string;
+  createTime: string;
+  knowledgeName: string;
+  knowledgeTypeName: string;
+  labels: LabelListReturnProps[];
+  relateds: any[];
+  securityLevelName: string;
+  expirationType: string;
+  endTime: string;
+  collectStatus: number;
+  creator: string;
+  user: Partial<UserType>;
+  archiveUserName: string;
+  logs: any[];
+}>({
+  evaluate: 0,
   accessory: '',
   archiveStatus: 0,
   content: '',
   createTime: '',
   knowledgeName: '',
-  knowledgeType: '',
-  labels: [''],
-  relateds: [''],
-  securityLevel: '',
+  knowledgeTypeName: '',
+  labels: [],
+  relateds: [],
+  securityLevelName: '',
   expirationType: '',
   endTime: '',
   collectStatus: 0,
+  creator: '',
+  user: {},
+  archiveUserName: '',
+  logs: [],
 });
 
 const fetchDetailData = async () => {
@@ -202,6 +253,8 @@ const fetchDetailData = async () => {
     const arr = item.split('/');
     return arr[arr.length - 1];
   });
+  state.value.knowledgeTypeName = res.knowledgeTypeName.split(',').join('-');
+  rateValue.value = res.evaluate;
 };
 
 onMounted(async () => {
@@ -239,7 +292,19 @@ const handleCloseCorrectDialog = () => {
   correctState.visible = false;
 };
 
-const rateValue = ref<number>(2.5);
+const viewContentState = reactive({
+  visible: false,
+  content: '',
+});
+
+const handleViewContent = (content: string) => {
+  viewContentState.visible = true;
+  viewContentState.content = content;
+};
+
+const handleCloseViewContentDialog = () => {
+  viewContentState.visible = false;
+};
 </script>
 
 <style lang="less" scoped>

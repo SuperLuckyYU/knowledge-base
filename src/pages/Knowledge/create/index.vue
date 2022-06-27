@@ -4,9 +4,9 @@
     <a-form class="mt24" :label-col="{ span: 2 }" :wrapper-col="{ span: 14 }">
       <a-form-item label="知识类型" v-bind="validateInfos.type">
         <a-radio-group v-model:value="modelRef.type" @change="handleTabChange">
-          <a-radio-button value="0">文档</a-radio-button>
-          <a-radio-button value="1">图片</a-radio-button>
-          <a-radio-button value="2">视频</a-radio-button>
+          <a-radio-button value="2">文档</a-radio-button>
+          <a-radio-button value="3">图片</a-radio-button>
+          <a-radio-button value="4">视频</a-radio-button>
         </a-radio-group>
       </a-form-item>
       <a-form-item
@@ -226,7 +226,9 @@ const fetchDetail = async () => {
   modelRef.pages_num = pagination;
   modelRef.storage_location = location;
   modelRef.content = content;
-  modelRef.label = labels ?? [];
+  modelRef.label = labels.map((item) => {
+    return item.id;
+  });
   modelRef.safe_level = securityLevel ?? '0';
   modelRef.expiration_type = expirationType ?? '0';
   modelRef.expiration_date = endTime;

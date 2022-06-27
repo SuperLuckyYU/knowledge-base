@@ -1,11 +1,29 @@
 import type { ListBaseReturnProps } from '@/services/common';
+import type { LabelListReturnProps } from '@/services/systemSetter/label';
 import request, { get, post } from '@/utils/request';
 
 export interface listProps {
   labelId?: string;
   knowledgeName?: string;
 }
-
+export interface UserType {
+  account: string;
+  articleNum: number;
+  createTime: string;
+  creator: string;
+  deptId: string;
+  deptName: string;
+  higherUp: string;
+  id: string;
+  moblie: string;
+  officeTelephone: string;
+  opUser: string;
+  position: string;
+  roleName: string;
+  sex: number;
+  updateTime: string;
+  userName: string;
+}
 export interface listReturnProps {
   accessory: string;
   archiveStatus: number;
@@ -15,7 +33,7 @@ export interface listReturnProps {
   createTime: string;
   documentNum: string;
   endTime: string;
-  evaluate: string;
+  evaluate: number;
   id: string;
   itemId: string;
   itemName: string;
@@ -23,13 +41,15 @@ export interface listReturnProps {
   knowledgeFlagName: string;
   knowledgeName: string;
   knowledgeType: string;
+  knowledgeTypeName: string;
   expirationType: string;
-  labels: string[];
+  labels: LabelListReturnProps[];
   latitude: string;
   location: string;
   longitude: string;
   pagination: string;
   securityLevel: string;
+  securityLevelName: string;
   startTime: string;
   types: string;
   updateTime: string;
@@ -38,6 +58,10 @@ export interface listReturnProps {
   relateds: any[];
   collectStatus: number;
   version: string;
+  creator: string;
+  user: UserType;
+  archiveUserName: string;
+  logs: any[];
 }
 
 export const getMyKnowledgeList = (data: listProps) => {

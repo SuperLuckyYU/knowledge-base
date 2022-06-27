@@ -1,3 +1,4 @@
+import type { ListBaseReturnProps } from '@/services/common';
 import request, { get, post } from '@/utils/request';
 
 export interface LabelItemType {
@@ -7,19 +8,50 @@ export interface LabelItemType {
   creator: string;
 }
 
-interface LabelListProps {
-  itemName?: string;
+interface ListProps {
+  knowledgeType?: string;
+  knowledgeName?: string;
+  creator?: string;
+  labelId?: string;
+  itemId?: string;
+  dateRange?: string;
 }
 
-interface LabelListReturnProps {
+export interface listReturnProps {
+  accessory: string;
+  archiveStatus: number;
+  archiveTime: string;
+  browseNum: string;
+  content: string;
   createTime: string;
+  documentNum: string;
+  endTime: string;
+  evaluate: string;
   id: string;
-  knowledgeNum: string;
-  labelCreator: string;
-  labelName: string;
+  itemId: string;
+  itemName: string;
+  knowledgeFlag: string;
+  knowledgeFlagName: string;
+  knowledgeName: string;
+  knowledgeType: string;
+  expirationType: string;
+  labels: string[];
+  latitude: string;
+  location: string;
+  longitude: string;
+  pagination: string;
+  securityLevel: string;
+  startTime: string;
+  types: string;
   updateTime: string;
+  userId: string;
+  userName: string;
+  relateds: any[];
+  collectStatus: number;
+  version: string;
+  creator: string;
 }
 
-export const getKnowledgeList = <LabelListProps, LabelListReturnProps>(data: LabelListProps) => {
-  return get<LabelListReturnProps>('/label/query', data);
+export const getKnowledgeList = (data: ListProps) => {
+  return get<ListBaseReturnProps<listReturnProps>>('/base/query', data);
 };

@@ -159,7 +159,9 @@ const fetchDetail = async () => {
   modelRef.knowledgeName = knowledgeName;
   modelRef.knowledgeType = knowledgeType;
   modelRef.content = content;
-  modelRef.labels = labels ?? [];
+  modelRef.labels = labels.map((item) => {
+    return item.id;
+  });
   modelRef.securityLevel = securityLevel ?? '0';
   modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
   LinkKnowledgeState.knowledgeList = relateds;
@@ -222,7 +224,7 @@ const genParams = (formState: CreateTopicFormState) => {
     })
     .join(',');
   const parmas = {
-    knowledgeFlag: '3',
+    knowledgeFlag: '5',
     knowledgeName,
     knowledgeType,
     content,

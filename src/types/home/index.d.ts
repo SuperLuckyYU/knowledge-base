@@ -1,8 +1,8 @@
 export interface FormStateType {
-  type: string;
-  title: string;
-  author: string;
-  tag: string;
-  project: string;
-  createTime: [string, string];
+  knowledgeType: string;
+  knowledgeName: string;
+  creator: string;
+  labelId: string;
+  itemId: string;
+  dateRange: [string, string];
 }
