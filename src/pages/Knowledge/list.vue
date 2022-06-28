@@ -15,7 +15,7 @@
           </a-col>
           <a-col>
             <a-form-item label="标签" name="labelId">
-              <search-label-select  v-model:value="formState.labelId" />
+              <search-label-select v-model:value="formState.labelId" />
             </a-form-item>
           </a-col>
           <a-col>
@@ -52,7 +52,19 @@
             }}</router-link>
           </template>
           <template v-if="column.dataIndex === 'operation'">
-            <a-button type="link" class="action-btn" @click="share">分享</a-button>
+            <a-button
+              type="link"
+              class="action-btn"
+              @click="
+                share({
+                  id: record.id,
+                  title: record.knowledgeName,
+                  type: record.knowledgeFlag,
+                  endTime: record.expirationType === '0' ? '永久有效' : record.endTime,
+                })
+              "
+              >分享</a-button
+            >
             <a-button
               type="link"
               class="action-btn"

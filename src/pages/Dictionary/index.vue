@@ -16,7 +16,7 @@
       </a-tabs>
     </a-card>
     <a-card class="table-box mt20">
-      <a-row class="action-btn-box">
+      <a-row class="action-btn-box" v-if="formState.status === '1'">
         <a-button type="primary" @click="append('create')">新建</a-button>
       </a-row>
       <el-empty v-if="!dataSource.length" :image-size="200" description="暂无数据" />
@@ -28,7 +28,7 @@
         :expand-on-click-node="false"
         :props="{ label: 'dictName' }"
       >
-        <template #default="{ node, data }">
+        <template #default="{ node, data }" v-if="formState.status === '1'">
           <span class="custom-tree-node">
             <span>{{ node.label }}</span>
             <span>

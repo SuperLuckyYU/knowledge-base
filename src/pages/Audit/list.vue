@@ -57,7 +57,19 @@
             <a-button type="link" class="action-btn" @click="handleArchive({ id: record.id })"
               >归档
             </a-button>
-            <a-button type="link" class="action-btn" @click="share">分享</a-button>
+            <a-button
+              type="link"
+              class="action-btn"
+              @click="
+                share({
+                  id: record.id,
+                  title: record.knowledgeName,
+                  type: record.knowledgeFlag,
+                  endTime: record.expirationType === '0' ? '永久有效' : record.endTime,
+                })
+              "
+              >分享</a-button
+            >
           </template>
         </template>
       </a-table>

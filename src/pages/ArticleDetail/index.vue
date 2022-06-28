@@ -17,7 +17,9 @@
             }}</a-button>
             <a-button type="link" class="mr10">分享</a-button>
             <a-button type="link" class="mr10" @click="handleOpenCorrectDialog">纠错</a-button>
-            <a-button type="link">评价</a-button>
+            <a-button type="link" @click="handleRate" :disabled="rateStatus">{{
+              rateStatus ? '已评价' : '评价'
+            }}</a-button>
           </a-col>
         </a-row>
         <a-row class="mb15">
@@ -62,7 +64,12 @@
             <span class="value">{{ state.archiveStatus === 0 ? '未归档' : '已归档' }}</span>
           </a-col>
         </a-row>
-        <div class="mb15" v-html="state.content"></div>
+        <a-row class="mb15">
+          <a-col :span="12">
+            <span class="label">内容: </span>
+            <div class="value" v-html="state.content"></div>
+          </a-col>
+        </a-row>
         <a-row class="mb15">
           <a-col :span="5">
             <span class="label">附件列表: </span>
@@ -155,6 +162,12 @@
     :content="viewContentState.content"
     @cancel="handleCloseViewContentDialog"
   />
+  <rate-dialog
+    v-if="rateState.visible"
+    :knowledgeId="rateState.id"
+    @success="fetchDetailData"
+    @cancel="handleCloseRateDialog"
+  />
 </template>
 <script lang="ts">
 export default {
@@ -168,12 +181,36 @@ import { reactive, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElDivider } from 'element-plus';
 import { message } from 'ant-design-vue';
-import { getKnowledgeDetail } from '@/services/myKnowledge/knowledge';
+import { getKnowledgeDetail, getRateState } from '@/services/myKnowledge/knowledge';
 import { collecteKnowledge, cancelCollecteKnowledge } from '@/services/myKnowledge/collection';
 import { download } from '@/utils/downloadFile';
+import useCorrect from './composables/useCorrect';
+import useViewContent from './composables/useViewContent';
+import useRate from './composables/useRate';
 import appConfig from '@/config/app.config';
 import CorrectDialog from './sections/CorrectDialog.vue';
 import ViewContentDialog from './sections/ViewContentDialog.vue';
+import RateDialog from './sections/RateDialog.vue';
+
+interface StateType {
+  evaluate: number;
+  accessory: string;
+  archiveStatus: number;
+  content: string;
+  createTime: string;
+  knowledgeName: string;
+  knowledgeTypeName: string;
+  labels: LabelListReturnProps[];
+  relateds: any[];
+  securityLevelName: string;
+  expirationType: string;
+  endTime: string;
+  collectStatus: number;
+  creator: string;
+  user: Partial<UserType>;
+  archiveUserName: string;
+  logs: any[];
+}
 
 const route = useRoute();
 const router = useRouter();
@@ -206,26 +243,9 @@ const columns = [
 const fileList = ref<string[]>([]);
 
 const rateValue = ref<number>(0);
+const rateStatus = ref<boolean>(false);
 
-const state = ref<{
-  evaluate: number;
-  accessory: string;
-  archiveStatus: number;
-  content: string;
-  createTime: string;
-  knowledgeName: string;
-  knowledgeTypeName: string;
-  labels: LabelListReturnProps[];
-  relateds: any[];
-  securityLevelName: string;
-  expirationType: string;
-  endTime: string;
-  collectStatus: number;
-  creator: string;
-  user: Partial<UserType>;
-  archiveUserName: string;
-  logs: any[];
-}>({
+const state = ref<StateType>({
   evaluate: 0,
   accessory: '',
   archiveStatus: 0,
@@ -257,8 +277,14 @@ const fetchDetailData = async () => {
   rateValue.value = res.evaluate;
 };
 
+const fetchRateState = async () => {
+  const res = await getRateState({ knowledgeId: id as string });
+  rateStatus.value = res;
+};
+
 onMounted(async () => {
   await fetchDetailData();
+  await fetchRateState();
 });
 
 const handleUploadFile = (index: number) => {
@@ -279,32 +305,13 @@ const handleCollecte = async () => {
   state.value.collectStatus = 1;
 };
 
-const correctState = reactive({
-  visible: false,
-  id,
-});
+const { correctState, handleOpenCorrectDialog, handleCloseCorrectDialog } = useCorrect(
+  id as string,
+);
 
-const handleOpenCorrectDialog = () => {
-  correctState.visible = true;
-};
+const { viewContentState, handleViewContent, handleCloseViewContentDialog } = useViewContent();
 
-const handleCloseCorrectDialog = () => {
-  correctState.visible = false;
-};
-
-const viewContentState = reactive({
-  visible: false,
-  content: '',
-});
-
-const handleViewContent = (content: string) => {
-  viewContentState.visible = true;
-  viewContentState.content = content;
-};
-
-const handleCloseViewContentDialog = () => {
-  viewContentState.visible = false;
-};
+const { rateState, handleRate, handleCloseRateDialog } = useRate(id as string);
 </script>
 
 <style lang="less" scoped>

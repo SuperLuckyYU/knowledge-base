@@ -30,14 +30,15 @@
           </a-col>
           <a-col>
             <a-form-item label="项目" name="itemId">
-              <!-- <a-cascader
-                style="min-width: 250px"
-                v-model:value="formState.itemId"
-                :options="projectOptions"
-                placeholder="请选择项目"
-                allow-clear
-              /> -->
               <search-project-select v-model:value="formState.itemId" />
+            </a-form-item>
+          </a-col>
+          <a-col>
+            <a-form-item label="排序方式" name="sortType">
+              <a-select v-model:value="formState.sortType" style="width: 120px" allow-clear>
+                <a-select-option value="createTime">创建时间</a-select-option>
+                <a-select-option value="browseNum">浏览量</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col>
@@ -63,10 +64,10 @@
       </a-form>
     </a-card>
     <a-row>
-      <a-col :span="6">
-        <type-tree v-model:value="formState.knowledgeType" @change="handleKnowledgeTypeChange" />
+      <a-col :span="4">
+        <type-tree v-model:knowledgeType="formState.knowledgeType"  v-model:knowledgeFlag="formState.knowledgeFlag" @change="handleKnowledgeTypeChange" />
       </a-col>
-      <a-col :span="18">
+      <a-col :span="20">
         <a-card class="table-box mt20">
           <a-table
             rowKey="id"
@@ -76,6 +77,16 @@
             bordered
             @change="onTableChange"
           >
+            <template #bodyCell="{ column, text, record }">
+              <template v-if="column.dataIndex === 'knowledgeName'">
+                <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+                  text
+                }}</router-link>
+              </template>
+              <template v-if="column.dataIndex === 'deadline'">
+                {{ record.expirationType === '0' ? '永久有效' : record.endTime }}
+              </template>
+            </template>
           </a-table>
         </a-card>
       </a-col>
@@ -98,26 +109,14 @@ import TypeTree from './sections/TypeTree.vue';
 import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 import SearchProjectSelect from '@/components/SearchProjectSelect/index.vue';
 
-const articleTypeOptions = reactive<
-  {
-    label: string;
-    value: string;
-  }[]
->([]);
-
-const tagOptions = reactive([]);
-const projectOptions = reactive([]);
-
 const columns = computed(() => {
-  const sorted = sortedInfo.value || {};
-
   return [
     {
       title: '知识条目',
       dataIndex: 'knowledgeName',
       key: 'knowledgeName',
       align: 'center',
-      width: 200,
+      width: 300,
     },
     {
       title: '类型',
@@ -142,9 +141,7 @@ const columns = computed(() => {
       dataIndex: 'deadline',
       key: 'deadline',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'deadline' && sorted.order,
-      width: 300,
+      width: 200,
     },
     {
       title: '创建人',
@@ -157,9 +154,7 @@ const columns = computed(() => {
       dataIndex: 'createTime',
       key: 'createTime',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'createTime' && sorted.order,
-      width: 300,
+      width: 200,
     },
   ];
 });
@@ -167,12 +162,14 @@ const columns = computed(() => {
 const dateFormat = 'YYYY-MM-DD';
 
 const formState: UnwrapRef<FormStateType> = reactive({
+  knowledgeFlag: '',
   knowledgeType: '',
   knowledgeName: '',
   creator: '',
   labelId: '',
   itemId: '',
   dateRange: ['', ''],
+  sortType: '',
 });
 
 // 获取列表数据

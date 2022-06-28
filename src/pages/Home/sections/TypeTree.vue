@@ -45,22 +45,22 @@ import { CATEGORY_OPTIONS } from '@/constants/dictionary';
 import 'element-plus/es/components/tree/style/css';
 import { ElTree, ElEmpty } from 'element-plus';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
-import { cloneDeep } from 'lodash-es';
 
 interface Props {
-  value: string;
+  knowledgeType: string;
+  knowledgeFlag: string;
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(['update:value', 'change']);
+const emit = defineEmits(['update:knowledgeType', 'update:knowledgeFlag', 'change']);
 
 const formState = reactive({
   status: '1',
 });
 
-const { value } = toRefs(props);
+const { knowledgeType, knowledgeFlag } = toRefs(props);
 
-const checkedKey = ref(cloneDeep(value));
+const checkedKey = ref('');
 
 const dataSource = ref<DictionaryReturnProps>([]);
 
@@ -76,11 +76,19 @@ fetchData();
 
 const handleTabChange = () => {
   fetchData();
+  emit('update:knowledgeType', '');
+  emit('update:knowledgeFlag', '');
 };
 
 const handleCheckNode = (node: Node) => {
   checkedKey.value = node.id.toString();
-  emit('update:value', toRaw(node.id));
+  if (formState.status === '1') {
+    emit('update:knowledgeType', toRaw(node.id));
+    emit('update:knowledgeFlag', '');
+  } else {
+    emit('update:knowledgeType', '');
+    emit('update:knowledgeFlag', toRaw(node.id));
+  }
   emit('change', toRaw(node.id));
 };
 </script>

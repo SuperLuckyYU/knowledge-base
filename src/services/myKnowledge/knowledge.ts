@@ -127,3 +127,11 @@ interface CreateDocKnowledgeProps {
 export const createDocKnowledge = (data: CreateDocKnowledgeProps[]) => {
   return post<boolean>('base/batch/save', data, { useGenParams: false });
 };
+
+export const rateKnowledge = (data: { knowledgeId: string }) => {
+  return post<boolean>('base/rate/save', data);
+};
+
+export const getRateState = (data: { knowledgeId: string }) => {
+  return get<boolean>('base/rate/check/state', data);
+};
