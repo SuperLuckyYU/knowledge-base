@@ -135,3 +135,11 @@ export const rateKnowledge = (data: { knowledgeId: string }) => {
 export const getRateState = (data: { knowledgeId: string }) => {
   return get<boolean>('base/rate/check/state', data);
 };
+
+export const getRanking = () => {
+  return get<ListBaseReturnProps<listReturnProps>>('base/query/ranking');
+};
+
+export const getMap = () => {
+  return get<ListBaseReturnProps<listReturnProps>>('base/query/map');
+};

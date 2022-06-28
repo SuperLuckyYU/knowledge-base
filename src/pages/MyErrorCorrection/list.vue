@@ -85,6 +85,7 @@ import {
   delErrorCorrection,
 } from '@/services/myKnowledge/errorCorrection';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
+import { knowledgeFlag } from '@/constants/index';
 import ViewCorrectionDialog from './sections/ViewCorrectionDialog.vue';
 import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 
@@ -98,6 +99,9 @@ const columns = computed(() => {
       dataIndex: 'knowledgeFlag',
       key: 'knowledgeFlag',
       align: 'center',
+      customRender: ({ text }: { text: number }) => {
+        return knowledgeFlag[text as keyof typeof knowledgeFlag];
+      },
     },
     {
       title: '知识条目',
@@ -107,9 +111,15 @@ const columns = computed(() => {
     },
     {
       title: '分类',
-      dataIndex: 'knowledgeType',
-      key: 'knowledgeType',
+      dataIndex: 'knowledgeTypeName',
+      key: 'knowledgeTypeName',
       align: 'center',
+      customRender: ({ text }: { text: string }) => {
+        if (text) {
+          return text.split(', ').join('-');
+        }
+        return '';
+      },
     },
     {
       title: '纠错时间',

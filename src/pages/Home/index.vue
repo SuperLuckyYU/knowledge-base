@@ -65,7 +65,11 @@
     </a-card>
     <a-row>
       <a-col :span="4">
-        <type-tree v-model:knowledgeType="formState.knowledgeType"  v-model:knowledgeFlag="formState.knowledgeFlag" @change="handleKnowledgeTypeChange" />
+        <type-tree
+          v-model:knowledgeType="formState.knowledgeType"
+          v-model:knowledgeFlag="formState.knowledgeFlag"
+          @change="handleKnowledgeTypeChange"
+        />
       </a-col>
       <a-col :span="20">
         <a-card class="table-box mt20">
@@ -105,6 +109,7 @@ import type { FormStateType } from '@/types/home/index';
 import { reactive, computed, UnwrapRef } from 'vue';
 import useSearchTableList from '@/composables/useSearchTableList';
 import { getKnowledgeList } from '@/services/home';
+import { knowledgeFlag } from '@/constants/index';
 import TypeTree from './sections/TypeTree.vue';
 import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 import SearchProjectSelect from '@/components/SearchProjectSelect/index.vue';
@@ -123,17 +128,26 @@ const columns = computed(() => {
       dataIndex: 'knowledgeFlag',
       key: 'knowledgeFlag',
       align: 'center',
+      customRender: ({ text }: { text: number }) => {
+        return knowledgeFlag[text as keyof typeof knowledgeFlag];
+      },
     },
     {
       title: '分类',
-      dataIndex: 'knowledgeType',
-      key: 'knowledgeType',
+      dataIndex: 'knowledgeTypeName',
+      key: 'knowledgeTypeName',
       align: 'center',
+      customRender: ({ text }: { text: string }) => {
+        if (text) {
+          return text.split(', ').join('-');
+        }
+        return '';
+      },
     },
     {
       title: '安全级别',
-      dataIndex: 'securityLevel',
-      key: 'securityLevel',
+      dataIndex: 'securityLevelName',
+      key: 'securityLevelName',
       align: 'center',
     },
     {

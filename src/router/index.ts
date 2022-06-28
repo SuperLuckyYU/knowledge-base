@@ -1,8 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import BasicLayout from '@/layout/BasicLayout.vue';
 import Home from '@/pages/Home/index.vue';
-import GoodsList from '@/pages/GoodsManager/index.vue';
-import GoodsCreate from '@/pages/GoodsManager/create/index.vue';
 import KnowledgeList from '@/pages/Knowledge/list.vue';
 import KnowledgeCreate from '@/pages/Knowledge/create/index.vue';
 import KnowledgeCreateTopic from '@/pages/Knowledge/create/topic.vue';
@@ -44,33 +42,6 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: '/goodsManage',
-    name: 'goodsManage',
-    component: BasicLayout,
-    meta: { title: '商品管理', icon: 'SkinOutlined' },
-    children: [
-      {
-        path: 'list',
-        name: 'GoodsList',
-        meta: {
-          title: '商品列表',
-          keepAlive: true,
-        },
-        component: GoodsList,
-      },
-      {
-        path: 'create',
-        name: 'GoodsCreate',
-        meta: {
-          title: '创建商品',
-          isMenu: false,
-          keepAlive: false,
-        },
-        component: GoodsCreate,
-      },
-    ],
-  },
-  {
     path: '/myKnowledge',
     name: 'myKnowledge',
     component: BasicLayout,
@@ -106,9 +77,9 @@ const routes: Array<RouteRecordRaw> = [
         component: KnowledgeCreateTopic,
       },
       {
-        path: 'articleDetail',
+        path: 'article-detail',
         name: 'ArticleDetail',
-        meta: { title: '详情', isMenu: false },
+        meta: { title: '详情', isMenu: false, keepAlive: false },
         component: ArticleDetail,
       },
       {

@@ -1,11 +1,21 @@
 <template>
   <a-layout class="layout-wrap">
-    <a-layout-sider class="sider-container" v-model:collapsed="collapsed" :trigger="null" collapsible>
+    <a-layout-sider
+      class="sider-container"
+      v-model:collapsed="collapsed"
+      :trigger="null"
+      collapsible
+    >
       <router-link class="app-logo" to="/">
         <h1 class="title" v-if="!collapsed">{{ STATE.title }}</h1>
       </router-link>
-      <a-menu :selectedKeys="STATE.selectedKeys" v-model:openKeys="STATE.openKeys" theme="dark" mode="inline"
-        @select="handleSelectMenu">
+      <a-menu
+        :selectedKeys="STATE.selectedKeys"
+        v-model:openKeys="STATE.openKeys"
+        theme="dark"
+        mode="inline"
+        @select="handleSelectMenu"
+      >
         <template v-for="route of routerList">
           <Menus :route="route" />
         </template>
@@ -13,12 +23,16 @@
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-header class="header-container">
-        <menu-unfold-outlined v-if="collapsed" class="trigger" @click="() => (collapsed = !collapsed)" />
+        <menu-unfold-outlined
+          v-if="collapsed"
+          class="trigger"
+          @click="() => (collapsed = !collapsed)"
+        />
         <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
         <user :name="STATE.name" :avatar="STATE.avatar" :emailAddr="STATE.emailAddr" />
       </a-layout-header>
       <a-layout-content id="content-container">
-        <router-view v-slot="{ Component, route }">
+        <router-view v-slot="{ Component, route }" :key="route.fullPath">
           <keep-alive :include="cacheList">
             <component :is="Component" :key="route.meta.path" />
           </keep-alive>
