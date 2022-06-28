@@ -15,6 +15,7 @@ import Dictionary from '@/pages/Dictionary/index.vue';
 import CollectionList from '@/pages/MyCollection/list.vue';
 import CorrectionList from '@/pages/MyErrorCorrection/list.vue';
 import AuditList from '@/pages/Audit/list.vue';
+import KnowledgeMap from '@/pages/KnowledgeMap/index.vue';
 
 //静态路由页面
 const routes: Array<RouteRecordRaw> = [
@@ -27,6 +28,18 @@ const routes: Array<RouteRecordRaw> = [
         path: '',
         name: 'home',
         component: Home,
+      },
+    ],
+  },
+  {
+    path: '/knowledgeMap',
+    component: BasicLayout,
+    meta: { title: '知识地图', icon: 'DashboardOutlined', level: '1', key: 'knowledgeMap' },
+    children: [
+      {
+        path: '',
+        name: 'knowledgeMap',
+        component: KnowledgeMap,
       },
     ],
   },

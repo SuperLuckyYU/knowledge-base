@@ -24,7 +24,13 @@
 </template>
 <script lang="ts">
 import { toRefs, defineComponent, PropType, computed } from 'vue';
-import { SkinOutlined, SettingOutlined, BookOutlined, HomeOutlined } from '@ant-design/icons-vue';
+import {
+  SkinOutlined,
+  SettingOutlined,
+  BookOutlined,
+  HomeOutlined,
+  DashboardOutlined,
+} from '@ant-design/icons-vue';
 import { RouteRecordRaw } from 'vue-router';
 
 interface RouteMenusProps {
@@ -36,6 +42,7 @@ export default defineComponent({
     SettingOutlined,
     BookOutlined,
     HomeOutlined,
+    DashboardOutlined,
   },
   props: {
     route: {
@@ -46,16 +53,16 @@ export default defineComponent({
 
   setup(props) {
     // 暴露给模板和 API 钩子的其他选项
-    const { route } = toRefs(props)
+    const { route } = toRefs(props);
     const key = computed(() => {
       if (route.value?.meta?.level === '1') {
-        return route.value?.meta?.key
+        return route.value?.meta?.key;
       }
-      return route.value?.name
-    })
+      return route.value?.name;
+    });
     return {
       ...toRefs(props),
-      key
+      key,
     };
   },
 });
