@@ -1,0 +1,116 @@
+<template>
+  <a-card>
+    <a-radio-group class="mb50 mr10" v-model:value="dateType">
+      <a-radio-button value="1">本周</a-radio-button>
+      <a-radio-button value="2">本月</a-radio-button>
+      <a-radio-button value="3">本年</a-radio-button>
+      <a-radio-button value="4">自定义时间范围</a-radio-button>
+    </a-radio-group>
+    <a-range-picker v-if="dateType === '4'" v-model:value="dateRange" format="YYYY-MM-DD" />
+    <a-row class="mb24">
+      <a-col :span="12">
+        <v-chart class="chart" :option="countStatisticalOption" />
+      </a-col>
+      <a-col :span="12">
+        <v-chart class="chart" :option="countTrendOption" />
+      </a-col>
+    </a-row>
+    <a-row class="mb24">
+      <a-col :span="12">
+        <v-chart class="chart" :option="typeCountStatisticalOption" />
+      </a-col>
+      <a-col :span="12">
+        <v-chart class="chart" :option="typeCountTrendOption" />
+      </a-col>
+    </a-row>
+    <a-row class="mb24">
+      <a-col :span="24">
+        <div class="title mb15">热门排行榜</div>
+        <a-table :columns="columns" :data-source="topData" bordered :pagination="false">
+          <template #bodyCell="{ column, text, record }">
+            <template v-if="column.dataIndex === 'knowledgeName'">
+              <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+                text
+              }}</router-link>
+            </template>
+          </template>
+        </a-table>
+      </a-col>
+    </a-row>
+    <a-row class="mb24">
+      <a-col :span="12">
+        <div class="title mb15">员工贡献排行榜</div>
+        <a-table
+          :columns="employeeContributionRankingColumns"
+          :data-source="employeeContributionData"
+          bordered
+          :pagination="false"
+        >
+        </a-table>
+      </a-col>
+      <a-col :span="12">
+        <v-chart class="chart" :option="departmentContributionOption" />
+      </a-col>
+    </a-row>
+    <a-row class="mb24">
+      <a-col :span="12">
+        <div class="title mb15">标签统计</div>
+        <top-search />
+      </a-col>
+    </a-row>
+  </a-card>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'Statistical',
+};
+</script>
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+import TopSearch from '../KnowledgeMap/sections/topSearch.vue';
+import useKnowledgeCountStatistic from './composables/useKnowledgeCountStatistic';
+import useKnowledgeCountTrend from './composables/useKnowledgeCountTrend';
+import useKnowledgeTypeCountStatistic from './composables/useKnowledgeTypeCountStatistic';
+import useKnowledgeTypeCountTrend from './composables/useKnowledgeTypeCountTrend';
+import useHotRanking from './composables/useHotRanking';
+import useEmployeeContributionRanking from './composables/useEmployeeContributionRanking';
+import useDepartmentContribution from './composables/useDepartmentContribution';
+
+const { countStatisticalOption, fetchKnowledgeNumber } = useKnowledgeCountStatistic();
+const { countTrendOption, fetchDataRangeCount } = useKnowledgeCountTrend();
+const { typeCountStatisticalOption, fetchKnowledgeTypeNumber } = useKnowledgeTypeCountStatistic();
+const { typeCountTrendOption, fetchDataRangeTypeCount } = useKnowledgeTypeCountTrend();
+const { columns, topData, fetchTopData } = useHotRanking();
+const {
+  employeeContributionRankingColumns,
+  employeeContributionData,
+  fetchEmployeeContributionData,
+} = useEmployeeContributionRanking();
+const { departmentContributionOption, fetchDepartmentContributionData } =
+  useDepartmentContribution();
+
+const dateType = ref('1');
+
+const dateRange = ref([]);
+
+onMounted(() => {
+  // fetchKnowledgeNumber();
+  // fetchDataRangeCount()
+  // fetchKnowledgeTypeNumber()
+  // fetchDataRangeTypeCount()
+  fetchTopData();
+  // fetchEmployeeContributionData()
+  // fetchDepartmentContributionData()
+});
+</script>
+
+<style lang="less" scoped>
+.title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.chart {
+  height: 400px;
+}
+</style>

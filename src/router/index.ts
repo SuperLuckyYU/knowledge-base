@@ -14,6 +14,7 @@ import CollectionList from '@/pages/MyCollection/list.vue';
 import CorrectionList from '@/pages/MyErrorCorrection/list.vue';
 import AuditList from '@/pages/Audit/list.vue';
 import KnowledgeMap from '@/pages/KnowledgeMap/index.vue';
+import Statistical from '@/pages/Statistical/index.vue';
 
 //静态路由页面
 const routes: Array<RouteRecordRaw> = [
@@ -108,6 +109,18 @@ const routes: Array<RouteRecordRaw> = [
           keepAlive: true,
         },
         component: AuditList,
+      },
+    ],
+  },
+  {
+    path: '/statistical',
+    component: BasicLayout,
+    meta: { title: '统计报表', icon: 'BarChartOutlined', level: '1', key: 'statistical' },
+    children: [
+      {
+        path: '',
+        name: 'statistical',
+        component: Statistical,
       },
     ],
   },

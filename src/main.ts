@@ -14,7 +14,7 @@ import './global.less';
 
 import { CanvasRenderer } from 'echarts/renderers';
 
-import { BarChart, PieChart } from 'echarts/charts';
+import { BarChart, PieChart, LineChart } from 'echarts/charts';
 
 import {
   GridComponent,
@@ -28,6 +28,7 @@ import {
     CanvasRenderer,
     BarChart,
     PieChart,
+    LineChart,
     GridComponent,
     TooltipComponent,
     LegendComponent,

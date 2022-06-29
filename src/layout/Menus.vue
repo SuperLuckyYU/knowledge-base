@@ -30,6 +30,7 @@ import {
   BookOutlined,
   HomeOutlined,
   DashboardOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons-vue';
 import { RouteRecordRaw } from 'vue-router';
 
@@ -43,6 +44,7 @@ export default defineComponent({
     BookOutlined,
     HomeOutlined,
     DashboardOutlined,
+    BarChartOutlined,
   },
   props: {
     route: {
