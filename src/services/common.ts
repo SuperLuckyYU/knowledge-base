@@ -5,3 +5,9 @@ export interface ListBaseReturnProps<T> {
   size: number;
   total: number;
 }
+
+export interface ChartProps {
+  timeType: string;
+  startTime?: string;
+  endTime?: string;
+}

@@ -66,11 +66,11 @@ const useKnowledgeTypeCountTrend = () => {
     ],
   });
 
-  const fetchDataRangeTypeCount = async () => {};
+  const fetchDateRangeTypeCount = async () => {};
 
   return {
     typeCountTrendOption,
-    fetchDataRangeTypeCount,
+    fetchDateRangeTypeCount,
   };
 };
 

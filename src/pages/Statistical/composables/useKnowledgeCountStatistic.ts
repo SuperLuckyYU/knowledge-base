@@ -1,3 +1,4 @@
+import type { ChartProps } from '@/services/common';
 import { ref } from 'vue';
 import { getKnowledgeNumber } from '@/services/statistics';
 
@@ -9,7 +10,7 @@ const useKnowledgeCountStatistic = () => {
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b} : {c} ({d}%)',
+      formatter: '{a} <br/>{b} : {c} 个',
     },
     xAxis: {
       type: 'category',
@@ -31,9 +32,16 @@ const useKnowledgeCountStatistic = () => {
     ],
   });
 
-  const fetchKnowledgeNumber = async () => {
-    const res = await getKnowledgeNumber();
-    console.log('🚀 ~ file: index.vue ~ line 48 ~ fetchKnowledgeNumber ~ res', res);
+  const fetchKnowledgeNumber = async (params: ChartProps) => {
+    const res = await getKnowledgeNumber(params);
+    const xAxisData: string[] = [];
+    const seriesData: number[] = [];
+    res.forEach((item) => {
+      xAxisData.push(item.dictName);
+      seriesData.push(item.num);
+    });
+    countStatisticalOption.value.xAxis.data = xAxisData;
+    countStatisticalOption.value.series[0].data = seriesData;
   };
 
   return {

@@ -1,4 +1,7 @@
+import type { ChartProps } from '@/services/common';
 import { ref } from 'vue';
+import { getKnowledgeTypeNumber } from '@/services/statistics';
+import { generateChartData } from '@/utils/chart';
 
 const useKnowledgeTypeCountStatistic = () => {
   const typeCountStatisticalOption = ref({
@@ -8,7 +11,7 @@ const useKnowledgeTypeCountStatistic = () => {
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b} : {c} ({d}%)',
+      formatter: '{a} <br/>{b} : {c} 个',
     },
     xAxis: {
       type: 'category',
@@ -26,7 +29,12 @@ const useKnowledgeTypeCountStatistic = () => {
     ],
   });
 
-  const fetchKnowledgeTypeNumber = async () => {};
+  const fetchKnowledgeTypeNumber = async (params: ChartProps) => {
+    const res = await getKnowledgeTypeNumber(params);
+    const { xAxisData, seriesData } = generateChartData(res, params, 'flag');
+    typeCountStatisticalOption.value.xAxis.data = xAxisData;
+    typeCountStatisticalOption.value.series[0].data = seriesData;
+  };
 
   return {
     typeCountStatisticalOption,

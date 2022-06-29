@@ -1,7 +1,10 @@
+import type { ChartProps } from '@/services/common';
+import type { EmployeeContributionReturnProps } from '@/services/statistics';
 import { ref } from 'vue';
+import { getEmployeeContribution } from '@/services/statistics';
 
 const useEmployeeContributionRanking = () => {
-  const employeeContributionData = ref<Record<string, any>[]>([]);
+  const employeeContributionData = ref<EmployeeContributionReturnProps[]>([]);
 
   const employeeContributionRankingColumns = [
     {
@@ -15,12 +18,12 @@ const useEmployeeContributionRanking = () => {
     },
     {
       title: '姓名',
-      dataIndex: 'name',
+      dataIndex: 'userName',
       align: 'center',
     },
     {
       title: '科室',
-      dataIndex: 'dipt',
+      dataIndex: 'deptName',
       align: 'center',
     },
     {
@@ -30,7 +33,10 @@ const useEmployeeContributionRanking = () => {
     },
   ];
 
-  const fetchEmployeeContributionData = async () => {};
+  const fetchEmployeeContributionData = async (params: ChartProps) => {
+    const res = await getEmployeeContribution(params);
+    employeeContributionData.value = res;
+  };
 
   return {
     employeeContributionRankingColumns,
