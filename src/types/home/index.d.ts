@@ -2,9 +2,9 @@ export interface FormStateType {
   knowledgeFlag: string;
   knowledgeType: string;
   knowledgeName: string;
-  creator: string;
+  author: string;
   labelId: string;
   itemId: string;
-  dateRange: [string, string];
-  sortType: '';
+  dateRange: string[];
+  sortType: string;
 }

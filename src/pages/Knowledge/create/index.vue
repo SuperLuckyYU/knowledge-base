@@ -182,9 +182,9 @@ enum pageType {
 }
 
 const fileType = {
-  '0': '文档',
-  '1': '图片',
-  '2': '视频',
+  '2': '文档',
+  '3': '图片',
+  '4': '视频',
 };
 
 const safeLevelOptions = [

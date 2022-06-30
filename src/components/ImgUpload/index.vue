@@ -1,7 +1,7 @@
 <template>
   <div class="upload-wrapper clearfix">
     <a-upload
-      v-if="type === '0'"
+      v-if="type === '2'"
       v-model:file-list="fileList"
       :custom-request="customUpload"
       :before-upload="beforeUpload"

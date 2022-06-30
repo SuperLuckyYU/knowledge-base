@@ -128,8 +128,6 @@ const columns = computed(() => {
       dataIndex: 'createTime',
       key: 'createTime',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'createTime' && sorted.order,
     },
     {
       title: '操作',

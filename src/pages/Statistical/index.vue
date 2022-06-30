@@ -25,8 +25,12 @@
       <a-col :span="12">
         <v-chart class="chart" :option="typeCountStatisticalOption" />
       </a-col>
-      <a-col :span="12">
+      <!-- <a-col :span="12">
         <v-chart class="chart" :option="typeCountTrendOption" />
+      </a-col> -->
+      <a-col :span="12">
+        <div class="title mb15">标签统计</div>
+        <top-search />
       </a-col>
     </a-row>
     <a-row class="mb24">
@@ -58,12 +62,12 @@
         <v-chart class="chart" :option="departmentContributionOption" />
       </a-col>
     </a-row>
-    <a-row class="mb24">
+    <!-- <a-row class="mb24">
       <a-col :span="12">
         <div class="title mb15">标签统计</div>
         <top-search />
       </a-col>
-    </a-row>
+    </a-row> -->
   </a-card>
 </template>
 
@@ -112,7 +116,7 @@ const fetchData = (params: ChartProps) => {
   // fetchDateRangeTypeCount()
   fetchTopData();
   fetchEmployeeContributionData(params);
-  // fetchDepartmentContributionData()
+  fetchDepartmentContributionData(params);
 };
 
 watchEffect(() => {

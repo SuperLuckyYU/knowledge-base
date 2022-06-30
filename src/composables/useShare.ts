@@ -1,6 +1,7 @@
 import { Modal, message } from 'ant-design-vue';
 import { h } from 'vue';
 import { copyText } from '@/plugins/clipboard';
+import { knowledgeFlag } from '@/constants/index';
 
 interface InfoType {
   id: string;
@@ -18,10 +19,16 @@ export default function useShare() {
       maskClosable: true,
       content: h('div', {}, [
         h('p', { class: 'mt15' }, [h('span', '标题：'), h('span', { class: 'link' }, title)]),
-        h('p', { class: 'mt15' }, `类型：${type}     有效期：${endTime}`),
+        h(
+          'p',
+          { class: 'mt15' },
+          `类型：${
+            knowledgeFlag[type as unknown as keyof typeof knowledgeFlag]
+          }     有效期：${endTime}`,
+        ),
       ]),
       onOk() {
-        copyText(`http://localhost:3000/#/myKnowledge/articleDetail?id=${id}`)
+        copyText(`http://47.98.251.91:8080/knowledge/#/myKnowledge/articleDetail?id=${id}`)
           .then(() => {
             message.success('文章链接也复制到您的剪切板!');
           })

@@ -14,9 +14,9 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <a-form-item label="作者" name="creator">
+            <a-form-item label="作者" name="author">
               <a-input
-                v-model:value.trim="formState.creator"
+                v-model:value.trim="formState.author"
                 placeholder="请输入作者"
                 autocomplete="off"
                 allow-clear
@@ -179,11 +179,11 @@ const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeFlag: '',
   knowledgeType: '',
   knowledgeName: '',
-  creator: '',
+  author: '',
   labelId: '',
   itemId: '',
-  dateRange: ['', ''],
-  sortType: '',
+  dateRange: [],
+  sortType: 'createTime',
 });
 
 // 获取列表数据
@@ -199,11 +199,15 @@ const {
 } = useSearchTableList({
   fetchData: getKnowledgeList,
   formatParams() {
-    const dateRange = formState.dateRange.join(',');
+    const dateRange = formState.dateRange;
     const data: Record<string, any> = {
       ...formState,
-      dateRange: dateRange === ',' ? '' : dateRange,
     };
+    delete data.dateRange;
+    if (dateRange.length) {
+      data['startTime'] = dateRange[0];
+      data['endTime'] = dateRange[1];
+    }
     return data;
   },
 });

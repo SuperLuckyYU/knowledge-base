@@ -15,7 +15,17 @@
             <a-button type="link" class="mr10" @click="handleCollecte">{{
               state.collectStatus === 1 ? '取消收藏' : '收藏'
             }}</a-button>
-            <a-button type="link" class="mr10">分享</a-button>
+            <a-button
+              type="link"
+              class="mr10"
+              @click="share({
+                  id: id as string,
+                  title: state.knowledgeName,
+                  type: state.knowledgeFlag,
+                  endTime: state.expirationType === '0' ? '永久有效' : state.endTime,
+                })"
+              >分享</a-button
+            >
             <a-button type="link" class="mr10" @click="handleOpenCorrectDialog">纠错</a-button>
             <a-button type="link" @click="handleRate" :disabled="rateStatus">{{
               rateStatus ? '已评价' : '评价'
@@ -165,7 +175,7 @@
   <rate-dialog
     v-if="rateState.visible"
     :knowledgeId="rateState.id"
-    @success="fetchDetailData"
+    @success="RateSuccessCallback"
     @cancel="handleCloseRateDialog"
   />
 </template>
@@ -184,6 +194,7 @@ import { message } from 'ant-design-vue';
 import { getKnowledgeDetail, getRateState } from '@/services/myKnowledge/knowledge';
 import { collecteKnowledge, cancelCollecteKnowledge } from '@/services/myKnowledge/collection';
 import { download } from '@/utils/downloadFile';
+import useShare from '@/composables/useShare';
 import useCorrect from './composables/useCorrect';
 import useViewContent from './composables/useViewContent';
 import useRate from './composables/useRate';
@@ -200,6 +211,7 @@ interface StateType {
   createTime: string;
   knowledgeName: string;
   knowledgeTypeName: string;
+  knowledgeFlag: string;
   labels: LabelListReturnProps[];
   relateds: any[];
   securityLevelName: string;
@@ -263,6 +275,7 @@ const state = ref<StateType>({
   user: {},
   archiveUserName: '',
   logs: [],
+  knowledgeFlag: '',
 });
 
 const fetchDetailData = async () => {
@@ -312,6 +325,13 @@ const { correctState, handleOpenCorrectDialog, handleCloseCorrectDialog } = useC
 const { viewContentState, handleViewContent, handleCloseViewContentDialog } = useViewContent();
 
 const { rateState, handleRate, handleCloseRateDialog } = useRate(id as string);
+
+const RateSuccessCallback = () => {
+  fetchDetailData();
+  fetchRateState();
+};
+
+const { share } = useShare();
 </script>
 
 <style lang="less" scoped>

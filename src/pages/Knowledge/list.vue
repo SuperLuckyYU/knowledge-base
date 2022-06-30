@@ -152,16 +152,12 @@ const columns = computed(() => {
       dataIndex: 'createTime',
       key: 'createTime',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'createTime' && sorted.order,
     },
     {
       title: '最后编辑时间',
       dataIndex: 'updateTime',
       key: 'updateTime',
       align: 'center',
-      sorter: true,
-      sortOrder: sorted.columnKey === 'updateTime' && sorted.order,
     },
     {
       title: '操作',
@@ -174,6 +170,7 @@ const columns = computed(() => {
 const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeName: '',
   labelId: '',
+  sortType: 'createTime',
 });
 
 // 获取数据

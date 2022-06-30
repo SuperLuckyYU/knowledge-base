@@ -2,7 +2,7 @@
   <a-dropdown>
     <div class="user-info" @click.prevent>
       <a-avatar :src="avatar || STATE.DEFAULT_AVATAR" :alt="`${name}'s avatar`"></a-avatar>
-      <span class="user-name">{{ name || '某人' }}</span>
+      <span class="user-name">{{ name || '管理员' }}</span>
     </div>
     <template #overlay>
       <a-menu>

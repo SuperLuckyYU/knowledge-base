@@ -32,3 +32,12 @@ export interface EmployeeContributionReturnProps {
 export const getEmployeeContribution = (data: ChartProps) => {
   return get<EmployeeContributionReturnProps[]>('/user/statistics/user/create/knowledge/num', data);
 };
+
+interface DepartmentContributionProps {
+  xAxisData: string;
+  num: number;
+}
+
+export const getDepartmentContribution = (data: ChartProps) => {
+  return get<DepartmentContributionProps[]>('/dept/statistics/dept/create/knowledge/ration', data);
+};

@@ -1,6 +1,8 @@
 import { UserConfig, ConfigEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import ElementPlus from 'unplugin-element-plus/vite';
+import unElementPlus from 'unplugin-element-plus/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver, AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import path from 'path';
 
 const port = 3000;
@@ -10,10 +12,35 @@ function resovePath(paths: string) {
   return path.resolve(__dirname, paths);
 }
 
+let plugins = [
+  vue(),
+  unElementPlus({
+    useSource: true,
+  }),
+  Components({
+    dirs: ['src/components'],
+    resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
+  }),
+];
+
+// if (process.env.NODE_ENV !== 'development') {
+//   plugins.push(
+//     unElementPlus({
+//       useSource: true,
+//     }),
+//   );
+//   plugins.push(
+//     Components({
+//       dirs: ['src/components'],
+//       resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
+//     }),
+//   );
+// }
+
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
   const isDev = mode === 'development';
-  const publicPath = isDev ? '/' : `/`;
+  const publicPath = isDev ? '/' : `/knowledge/`;
   const distDir = path.join(__dirname, `../../../www/${publicPath}`);
 
   return {
@@ -28,15 +55,15 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: 'http://47.98.251.91:8662/',
-          // target: 'http://192.168.1.16:8662/',
+          // target: 'http://47.98.251.91:8662/',
+          target: 'http://192.168.1.16:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
     },
     // plugins
-    plugins: [vue(), ElementPlus()],
+    plugins,
     // css
     css: {
       preprocessorOptions: {
@@ -50,10 +77,19 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     // build
     build: {
       emptyOutDir: true,
-      // outDir: distDir,
+      outDir: 'knowledge',
       sourcemap: false,
       brotliSize: false,
       chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return id.toString().split('node_modules')[1].split('/')[0].toString();
+            }
+          },
+        },
+      },
     },
 
     resolve: {

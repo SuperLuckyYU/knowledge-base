@@ -3,7 +3,7 @@ import { reactive, computed } from 'vue';
 
 export default function useFormState() {
   const modelRef = reactive<CreateFormState>({
-    type: '0',
+    type: '2',
     file: [],
     entry: '',
     category: '',
@@ -41,7 +41,8 @@ export default function useFormState() {
     ],
     category: [
       {
-        required: false,
+        required: true,
+        message: '请选择知识分类',
       },
     ],
     doc_number: [
