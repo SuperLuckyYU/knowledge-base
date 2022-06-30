@@ -14,7 +14,8 @@ const useKnowledgeCountStatistic = () => {
     },
     xAxis: {
       type: 'category',
-      data: ['法律', '行政法规', '部门规章', '水资源利用', '海绵城市', '蓄滞洪区建设', '年鉴'],
+      // data: ['法律', '行政法规', '部门规章', '水资源利用', '海绵城市', '蓄滞洪区建设', '年鉴'],
+      data: [''],
       axisLabel: {
         interval: 0,
         rotate: -38,
@@ -27,7 +28,8 @@ const useKnowledgeCountStatistic = () => {
       {
         name: '知识数量统计',
         type: 'bar',
-        data: [120, 200, 150, 80, 70, 110, 130],
+        // data: [120, 200, 150, 80, 70, 110, 130],
+        data: [0],
       },
     ],
   });

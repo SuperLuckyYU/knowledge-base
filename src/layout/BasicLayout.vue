@@ -29,7 +29,7 @@
           @click="() => (collapsed = !collapsed)"
         />
         <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
-        <user :name="STATE.name" :avatar="STATE.avatar" :emailAddr="STATE.emailAddr" />
+        <user :name="STATE.name" :avatar="STATE.avatar" />
       </a-layout-header>
       <a-layout-content id="content-container">
         <router-view v-slot="{ Component, route }" :key="route.fullPath">

@@ -6,13 +6,9 @@
     </div>
     <template #overlay>
       <a-menu>
-        <a-menu-item key="0">
-          <MailOutlined />
-          <span>{{ emailAddr }}</span>
-        </a-menu-item>
         <a-menu-item key="1">
           <RollbackOutlined />
-          <span><a class="link" href="/">返回pandora工具平台</a></span>
+          <span><a class="link" href="/">返回登录</a></span>
         </a-menu-item>
       </a-menu>
     </template>
@@ -21,7 +17,7 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import { MailOutlined, RollbackOutlined } from '@ant-design/icons-vue';
+import { RollbackOutlined } from '@ant-design/icons-vue';
 import appConfig from '@/config/app.config';
 const props = defineProps({
   name: {

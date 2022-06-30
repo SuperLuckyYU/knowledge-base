@@ -8,26 +8,24 @@ type StateType = {
     avatar: string;
     email: string;
     userid: string;
-  },
-  authList: string[]
-}
+  };
+  authList: string[];
+};
 export const useUserStore = defineStore({
   id: 'app-user',
   state: (): StateType => ({
     islogin: false,
     // user info
     userInfo: {
-      name: '未登录',
+      name: '',
       avatar: '',
       email: '',
-      userid: ''
+      userid: '',
     },
     // 权限列表
-    authList: []
+    authList: [],
   }),
-  getters: {
-
-  },
+  getters: {},
   actions: {
     // getUser
     async getUserLogged() {
@@ -35,7 +33,7 @@ export const useUserStore = defineStore({
         const res = await fetchCurrentUser();
         if (res.status === 'success') {
           this.userInfo = res.user;
-          return true
+          return true;
         }
       } catch (error) {
         return false;
@@ -48,14 +46,13 @@ export const useUserStore = defineStore({
         const res = await fetchUserAuth();
         if (res.status === 'success') {
           this.authList = res.result;
-          return true
+          return true;
         } else {
-          return false
+          return false;
         }
       } catch (error) {
         return false;
       }
-
     },
 
     redirectToLogin() {
@@ -67,15 +64,15 @@ export const useUserStore = defineStore({
     // 是否登录
     async isUserLogged() {
       if (!this.islogin) {
-        if (!(await this.getUserLogged() && await this.getUserAuth())) {
-          this.islogin = false
+        if (!((await this.getUserLogged()) && (await this.getUserAuth()))) {
+          this.islogin = false;
           this.redirectToLogin();
-          return
+          return;
         } else {
-          this.islogin = true
+          this.islogin = true;
         }
       }
-      return true
+      return true;
     },
   },
 });
