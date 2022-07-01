@@ -42,7 +42,6 @@ import type { DictionaryReturnProps } from '@/services/systemSetter/dictionary';
 import type Node from 'element-plus/es/components/tree/src/model/node';
 import { ref, reactive, toRefs, toRaw } from 'vue';
 import { CATEGORY_OPTIONS } from '@/constants/dictionary';
-import 'element-plus/es/components/tree/style/css';
 import { ElTree, ElEmpty } from 'element-plus';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
 

@@ -3,12 +3,14 @@ import vue from '@vitejs/plugin-vue';
 import unElementPlus from 'unplugin-element-plus/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver, AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
+import { visualizer } from 'rollup-plugin-visualizer';
+import compress from 'vite-plugin-compress';
 import path from 'path';
 
 const port = 3000;
 
 function resovePath(paths: string) {
-  // 如何 __dirname 找不到 需要 yarn add @types/node --save-dev
   return path.resolve(__dirname, paths);
 }
 
@@ -21,23 +23,18 @@ let plugins = [
     dirs: ['src/components'],
     resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
   }),
+  chunkSplitPlugin({
+    strategy: 'default',
+    customSplitting: {
+      'chart-vendor': ['echarts', 'echarts-wordcloud', 'vue-echarts'],
+      wangeditor: ['@wangeditor/editor', '@wangeditor/editor-for-vue'],
+      utils: [/src\/utils/],
+    },
+  }),
+  compress(),
+  visualizer(),
 ];
 
-// if (process.env.NODE_ENV !== 'development') {
-//   plugins.push(
-//     unElementPlus({
-//       useSource: true,
-//     }),
-//   );
-//   plugins.push(
-//     Components({
-//       dirs: ['src/components'],
-//       resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
-//     }),
-//   );
-// }
-
-// https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
   const isDev = mode === 'development';
   const publicPath = isDev ? '/' : `/knowledge/`;
@@ -55,8 +52,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          // target: 'http://47.98.251.91:8662/',
-          target: 'http://192.168.1.16:8662/',
+          target: 'http://47.98.251.91:8662/',
+          // target: 'http://192.168.1.16:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
@@ -81,15 +78,6 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       sourcemap: false,
       brotliSize: false,
       chunkSizeWarningLimit: 2000,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              return id.toString().split('node_modules')[1].split('/')[0].toString();
-            }
-          },
-        },
-      },
     },
 
     resolve: {

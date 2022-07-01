@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { reactive, toRefs, ref, onMounted } from 'vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 interface Props {
   modelValue: string;

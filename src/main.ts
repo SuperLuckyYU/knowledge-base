@@ -6,7 +6,6 @@ import 'echarts-wordcloud/dist/echarts-wordcloud';
 import App from './App.vue';
 import Clipboard from './plugins/clipboard';
 import DownloadFile from './plugins/DownloadFile';
-import 'ant-design-vue/dist/antd.css';
 import router from '@/router/index';
 import permission from '@/router/permission';
 import { setupStore } from './store';

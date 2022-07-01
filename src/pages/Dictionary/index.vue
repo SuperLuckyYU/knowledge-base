@@ -71,7 +71,6 @@ import type Node from 'element-plus/es/components/tree/src/model/node';
 import { ref, reactive } from 'vue';
 import { CATEGORY_OPTIONS } from '@/constants/dictionary';
 import { PlusSquareOutlined, MinusSquareOutlined, EditOutlined } from '@ant-design/icons-vue';
-import 'element-plus/es/components/tree/style/css';
 import { ElTree, ElEmpty } from 'element-plus';
 import { getDictionaryList, delDictionary } from '@/services/systemSetter/dictionary';
 import type {
