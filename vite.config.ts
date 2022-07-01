@@ -5,7 +5,6 @@ import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver, AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
 import { visualizer } from 'rollup-plugin-visualizer';
-import compress from 'vite-plugin-compress';
 import path from 'path';
 
 const port = 3000;
@@ -28,16 +27,16 @@ let plugins = [
     customSplitting: {
       'chart-vendor': ['echarts', 'echarts-wordcloud', 'vue-echarts'],
       wangeditor: ['@wangeditor/editor', '@wangeditor/editor-for-vue'],
-      utils: [/src\/utils/],
+      utils: [/src\/utils/, 'axios'],
     },
   }),
-  compress(),
   visualizer(),
 ];
 
 export default ({ mode }: ConfigEnv): UserConfig => {
   const isDev = mode === 'development';
-  const publicPath = isDev ? '/' : `/knowledge/`;
+  // const publicPath = isDev ? '/' : `/knowledge/`;
+  const publicPath = isDev ? '/' : `/`;
   const distDir = path.join(__dirname, `../../../www/${publicPath}`);
 
   return {
@@ -74,7 +73,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     // build
     build: {
       emptyOutDir: true,
-      outDir: 'knowledge',
+      // outDir: 'knowledge',
+      outDir: 'dist',
       sourcemap: false,
       brotliSize: false,
       chunkSizeWarningLimit: 2000,

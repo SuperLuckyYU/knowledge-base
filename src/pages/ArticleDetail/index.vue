@@ -52,7 +52,7 @@
           <a-col :span="12">
             <span class="label">标签: </span>
             <span class="value">
-              <a-tag v-for="item in state.labels" class="mr10" color="blue">{{
+              <a-tag v-for="item in state.labels" class="tag-item mr10" color="blue">{{
                 item.labelName
               }}</a-tag>
             </span>
@@ -361,5 +361,12 @@ const { share } = useShare();
 .link-btn {
   height: auto;
   padding: 0;
+}
+
+.tag-item {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

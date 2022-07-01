@@ -10,6 +10,7 @@ import router from '@/router/index';
 import permission from '@/router/permission';
 import { setupStore } from './store';
 import './global.less';
+// import 'ant-design-vue/dist/antd.css';
 
 import { CanvasRenderer } from 'echarts/renderers';
 

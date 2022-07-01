@@ -28,7 +28,7 @@ export default function useShare() {
         ),
       ]),
       onOk() {
-        copyText(`http://47.98.251.91:8080/knowledge/#/myKnowledge/articleDetail?id=${id}`)
+        copyText(`${window.location.protocol}${window.location.host}/${window.location.pathname}#/myKnowledge/article-detail?id=${id}`)
           .then(() => {
             message.success('文章链接也复制到您的剪切板!');
           })

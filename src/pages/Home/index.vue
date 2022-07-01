@@ -48,7 +48,6 @@
                 :format="dateFormat"
                 :value-format="dateFormat"
                 allow-clear
-                valueFormat="YYYY-MM-DD"
               />
             </a-form-item>
           </a-col>
@@ -137,6 +136,7 @@ const columns = computed(() => {
       dataIndex: 'knowledgeTypeName',
       key: 'knowledgeTypeName',
       align: 'center',
+      width: 80,
       customRender: ({ text }: { text: string }) => {
         if (text) {
           return text.split(', ').join('-');

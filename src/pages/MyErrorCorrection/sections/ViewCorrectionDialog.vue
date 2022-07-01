@@ -22,7 +22,8 @@
         <div>补充图片:</div>
       </a-col>
       <a-col :span="19">
-        <img v-for="item in state.picture.split(',')" :src="item" class="pic" />
+        <img-upload disabled type="1" :modelValue="picMockObj" :max-length="picMockObj.length" />
+        <!-- <img v-for="item in state.picture.split(',')" :src="item" class="pic" /> -->
       </a-col>
     </a-row>
     <a-row class="mb15">
@@ -35,7 +36,9 @@
             <div class="file">{{ item }}</div>
           </a-col>
           <a-col :span="2">
-            <a-button class="link-btn" type="link" @click="handleUploadFile(index)">下载</a-button>
+            <a-button v-if="!!item" class="link-btn" type="link" @click="handleUploadFile(index)"
+              >下载</a-button
+            >
           </a-col>
         </a-row>
       </a-col>
@@ -52,12 +55,17 @@
       </a-col>
       <a-col :span="19">{{ state.createTime }} </a-col>
     </a-row>
+    <template #footer>
+      <a-button key="back" @click="onModalClose">关闭</a-button>
+    </template>
   </a-modal>
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onMounted, toRefs } from 'vue';
 import { download } from '@/utils/downloadFile';
 import { getErrorCorrectionDetail } from '@/services/myKnowledge/errorCorrection';
+import { mockImgUrl } from '@/utils/utils';
+import ImgUpload from '@/components/ImgUpload/index.vue';
 
 interface Props {
   id: string;
@@ -79,6 +87,17 @@ const state = reactive({
   userId: '',
 });
 
+const picMockObj = ref<
+  {
+    uid: string;
+    name: string;
+    status: string;
+    thumbUrl: string;
+    type: string;
+    response: string;
+  }[]
+>([]);
+
 const { id } = toRefs(props);
 
 const fetchDetail = async () => {
@@ -89,6 +108,10 @@ const fetchDetail = async () => {
     const arr = item.split('/');
     return arr[arr.length - 1];
   });
+  if (res.picture) {
+    const picList = state.picture.split(',');
+    picMockObj.value = mockImgUrl(picList);
+  }
 };
 
 onMounted(() => {

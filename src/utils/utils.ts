@@ -115,15 +115,15 @@ export const getImgOgriginUrl = (fileList: any[]) => {
 export const mockImgUrl = (fileList: string[] | string) => {
   if (!fileList.length) return [];
   if (typeof fileList === 'string') {
+    const fileNameArr = fileList.split('/');
     return [
       {
         uid: '-1',
         status: 'done',
         thumbUrl: fileList,
         type: 'image/png',
-        response: {
-          url: fileList,
-        },
+        name: fileNameArr[fileNameArr.length - 1],
+        response: fileList,
       },
     ];
   }
@@ -131,7 +131,7 @@ export const mockImgUrl = (fileList: string[] | string) => {
     return fileList.map((item: string, index) => {
       const fileNameArr = item.split('/');
       return {
-        uid: -(index + 1),
+        uid: (-(index + 1)).toString(),
         status: 'done',
         thumbUrl: item,
         type: 'image/png',
@@ -150,63 +150,6 @@ export const getUserInfo = () => {
     operator: Cookies.get('nickname'),
   };
   return info;
-};
-
-// 格式化枚举
-export const formatEnum = (data: Record<string, any> | Record<string, any>[]) => {
-  if (!data) return;
-  type OptionType = {
-    label: string;
-    value: string;
-    children?: OptionType[];
-  };
-
-  function assignFn(data: Record<string, any>, originField: string, options: OptionType[]) {
-    const originValue = data[originField as keyof typeof data];
-    if (options && originValue) {
-      if (Array.isArray(originValue)) {
-        let str = '';
-        function recursion(data: OptionType[], topIndex: number) {
-          for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            const { value, label, children } = item;
-            if (value === originValue[topIndex]) {
-              str += label + (children ? '/' : '');
-              if (children && children.length) {
-                topIndex++;
-                recursion(children, topIndex);
-              }
-              break;
-            }
-          }
-        }
-        recursion(options, 0);
-        data[(originField + '_origin') as keyof typeof data] = data[originField];
-        data[originField as keyof typeof data] = str;
-      }
-      if (typeof originValue === 'string') {
-        options.forEach(({ label, value }: OptionType) => {
-          if (originValue === value) {
-            data[(originField + '_origin') as keyof typeof data] = data[originField];
-            data[originField as keyof typeof data] = label;
-          }
-        });
-      }
-    }
-  }
-
-  for (const key in C) {
-    const options = C[key as keyof typeof C];
-    const originField = key.toLowerCase().substring(0, key.length - 8);
-    if (Array.isArray(data)) {
-      data.forEach((item: Record<string, any>) => {
-        assignFn(item, originField, options);
-      });
-    } else {
-      assignFn(data, originField, options);
-    }
-  }
-  return data;
 };
 
 /**

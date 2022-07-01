@@ -178,7 +178,7 @@ const genParams = ({
     accessory: item.response || '',
     knowledgeName: item.name,
     knowledgeType: category,
-    knowledgeFlag: '0',
+    knowledgeFlag: '1',
     labels: label.join(','),
   }));
 };
