@@ -120,13 +120,15 @@ const columns = computed(() => {
       dataIndex: 'knowledgeName',
       key: 'knowledgeName',
       align: 'center',
-      width: 300,
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '类型',
       dataIndex: 'knowledgeFlag',
       key: 'knowledgeFlag',
       align: 'center',
+      width: 80,
       customRender: ({ text }: { text: number }) => {
         return knowledgeFlag[text as keyof typeof knowledgeFlag];
       },
@@ -155,7 +157,6 @@ const columns = computed(() => {
       dataIndex: 'deadline',
       key: 'deadline',
       align: 'center',
-      width: 200,
     },
     {
       title: '创建人',
@@ -168,7 +169,6 @@ const columns = computed(() => {
       dataIndex: 'createTime',
       key: 'createTime',
       align: 'center',
-      width: 200,
     },
   ];
 });

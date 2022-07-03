@@ -11,6 +11,7 @@ import permission from '@/router/permission';
 import { setupStore } from './store';
 import './global.less';
 // import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/es/message/style/css';
 
 import { CanvasRenderer } from 'echarts/renderers';
 

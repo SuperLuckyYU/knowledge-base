@@ -35,8 +35,8 @@ let plugins = [
 
 export default ({ mode }: ConfigEnv): UserConfig => {
   const isDev = mode === 'development';
-  // const publicPath = isDev ? '/' : `/knowledge/`;
-  const publicPath = isDev ? '/' : `/`;
+  const publicPath = isDev ? '/' : `/knowledge/`;
+  // const publicPath = isDev ? '/' : `/`;
   const distDir = path.join(__dirname, `../../../www/${publicPath}`);
 
   return {
@@ -51,8 +51,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: 'http://47.98.251.91:8662/',
-          // target: 'http://192.168.1.16:8662/',
+          // target: 'http://47.98.251.91:8662/',
+          target: 'http://192.168.1.16:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
@@ -73,8 +73,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     // build
     build: {
       emptyOutDir: true,
-      // outDir: 'knowledge',
-      outDir: 'dist',
+      outDir: 'knowledge',
+      // outDir: 'dist',
       sourcemap: false,
       brotliSize: false,
       chunkSizeWarningLimit: 2000,

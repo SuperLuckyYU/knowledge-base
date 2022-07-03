@@ -125,6 +125,7 @@ const columns = computed(() => {
       dataIndex: 'knowledgeFlag',
       key: 'knowledgeFlag',
       align: 'center',
+      width: 80,
       customRender: ({ text }: { text: number }) => {
         return knowledgeFlag[text as keyof typeof knowledgeFlag];
       },
@@ -134,6 +135,8 @@ const columns = computed(() => {
       dataIndex: 'knowledgeName',
       key: 'knowledgeName',
       align: 'center',
+      width: 300,
+      ellipsis: true,
     },
     {
       title: '分类',

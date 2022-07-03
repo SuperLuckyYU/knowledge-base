@@ -22,7 +22,7 @@ const fetchMapData = async () => {
 const addInfoWindow = (marker: any, poi: any) => {
   //pop弹窗标题
   const title = `<div style="font-weight:bold;color:#CE5521;font-size:14px">
-    <a href="${window.location.protocol}${window.location.host}/${window.location.pathname}#/myKnowledge/article-detail?id=${poi.id}">${poi.knowledgeName}</a>
+    <a href="#/myKnowledge/article-detail?id=${poi.id}">${poi.knowledgeName}</a>
   </div>`;
   //pop弹窗信息
   const html = [
