@@ -4,10 +4,10 @@
       <a-form ref="searchFormRef" layout="inline" :model="formState">
         <a-row :gutter="[24, 16]">
           <a-col>
-            <a-form-item label="姓名" name="roleName">
+            <a-form-item label="角色名称" name="roleName">
               <a-input
                 v-model:value.trim="formState.roleName"
-                placeholder="请输入姓名"
+                placeholder="请输入角色名称"
                 autocomplete="off"
                 allow-clear
               />
