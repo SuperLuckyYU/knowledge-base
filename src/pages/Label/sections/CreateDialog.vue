@@ -71,7 +71,10 @@ const fetchRequest = async (params: CreateLabelProps | UpdateLabelProps) => {
   if (type.value === 'create') {
     return await createLabel(params);
   }
-  return await updateLabel(params as UpdateLabelProps);
+  return await updateLabel({
+    ...params,
+    id: info.value.id,
+  });
 };
 
 const handleSubmit = async () => {
