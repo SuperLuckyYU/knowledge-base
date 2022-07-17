@@ -30,7 +30,7 @@
       </a-form>
     </a-card>
     <a-card class="table-box mt20">
-      <a-row class="action-btn-box">
+      <a-row class="action-btn-box" v-if="hasOperateAuth">
         <a-button class="mr15" type="primary" @click="handleOperateKnowledge({ id: '' }, 'create')"
           >新建知识</a-button
         >
@@ -106,7 +106,8 @@ export default {
 <script lang="ts" setup>
 import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from '@/store/moudles/user';
 import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
 import { getMyKnowledgeList, delKnowledge } from '@/services/myKnowledge/knowledge';
@@ -116,10 +117,17 @@ import BulkUploadDocumentsDialog from './sections/BulkUploadDocumentsDialog.vue'
 import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 
 const router = useRouter();
+const route = useRoute();
+
+const userStore = useUserStore();
+const currentRouteKey = route.meta.key;
+const hasOperateAuth = computed(
+  () => userStore.menuOperateAuthMap[currentRouteKey as keyof typeof userStore.menuOperateAuthMap],
+);
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {};
-  return [
+  const arr = [
     {
       title: '类型',
       dataIndex: 'knowledgeFlag',
@@ -168,6 +176,10 @@ const columns = computed(() => {
       align: 'center',
     },
   ];
+  if (!hasOperateAuth.value) {
+    arr.pop();
+  }
+  return arr;
 });
 
 const formState: UnwrapRef<FormStateType> = reactive({

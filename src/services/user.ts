@@ -1,24 +1,34 @@
-// import requestUmi from '@/utils/requestUmi';
+import type { MenuReturnProps } from './systemSetter/role';
 import { get } from '@/utils/request';
 
-type User = {
-  userid: string;
-  name: string;
-  email: string;
-  avatar: string;
-};
-
-type UserResponse = {
-  status: 'success' | 'failed';
-  user: User;
-};
-
-export async function fetchCurrentUser() {
-  return get<UserResponse>('http://pandora.yidian-inc.com/api/user/getuser');
-
+export interface UserType {
+  account: string;
+  articleNum: string;
+  createTime: string;
+  creator: string;
+  deptId: string;
+  deptName: string;
+  depts: string;
+  higherUp: string;
+  id: string;
+  idCard: string;
+  moblie: string;
+  officeTelephone: string;
+  opUser: string;
+  pUserId: string;
+  photo: string;
+  position: string;
+  puserId: string;
+  roleName: string;
+  sex: 1 | 2;
+  updateTime: string;
+  userName: string;
 }
 
-export async function fetchUserAuth() {
-  return get<string[]>('http://pandora.yidian-inc.com/tools/auth/index?tool=3389842355');
+export async function fetchCurrentUser(data: { token: string }) {
+  return get<UserType>('/user/parse/token', data);
 }
 
+export async function fetchMenuAuth() {
+  return get<MenuReturnProps>('/menu/query/user');
+}

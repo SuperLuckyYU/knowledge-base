@@ -22,6 +22,7 @@
           checkable
           :tree-data="menuData"
           :fieldNames="{ children: 'children', title: 'menuName', key: 'id' }"
+          @check="handleCheckTree"
         >
         </a-tree>
       </a-form-item>
@@ -45,6 +46,11 @@ interface FormState {
   desc?: string;
 }
 
+interface MenuCheckedIdsType {
+  checked: string[];
+  halfChecked: string[];
+}
+
 const props = defineProps<Props>();
 const { type, info } = toRefs(props);
 const emit = defineEmits(['success', 'cancel']);
@@ -66,6 +72,7 @@ const modelRef = reactive<FormState>({
 });
 
 const menuCheckedIds = ref<string[]>([]);
+const halfCheckedKeys = ref<string[]>([]);
 
 const rulesRef = reactive({
   name: [
@@ -105,15 +112,36 @@ const fetchMeunData = async () => {
 fetchMeunData();
 
 const fetchDetial = async () => {
-  const { roleName, roleDesc, menuIds } = await getRoleDetail({ id: info?.value?.id ?? '' });
+  const { roleName, roleDesc, menus } = await getRoleDetail({ id: info?.value?.id ?? '' });
   modelRef.desc = roleDesc;
   modelRef.name = roleName;
-  menuCheckedIds.value = menuIds ?? [];
+  menuCheckedIds.value = menus
+    ? menus
+        .filter(({ status }) => {
+          return status === '0';
+        })
+        .map((item) => {
+          return item.menuId;
+        })
+    : [];
+  halfCheckedKeys.value = menus
+    ? menus
+        .filter(({ status }) => {
+          return status === '1';
+        })
+        .map((item) => {
+          return item.menuId;
+        })
+    : [];
 };
 
 if (type.value === 'update') {
   fetchDetial();
 }
+
+const handleCheckTree = (checkedKeys: string[], e: any) => {
+  halfCheckedKeys.value = e.halfCheckedKeys;
+};
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
 
@@ -124,14 +152,24 @@ const sendRequest = async (params: FormState) => {
     if (menuDataObj[item] !== '可编辑' && menuDataObj[item] !== '仅查看')
       menuNames.push(menuDataObj[item]);
   });
-  const menuIds = menuCheckedIds.value.map((item: string) => {
-    return item;
+  let menuDTOS = menuCheckedIds.value.map((item: string) => {
+    return {
+      menuId: item,
+    };
   });
+
+  menuDTOS = [
+    ...menuDTOS,
+    ...halfCheckedKeys.value.map((item) => ({
+      menuId: item,
+      status: 1,
+    })),
+  ];
 
   const commonProps = {
     roleName: name,
     roleDesc: desc,
-    menuIds: menuIds.join(','),
+    menuDTOS,
     roleModules: menuNames.join(','),
   };
 

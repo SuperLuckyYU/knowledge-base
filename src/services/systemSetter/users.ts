@@ -14,6 +14,7 @@ export interface UserItemType {
   updateTime: string;
   userName: string;
   roleName: string;
+  puserId: string;
 }
 
 interface UserListProps {

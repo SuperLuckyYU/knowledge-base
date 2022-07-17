@@ -72,7 +72,7 @@
       >
         <a-date-picker v-model:value="modelRef.expiration_date" valueFormat="YYYY-MM-DD" />
       </a-form-item>
-      <a-form-item label="所属项目" v-bind="validateInfos.project">
+      <!-- <a-form-item label="所属项目" v-bind="validateInfos.project">
         <a-select
           v-model:value="modelRef.project"
           :filter-option="false"
@@ -82,7 +82,7 @@
           @search="fetchProject"
         >
         </a-select>
-      </a-form-item>
+      </a-form-item> -->
       <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
         <a-row>
           <a-col :span="20" class="mr15">
@@ -161,13 +161,14 @@ import LocationDialog from '../sections/LocationDialog.vue';
 import SelectKnowledgeDialog from '../sections/SelectKnowledgeDialog.vue';
 import SelectKnowledgeTable from '../sections/SelectKnowledgeTable.vue';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
-import { getProjectList } from '@/services/systemSetter/project';
+// import { getProjectList } from '@/services/systemSetter/project';
 import {
   createMyKnowledge,
   getKnowledgeDetail,
   updateMyKnowledge,
 } from '@/services/myKnowledge/knowledge';
 import { removeNullItem, mockImgUrl } from '@/utils/utils';
+import { useUserStore } from '@/store/moudles/user';
 
 type PageType = 'update' | 'create';
 
@@ -175,6 +176,8 @@ const route = useRoute();
 const router = useRouter();
 
 const { type = 'create', id = '' } = route.query;
+
+const userStore = useUserStore();
 
 enum pageType {
   update = '编辑',
@@ -190,7 +193,7 @@ const fileType = {
 const safeLevelOptions = [
   { label: '水务局内部公开', value: '0' },
   { label: '同科室公开', value: '1' },
-  { label: '项目组公开', value: '2' },
+  // { label: '项目组公开', value: '2' },
   { label: '私有', value: '3' },
 ];
 
@@ -212,7 +215,7 @@ const fetchDetail = async () => {
     securityLevel,
     expirationType,
     endTime,
-    itemId,
+    // itemId,
     longitude,
     latitude,
     relateds,
@@ -232,7 +235,7 @@ const fetchDetail = async () => {
   modelRef.safe_level = securityLevel ?? '0';
   modelRef.expiration_type = expirationType ?? '0';
   modelRef.expiration_date = endTime;
-  modelRef.project = itemId;
+  // modelRef.project = itemId;
   modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
   modelRef.file = mockImgUrl(accessory.split(','));
   LinkKnowledgeState.knowledgeList = relateds;
@@ -291,23 +294,23 @@ const handleRemoveKnowledge = (row: KnowledgeItemType) => {
   );
 };
 
-const projectOptions = ref<{ label: string; value: string }[]>([]);
+// const projectOptions = ref<{ label: string; value: string }[]>([]);
 
-const fetchProjectList = async (name?: string) => {
-  const data: Record<string, any> = {};
-  if (name) data['itemName'] = name;
-  const { records } = await getProjectList(data);
-  projectOptions.value = records.map(({ itemName, id }) => ({
-    label: itemName,
-    value: id,
-  }));
-};
+// const fetchProjectList = async (name?: string) => {
+//   const data: Record<string, any> = {};
+//   if (name) data['itemName'] = name;
+//   const { records } = await getProjectList(data);
+//   projectOptions.value = records.map(({ itemName, id }) => ({
+//     label: itemName,
+//     value: id,
+//   }));
+// };
 
-const fetchProject = debounce((name: string) => {
-  fetchProjectList(name);
-}, 300);
+// const fetchProject = debounce((name: string) => {
+//   fetchProjectList(name);
+// }, 300);
 
-fetchProjectList();
+// fetchProjectList();
 
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
 
@@ -324,7 +327,7 @@ const genParmas = (formState: Record<string, any>) => {
     label,
     location,
     pages_num,
-    project,
+    // project,
     safe_level,
     storage_location,
     type,
@@ -354,11 +357,14 @@ const genParmas = (formState: Record<string, any>) => {
     labels,
     securityLevel: safe_level,
     endTime: expiration_date,
-    itemId: project,
+    // itemId: project,
+    itemId: '',
     longitude: locationArr.length && locationArr[0],
     latitude: locationArr.length && locationArr[1],
     expirationType: expiration_type,
     relateds,
+    userId: userStore.userInfo.id,
+    parentUserId: userStore.userInfo.pUserId,
   };
   return removeNullItem(parmas);
 };

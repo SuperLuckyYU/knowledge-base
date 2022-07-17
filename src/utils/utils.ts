@@ -143,15 +143,6 @@ export const mockImgUrl = (fileList: string[] | string) => {
   return [];
 };
 
-// 获取用户信息
-export const getUserInfo = () => {
-  let info = {
-    user_id: Cookies.get('userid'),
-    operator: Cookies.get('nickname'),
-  };
-  return info;
-};
-
 /**
  * 获取首页的route
  */

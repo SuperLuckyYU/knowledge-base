@@ -1,8 +1,8 @@
 import { message } from 'ant-design-vue';
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import Cookies from 'js-cookie';
 import { isArray } from 'lodash-es';
+import { useUserStore } from '@/store/moudles/user';
 import qs from 'qs';
 
 interface IAxiosRequestConfig extends AxiosRequestConfig {
@@ -43,13 +43,13 @@ export const defaultConfig = {
  * @returns {{"app-code": string, "yd-login-token": any}}
  */
 export const getDefaultParams = (config: IAxiosRequestConfig) => {
-  const userName = Cookies.get('username') || '';
   if (config.useDefaultParms === false) {
     return {};
   }
+  const userStore = useUserStore();
   return {
-    userId: '23897438221123',
-    opUser: 'Admin',
+    userId: userStore.userInfo.pUserId,
+    opUser: userStore.userInfo.userName,
   };
 };
 

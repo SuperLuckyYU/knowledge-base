@@ -53,5 +53,5 @@ export interface listReturnProps {
 }
 
 export const getKnowledgeList = (data: ListProps) => {
-  return get<ListBaseReturnProps<listReturnProps>>('/base/query', data);
+  return get<ListBaseReturnProps<listReturnProps>>('/base/home', data);
 };

@@ -112,6 +112,7 @@ import {
 } from '@/services/myKnowledge/knowledge';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
 import { removeNullItem } from '@/utils/utils';
+import { useUserStore } from '@/store/moudles/user';
 import useCreateTopicFormState from '../composables/useCreateTopicFormState';
 import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
 import LocationDialog from '../sections/LocationDialog.vue';
@@ -123,6 +124,8 @@ type PageType = 'update' | 'create';
 const route = useRoute();
 const router = useRouter();
 
+const userStore = useUserStore();
+
 const { type = 'create', id = '' } = route.query;
 
 enum pageType {
@@ -133,7 +136,7 @@ enum pageType {
 const safeLevelOptions = [
   { label: '水务局内部公开', value: '0' },
   { label: '同科室公开', value: '1' },
-  { label: '项目组公开', value: '2' },
+  // { label: '项目组公开', value: '2' },
   { label: '私有', value: '3' },
 ];
 
@@ -233,6 +236,8 @@ const genParams = (formState: CreateTopicFormState) => {
     longitude: locationArr.length && locationArr[0],
     latitude: locationArr.length && locationArr[1],
     relateds,
+    userId: userStore.userInfo.id,
+    parentUserId: userStore.userInfo.pUserId,
   };
   return removeNullItem(parmas);
 };

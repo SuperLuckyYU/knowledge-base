@@ -15,22 +15,22 @@ function resovePath(paths: string) {
 
 let plugins = [
   vue(),
-  unElementPlus({
-    useSource: true,
-  }),
-  Components({
-    dirs: ['src/components'],
-    resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
-  }),
-  chunkSplitPlugin({
-    strategy: 'default',
-    customSplitting: {
-      'chart-vendor': ['echarts', 'echarts-wordcloud', 'vue-echarts'],
-      wangeditor: ['@wangeditor/editor', '@wangeditor/editor-for-vue'],
-      utils: [/src\/utils/, 'axios'],
-    },
-  }),
-  visualizer(),
+  // unElementPlus({
+  //   useSource: true,
+  // }),
+  // Components({
+  //   dirs: ['src/components'],
+  //   resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
+  // }),
+  // chunkSplitPlugin({
+  //   strategy: 'default',
+  //   customSplitting: {
+  //     'chart-vendor': ['echarts', 'echarts-wordcloud', 'vue-echarts'],
+  //     wangeditor: ['@wangeditor/editor', '@wangeditor/editor-for-vue'],
+  //     utils: [/src\/utils/, 'axios', 'js-cookie'],
+  //   },
+  // }),
+  // visualizer(),
 ];
 
 export default ({ mode }: ConfigEnv): UserConfig => {
@@ -51,8 +51,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          // target: 'http://47.98.251.91:8662/',
-          target: 'http://192.168.1.16:8662/',
+          target: 'http://47.98.251.91:8662/',
+          // target: 'http://192.168.1.15:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

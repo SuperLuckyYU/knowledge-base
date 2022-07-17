@@ -78,7 +78,8 @@ export default {
 <script lang="ts" setup>
 import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from '@/store/moudles/user';
 import useSearchTableList from '@/composables/useSearchTableList';
 import {
   getMyErrorCorrectionList,
@@ -90,10 +91,17 @@ import ViewCorrectionDialog from './sections/ViewCorrectionDialog.vue';
 import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 
 const router = useRouter();
+const route = useRoute();
+
+const userStore = useUserStore();
+const currentRouteKey = route.meta.key;
+const hasOperateAuth = computed(
+  () => userStore.menuOperateAuthMap[currentRouteKey as keyof typeof userStore.menuOperateAuthMap],
+);
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {};
-  return [
+  const arr = [
     {
       title: '类型',
       dataIndex: 'knowledgeFlag',
@@ -133,6 +141,8 @@ const columns = computed(() => {
       align: 'center',
     },
   ];
+  if (!hasOperateAuth.value) arr.pop();
+  return arr;
 });
 
 const formState: UnwrapRef<FormStateType> = reactive({

@@ -175,11 +175,11 @@ const columns = [
     key: 'roleName',
     align: 'center',
   },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    align: 'center',
-  },
+  // {
+  //   title: '操作',
+  //   dataIndex: 'operation',
+  //   align: 'center',
+  // },
 ];
 
 const selectedRowsRef = ref<UserItemType[]>([]);

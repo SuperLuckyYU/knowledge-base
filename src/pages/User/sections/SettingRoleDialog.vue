@@ -55,7 +55,7 @@ fetchRoleList();
 const handleSubmit = async () => {
   const userIds = info.value
     .map((item) => {
-      return item.id;
+      return item.puserId;
     })
     .join(',');
   const params = {

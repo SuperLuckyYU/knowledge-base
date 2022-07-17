@@ -45,6 +45,7 @@
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue';
 import { reactive, ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute, RouteRecordName } from 'vue-router';
+import { routes } from '@/router/index';
 import appConfig from '../config/app.config';
 import User from './User.vue';
 import Menus from './Menus.vue';
@@ -73,7 +74,6 @@ interface StateType {
   openKeys: string[];
   name: string;
   avatar: string;
-  emailAddr: string;
 }
 const STATE = reactive<StateType>({
   title: appConfig.appName,
@@ -81,9 +81,10 @@ const STATE = reactive<StateType>({
   openKeys: [],
   name: '',
   avatar: '',
-  emailAddr: '',
 });
-const routerList = router.options.routes;
+// const routerList = routes;
+// const routerList = router.options.routes;
+const routerList = userStore.menuList;
 const cacheList = computed(() => {
   // return getRouteList(routerList)
   //   .filter((item: { meta: { notCache: any } }) => !(item.meta && item.meta.notCache))
@@ -99,10 +100,9 @@ const handleSelectMenu = ({ key, selectedKeys }: SelectEventHandler) => {
 onMounted(async () => {
   STATE.selectedKeys = [route.name];
   STATE.openKeys = [route.path.split('/')[1]];
-  const { name, avatar, email } = userStore.userInfo;
-  STATE.name = name;
-  STATE.avatar = avatar;
-  STATE.emailAddr = email;
+  const { userName, photo } = userStore.userInfo;
+  STATE.name = userName;
+  STATE.avatar = photo;
 });
 </script>
 <style lang="less" scoped>

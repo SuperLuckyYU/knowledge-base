@@ -1,6 +1,6 @@
 <template>
   <!-- 如果存在子路由 -->
-  <template v-if="route?.children && route?.meta?.level !== '1'">
+  <template v-if="route?.children && route?.meta?.level !== '1' && !(route.meta?.isMenu === false)">
     <a-sub-menu :key="route.name" :title="route.meta?.title || '未命名'">
       <template #icon>
         <component :is="route.meta?.icon"></component>
@@ -14,7 +14,7 @@
     </a-sub-menu>
   </template>
   <template v-else>
-    <a-menu-item :key="key">
+    <a-menu-item :key="key" v-if="!(route?.meta?.isMenu === false)">
       <template #icon>
         <component :is="route?.meta?.icon"></component>
       </template>

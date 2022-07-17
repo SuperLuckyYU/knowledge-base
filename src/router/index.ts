@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import BasicLayout from '@/layout/BasicLayout.vue';
+import FullScreen from '@/layout/FullScreen.vue';
+import NotLogin from '@/pages/Auth/notLogin.vue';
 import Home from '@/pages/Home/index.vue';
 import KnowledgeList from '@/pages/Knowledge/list.vue';
 import KnowledgeCreate from '@/pages/Knowledge/create/index.vue';
@@ -17,15 +19,15 @@ import KnowledgeMap from '@/pages/KnowledgeMap/index.vue';
 import Statistical from '@/pages/Statistical/index.vue';
 
 //静态路由页面
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: BasicLayout,
-    meta: { title: '知识首页', icon: 'HomeOutlined', level: '1', key: 'home' },
+    meta: { title: '知识首页', icon: 'HomeOutlined', level: '1', key: 'Home' },
     children: [
       {
         path: '',
-        name: 'home',
+        name: 'Home',
         component: Home,
       },
     ],
@@ -33,11 +35,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/knowledgeMap',
     component: BasicLayout,
-    meta: { title: '知识地图', icon: 'DashboardOutlined', level: '1', key: 'knowledgeMap' },
+    meta: { title: '知识地图', icon: 'DashboardOutlined', level: '1', key: 'KnowledgeMap' },
     children: [
       {
         path: '',
-        name: 'knowledgeMap',
+        name: 'KnowledgeMap',
         component: KnowledgeMap,
       },
     ],
@@ -54,6 +56,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '我的知识',
           keepAlive: true,
+          key: 'KnowledgeList',
         },
         component: KnowledgeList,
       },
@@ -89,6 +92,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '我的收藏',
           keepAlive: true,
+          key: 'CollectionList',
         },
         component: CollectionList,
       },
@@ -98,6 +102,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '我的纠错',
           keepAlive: true,
+          key: 'CorrectionList',
         },
         component: CorrectionList,
       },
@@ -107,6 +112,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '知识审核',
           keepAlive: true,
+          key: 'AuditList',
         },
         component: AuditList,
       },
@@ -119,7 +125,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        name: 'statistical',
+        name: 'Statistical',
         component: Statistical,
       },
     ],
@@ -136,6 +142,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '用户管理',
           keepAlive: true,
+          key: 'UserList',
         },
         component: UserList,
       },
@@ -145,24 +152,26 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '角色与权限',
           keepAlive: true,
+          key: 'RoleList',
         },
         component: RoleList,
       },
-      {
-        path: 'product',
-        name: 'ProductList',
-        meta: {
-          title: '项目列表',
-          keepAlive: true,
-        },
-        component: ProductList,
-      },
+      // {
+      //   path: 'product',
+      //   name: 'ProductList',
+      //   meta: {
+      //     title: '项目列表',
+      //     keepAlive: true,
+      //   },
+      //   component: ProductList,
+      // },
       {
         path: 'label',
         name: 'LabelList',
         meta: {
           title: '知识标签管理',
           keepAlive: true,
+          key: 'LabelList',
         },
         component: LabelList,
       },
@@ -172,6 +181,7 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           title: '数据字典',
           keepAlive: false,
+          key: 'Dictionary',
         },
         component: Dictionary,
       },
@@ -179,9 +189,26 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
+export const otherRoutes: Array<RouteRecordRaw> = [
+  {
+    path: '/not-login',
+    meta: {
+      isMenu: false,
+    },
+    component: FullScreen,
+    children: [
+      {
+        path: '',
+        component: NotLogin,
+      },
+    ],
+  },
+];
+
 const router = createRouter({
   history: createWebHashHistory(), // createWebHistory
-  routes,
+  routes: [...routes, ...otherRoutes],
+  // routes: [],
 });
 
 export default router;

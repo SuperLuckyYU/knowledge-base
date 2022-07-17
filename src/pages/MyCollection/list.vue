@@ -77,7 +77,8 @@ export default {
 <script lang="ts" setup>
 import { reactive, computed, UnwrapRef } from 'vue';
 import { message } from 'ant-design-vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from '@/store/moudles/user';
 import { getMyCollectionList, cancelCollecteKnowledge } from '@/services/myKnowledge/collection';
 import { FormStateType } from '@/types/myKnowledge/knowledge';
 import { knowledgeFlag } from '@/constants/index';
@@ -86,10 +87,17 @@ import useShare from '@/composables/useShare';
 import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 
 const router = useRouter();
+const route = useRoute();
+
+const userStore = useUserStore();
+const currentRouteKey = route.meta.key;
+const hasOperateAuth = computed(
+  () => userStore.menuOperateAuthMap[currentRouteKey as keyof typeof userStore.menuOperateAuthMap],
+);
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {};
-  return [
+  const arr = [
     {
       title: '类型',
       dataIndex: 'knowledgeFlag',
@@ -135,6 +143,8 @@ const columns = computed(() => {
       align: 'center',
     },
   ];
+  if (!hasOperateAuth.value) arr.pop();
+  return arr;
 });
 
 const formState: UnwrapRef<FormStateType> = reactive({

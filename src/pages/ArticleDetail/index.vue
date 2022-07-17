@@ -110,8 +110,8 @@
       <a-col :span="8">
         <div class="user-info">
           <a-avatar :src="STATE.DEFAULT_AVATAR"></a-avatar>
-          <div class="user-name">{{ state.archiveUserName }}</div>
-          <div class="role">审核人员</div>
+          <div class="user-name">{{ state.creator }}</div>
+          <!-- <div class="role">审核人员</div> -->
         </div>
         <el-divider />
         <div class="base-info mb24">

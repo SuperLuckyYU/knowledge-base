@@ -7,7 +7,7 @@ export interface RoleItemType {
   roleModules: string;
   roleName: string;
   updateTime: string;
-  menuIds?: string[];
+  menus?: { menuId: string; status: string }[];
 }
 
 export interface RoleListProps {
@@ -41,7 +41,10 @@ export const getRoleList = <RoleListProps, RoleListReturnProps>(data: RoleListPr
 export type CommonOpreateReturnType = boolean;
 
 export interface CreateProps {
-  menuIds: string;
+  menuDTOS: {
+    menuId: string;
+    status?: 0 | 1;
+  }[];
   roleModules: string;
   roleName: string;
   roleDesc?: string;
