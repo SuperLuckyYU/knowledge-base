@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue';
 import unElementPlus from 'unplugin-element-plus/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver, AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
-import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 
@@ -15,22 +14,14 @@ function resovePath(paths: string) {
 
 let plugins = [
   vue(),
-  // unElementPlus({
-  //   useSource: true,
-  // }),
-  // Components({
-  //   dirs: ['src/components'],
-  //   resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
-  // }),
-  // chunkSplitPlugin({
-  //   strategy: 'default',
-  //   customSplitting: {
-  //     'chart-vendor': ['echarts', 'echarts-wordcloud', 'vue-echarts'],
-  //     wangeditor: ['@wangeditor/editor', '@wangeditor/editor-for-vue'],
-  //     utils: [/src\/utils/, 'axios', 'js-cookie'],
-  //   },
-  // }),
-  // visualizer(),
+  unElementPlus({
+    useSource: true,
+  }),
+  Components({
+    // dirs: ['src/components'],
+    resolvers: [ElementPlusResolver(), AntDesignVueResolver()],
+  }),
+  visualizer(),
 ];
 
 export default ({ mode }: ConfigEnv): UserConfig => {
@@ -77,7 +68,28 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       // outDir: 'dist',
       sourcemap: false,
       brotliSize: false,
-      chunkSizeWarningLimit: 2000,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          //静态资源分类打包
+          chunkFileNames: 'static/js/[name]-[hash].js',
+          entryFileNames: 'static/js/[name]-[hash].js',
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+          manualChunks(id) {
+            //静态资源分拆打包
+            if (id.includes('node_modules')) {
+              return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            }
+          },
+        },
+      },
     },
 
     resolve: {

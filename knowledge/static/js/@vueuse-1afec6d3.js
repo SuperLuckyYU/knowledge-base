@@ -1,0 +1,1 @@
+var o;const n=o=>"boolean"==typeof o,e=o=>"number"==typeof o;"undefined"!=typeof window&&(null==(o=null==window?void 0:window.navigator)?void 0:o.userAgent)&&/iP(ad|hone|od)/.test(window.navigator.userAgent);export{n as a,e as i};

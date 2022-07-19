@@ -1,6 +1,3 @@
-import Cookies from 'js-cookie';
-import * as C from '@/constants/index';
-
 /**
  * @param {Date|Number} 日期对象或时间戳
  * @param {String} 模板字符串
