@@ -121,7 +121,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/statistical',
     component: BasicLayout,
-    meta: { title: '统计报表', icon: 'BarChartOutlined', level: '1', key: 'statistical' },
+    meta: { title: '统计报表', icon: 'BarChartOutlined', level: '1', key: 'Statistical' },
     children: [
       {
         path: '',
