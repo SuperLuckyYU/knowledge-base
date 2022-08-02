@@ -26,7 +26,13 @@
     </a-card>
     <a-card>
       <a-row class="action-btn-box">
-        <a-button class="mr15" type="primary" @click="handleCreate('create')">新建</a-button>
+        <a-button
+          class="mr15"
+          style="background-color: #36bc62; border-color: #36bc62"
+          type="primary"
+          @click="handleCreate('create')"
+          >新建</a-button
+        >
         <a-popconfirm
           title="确认要删除所选标签吗？"
           ok-text="确定"

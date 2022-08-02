@@ -31,7 +31,11 @@
     </a-card>
     <a-card class="table-box mt20">
       <a-row class="action-btn-box" v-if="hasOperateAuth">
-        <a-button class="mr15" type="primary" @click="handleOperateKnowledge({ id: '' }, 'create')"
+        <a-button
+          class="mr15"
+          style="background-color: #36bc62; border-color: #36bc62"
+          type="primary"
+          @click="handleOperateKnowledge({ id: '' }, 'create')"
           >新建知识</a-button
         >
         <a-button class="mr15" @click="handleClickUpload">批量上传文档</a-button>

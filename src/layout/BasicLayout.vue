@@ -1,14 +1,21 @@
 <template>
   <a-layout class="layout-wrap">
-    <a-layout-sider
-      class="sider-container"
-      v-model:collapsed="collapsed"
-      :trigger="null"
-      collapsible
-    >
+    <a-layout-header class="header-container">
+      <!-- <menu-unfold-outlined
+          v-if="collapsed"
+          class="trigger"
+          @click="() => (collapsed = !collapsed)"
+        /> -->
+      <!-- <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" /> -->
       <router-link class="app-logo" to="/">
         <h1 class="title" v-if="!collapsed">{{ STATE.title }}</h1>
       </router-link>
+      <user :name="STATE.name" :avatar="STATE.avatar" />
+    </a-layout-header>
+    <a-layout-sider class="sider-container" v-model:collapsed="collapsed">
+      <!-- <router-link class="app-logo" to="/">
+        <h1 class="title" v-if="!collapsed">{{ STATE.title }}</h1>
+      </router-link> -->
       <a-menu
         :selectedKeys="STATE.selectedKeys"
         v-model:openKeys="STATE.openKeys"
@@ -22,7 +29,7 @@
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px' }">
-      <a-layout-header class="header-container">
+      <!-- <a-layout-header class="header-container">
         <menu-unfold-outlined
           v-if="collapsed"
           class="trigger"
@@ -30,7 +37,7 @@
         />
         <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
         <user :name="STATE.name" :avatar="STATE.avatar" />
-      </a-layout-header>
+      </a-layout-header> -->
       <a-layout-content id="content-container">
         <router-view v-slot="{ Component, route }" :key="route.fullPath">
           <keep-alive :include="cacheList">
@@ -106,17 +113,63 @@ onMounted(async () => {
 });
 </script>
 <style lang="less" scoped>
+@sibar-bg: #0d87e8;
+@menu-color: #2785da;
+
 .app-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #001529;
+  background-color: #fff;
   height: 64px;
+  .title {
+    color: #2785da;
+    font-size: 20px;
+  }
 }
 
 .logo {
   width: 30px;
   height: 30px;
+}
+
+.ant-layout-sider {
+  background: @sibar-bg;
+}
+
+.ant-menu.ant-menu-dark {
+  background: @sibar-bg;
+}
+
+.ant-menu {
+  padding-top: 20px;
+  padding: 20px 10px 0 10px;
+}
+
+:deep(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
+  background: @sibar-bg;
+}
+
+:deep(.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected) {
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+:deep(.ant-menu-dark .ant-menu-item-selected .ant-menu-item-icon + span, .ant-menu-dark
+    .ant-menu-item-selected
+    .anticon
+    + span) {
+  color: @menu-color;
+}
+
+:deep(.ant-menu-dark .ant-menu-item-selected .ant-menu-item-icon, .ant-menu-dark
+    .ant-menu-item-selected
+    .anticon) {
+  color: @menu-color;
+}
+
+:deep(.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected) {
+  color: @menu-color;
 }
 
 .title {

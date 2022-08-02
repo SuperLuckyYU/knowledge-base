@@ -25,12 +25,12 @@
 <script lang="ts">
 import { toRefs, defineComponent, PropType, computed } from 'vue';
 import {
-  SkinOutlined,
-  SettingOutlined,
-  BookOutlined,
-  HomeOutlined,
-  DashboardOutlined,
-  BarChartOutlined,
+  SkinFilled,
+  SettingFilled,
+  BookFilled,
+  HomeFilled,
+  DashboardFilled,
+  PieChartFilled,
 } from '@ant-design/icons-vue';
 import { RouteRecordRaw } from 'vue-router';
 
@@ -39,12 +39,12 @@ interface RouteMenusProps {
 }
 export default defineComponent({
   components: {
-    SkinOutlined,
-    SettingOutlined,
-    BookOutlined,
-    HomeOutlined,
-    DashboardOutlined,
-    BarChartOutlined,
+    SkinFilled,
+    SettingFilled,
+    BookFilled,
+    HomeFilled,
+    DashboardFilled,
+    PieChartFilled,
   },
   props: {
     route: {

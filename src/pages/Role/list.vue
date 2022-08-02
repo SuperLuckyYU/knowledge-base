@@ -26,7 +26,12 @@
     </a-card>
     <a-card>
       <a-row class="action-btn-box">
-        <a-button type="primary" @click="handleCreate('create')">新建</a-button>
+        <a-button
+          style="background-color: #36bc62; border-color: #36bc62"
+          type="primary"
+          @click="handleCreate('create')"
+          >新建</a-button
+        >
       </a-row>
       <a-table
         rowKey="id"

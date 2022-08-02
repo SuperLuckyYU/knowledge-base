@@ -17,7 +17,12 @@
     </a-card>
     <a-card class="table-box mt20">
       <a-row class="action-btn-box" v-if="formState.status === '1'">
-        <a-button type="primary" @click="append('create')">新建</a-button>
+        <a-button
+          style="background-color: #36bc62; border-color: #36bc62"
+          type="primary"
+          @click="append('create')"
+          >新建</a-button
+        >
       </a-row>
       <el-empty v-if="!dataSource.length" :image-size="200" description="暂无数据" />
       <el-tree

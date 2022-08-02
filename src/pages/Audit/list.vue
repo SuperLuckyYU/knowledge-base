@@ -119,6 +119,7 @@ const columns = computed(() => {
       dataIndex: 'knowledgeFlag',
       key: 'knowledgeFlag',
       align: 'center',
+      width: 80,
       customRender: ({ text }: { text: number }) => {
         return knowledgeFlag[text as keyof typeof knowledgeFlag];
       },
@@ -134,6 +135,7 @@ const columns = computed(() => {
       dataIndex: 'knowledgeTypeName',
       key: 'knowledgeTypeName',
       align: 'center',
+      width: 80,
       customRender: ({ text }: { text: string }) => {
         if (text) {
           return text.split(', ').join('-');
@@ -152,11 +154,13 @@ const columns = computed(() => {
       dataIndex: 'userName',
       key: 'userName',
       align: 'center',
+      width: 100,
     },
     {
       title: '操作',
       dataIndex: 'operation',
       align: 'center',
+      width: 200,
     },
   ];
 });

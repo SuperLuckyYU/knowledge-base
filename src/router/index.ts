@@ -23,7 +23,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: BasicLayout,
-    meta: { title: '知识首页', icon: 'HomeOutlined', level: '1', key: 'Home' },
+    meta: { title: '知识首页', icon: 'HomeFilled', level: '1', key: 'Home' },
     children: [
       {
         path: '',
@@ -35,7 +35,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/knowledgeMap',
     component: BasicLayout,
-    meta: { title: '知识地图', icon: 'DashboardOutlined', level: '1', key: 'KnowledgeMap' },
+    meta: { title: '知识地图', icon: 'DashboardFilled', level: '1', key: 'KnowledgeMap' },
     children: [
       {
         path: '',
@@ -48,7 +48,7 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/myKnowledge',
     name: 'myKnowledge',
     component: BasicLayout,
-    meta: { title: '我的知识', icon: 'BookOutlined' },
+    meta: { title: '我的知识', icon: 'BookFilled' },
     children: [
       {
         path: 'knowledge',
@@ -121,7 +121,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/statistical',
     component: BasicLayout,
-    meta: { title: '统计报表', icon: 'BarChartOutlined', level: '1', key: 'Statistical' },
+    meta: { title: '统计报表', icon: 'PieChartFilled', level: '1', key: 'Statistical' },
     children: [
       {
         path: '',
@@ -134,7 +134,7 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/systemSetter',
     name: 'systemSetter',
     component: BasicLayout,
-    meta: { title: '系统管理', icon: 'SettingOutlined' },
+    meta: { title: '系统管理', icon: 'SettingFilled' },
     children: [
       {
         path: 'user',
