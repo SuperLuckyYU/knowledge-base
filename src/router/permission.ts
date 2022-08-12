@@ -16,12 +16,11 @@ export default function createPermissionGuard() {
     if (!token && !to.query.token) {
       return next({ path: '/not-login' });
     }
-    if (!token && to.query.token) {
-      // token will expire in one day
+    if (to.query.token) {
       Cookies.set('token', to.query.token as string, { expires: 1 });
+    }
+    if (!useUserStore().userInfo.pUserId) {
       await useUserStore().getUserLogged();
-      await useUserStore().getMenuAuth();
-      return next();
     }
     await useUserStore().getMenuAuth();
     return next();

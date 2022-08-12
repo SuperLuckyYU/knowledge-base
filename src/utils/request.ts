@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { isArray } from 'lodash-es';
 import { useUserStore } from '@/store/moudles/user';
+import { removeNullItem } from './utils';
 import qs from 'qs';
 
 interface IAxiosRequestConfig extends AxiosRequestConfig {
@@ -47,10 +48,12 @@ export const getDefaultParams = (config: IAxiosRequestConfig) => {
     return {};
   }
   const userStore = useUserStore();
-  return {
+  const result ={
     userId: userStore.userInfo.pUserId,
     opUser: userStore.userInfo.userName,
   };
+  removeNullItem(result)
+  return result
 };
 
 /**

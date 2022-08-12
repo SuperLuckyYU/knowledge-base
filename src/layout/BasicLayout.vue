@@ -143,7 +143,7 @@ onMounted(async () => {
 
 .ant-menu {
   padding-top: 20px;
-  padding: 20px 10px 0 10px;
+  padding: 80px 10px 0 10px;
 }
 
 :deep(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
