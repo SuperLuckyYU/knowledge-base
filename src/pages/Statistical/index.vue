@@ -28,10 +28,10 @@
       <!-- <a-col :span="12">
         <v-chart class="chart" :option="typeCountTrendOption" />
       </a-col> -->
-      <a-col :span="12">
+      <!-- <a-col :span="12">
         <div class="title mb15">标签统计</div>
         <top-search />
-      </a-col>
+      </a-col> -->
     </a-row>
     <a-row class="mb24">
       <a-col :span="24">
@@ -80,11 +80,11 @@ export default {
 import type { ChartProps } from '@/services/common';
 import { onMounted, ref, reactive, watchEffect } from 'vue';
 import dayjs from 'dayjs';
-import TopSearch from '../KnowledgeMap/sections/topSearch.vue';
+// import TopSearch from '../KnowledgeMap/sections/topSearch.vue';
 import useKnowledgeCountStatistic from './composables/useKnowledgeCountStatistic';
 import useKnowledgeCountTrend from './composables/useKnowledgeCountTrend';
 import useKnowledgeTypeCountStatistic from './composables/useKnowledgeTypeCountStatistic';
-import useKnowledgeTypeCountTrend from './composables/useKnowledgeTypeCountTrend';
+// import useKnowledgeTypeCountTrend from './composables/useKnowledgeTypeCountTrend';
 import useHotRanking from './composables/useHotRanking';
 import useEmployeeContributionRanking from './composables/useEmployeeContributionRanking';
 import useDepartmentContribution from './composables/useDepartmentContribution';
@@ -99,7 +99,7 @@ const dateRange = ref<[string, string]>([startDate, endDate]);
 const { countStatisticalOption, fetchKnowledgeNumber } = useKnowledgeCountStatistic();
 const { countTrendOption, fetchDateRangeCount } = useKnowledgeCountTrend();
 const { typeCountStatisticalOption, fetchKnowledgeTypeNumber } = useKnowledgeTypeCountStatistic();
-const { typeCountTrendOption, fetchDateRangeTypeCount } = useKnowledgeTypeCountTrend();
+// const { typeCountTrendOption, fetchDateRangeTypeCount } = useKnowledgeTypeCountTrend();
 const { columns, topData, fetchTopData } = useHotRanking();
 const {
   employeeContributionRankingColumns,

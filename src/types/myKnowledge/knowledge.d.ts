@@ -1,6 +1,6 @@
 export interface FormStateType {
   knowledgeName: string;
-  labelId: string;
+  // labelId: string;
 }
 
 export interface KnowledgeItemType {
@@ -11,7 +11,7 @@ export interface KnowledgeItemType {
 export interface UploadDocumentFormState {
   fileList: any[];
   category: string;
-  label: string[];
+  // label: string[];
 }
 
 export interface CreateFormState {

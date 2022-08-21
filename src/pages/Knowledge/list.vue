@@ -14,9 +14,9 @@
             </a-form-item>
           </a-col>
           <a-col>
-            <a-form-item label="标签" name="labelId">
+            <!-- <a-form-item label="标签" name="labelId">
               <search-label-select v-model:value="formState.labelId" />
-            </a-form-item>
+            </a-form-item> -->
           </a-col>
           <a-col>
             <a-form-item>
@@ -188,7 +188,7 @@ const columns = computed(() => {
 
 const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeName: '',
-  labelId: '',
+  // labelId: '',
   sortType: 'createTime',
 });
 

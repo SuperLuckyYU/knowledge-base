@@ -30,13 +30,13 @@
           :maxlength="6"
         />
       </a-form-item>
-      <a-form-item label="设置标签" v-bind="validateInfos.labels">
+      <!-- <a-form-item label="设置标签" v-bind="validateInfos.labels">
         <knowledge-label v-model="modelRef.labels" />
-      </a-form-item>
+      </a-form-item> -->
       <a-form-item label="安全级别" v-bind="validateInfos.securityLevel">
         <a-radio-group v-model:value="modelRef.securityLevel" :options="safeLevelOptions" />
       </a-form-item>
-      <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
+      <!-- <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
         <a-row>
           <a-col :span="20" class="mr15">
             <a-input v-model:value="modelRef.location" />
@@ -50,7 +50,7 @@
             </a-button>
           </a-col>
         </a-row>
-      </a-form-item>
+      </a-form-item> -->
       <a-form-item label="关联知识" v-bind="validateInfos.knowledge">
         <div>
           <a-button class="mr15" type="primary" @click="LinkKnowledgeState.visible = true"
@@ -81,11 +81,11 @@
       </a-row>
     </a-form>
   </a-card>
-  <location-dialog
+  <!-- <location-dialog
     v-if="LocationDialogState.visible"
     v-model="modelRef.location"
     @cancel="handleCancelLocationDialog"
-  />
+  /> -->
   <select-knowledge-dialog
     v-if="LinkKnowledgeState.visible"
     :selected-rows="LinkKnowledgeState.knowledgeList"
@@ -114,8 +114,8 @@ import { getDictionaryList } from '@/services/systemSetter/dictionary';
 import { removeNullItem } from '@/utils/utils';
 import { useUserStore } from '@/store/moudles/user';
 import useCreateTopicFormState from '../composables/useCreateTopicFormState';
-import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
-import LocationDialog from '../sections/LocationDialog.vue';
+// import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
+// import LocationDialog from '../sections/LocationDialog.vue';
 import SelectKnowledgeDialog from '../sections/SelectKnowledgeDialog.vue';
 import SelectKnowledgeTable from '../sections/SelectKnowledgeTable.vue';
 
@@ -152,7 +152,7 @@ const fetchDetail = async () => {
     knowledgeName,
     knowledgeType,
     content,
-    labels,
+    // labels,
     securityLevel,
     longitude,
     latitude,
@@ -162,11 +162,11 @@ const fetchDetail = async () => {
   modelRef.knowledgeName = knowledgeName;
   modelRef.knowledgeType = knowledgeType;
   modelRef.content = content;
-  modelRef.labels = labels.map((item) => {
-    return item.id;
-  });
+  // modelRef.labels = labels.map((item) => {
+  //   return item.id;
+  // });
   modelRef.securityLevel = securityLevel ?? '0';
-  modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
+  // modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
   LinkKnowledgeState.knowledgeList = relateds;
   updateVerision.value = version;
 };
@@ -177,17 +177,17 @@ onMounted(async () => {
   }
 });
 
-const LocationDialogState = reactive({
-  visible: false,
-});
+// const LocationDialogState = reactive({
+//   visible: false,
+// });
 
-const handleChooseLocation = () => {
-  LocationDialogState.visible = true;
-};
+// const handleChooseLocation = () => {
+//   LocationDialogState.visible = true;
+// };
 
-const handleCancelLocationDialog = () => {
-  LocationDialogState.visible = false;
-};
+// const handleCancelLocationDialog = () => {
+//   LocationDialogState.visible = false;
+// };
 
 const LinkKnowledgeState = reactive<{ visible: boolean; knowledgeList: KnowledgeItemType[] }>({
   visible: false,
@@ -218,9 +218,9 @@ fetchCategoryData();
 const { resetFields, validate, validateInfos } = useForm(modelRef, rulesRef);
 
 const genParams = (formState: CreateTopicFormState) => {
-  const { knowledgeName, knowledgeType, content, labels, securityLevel, location } = formState;
-  const locationArr = location ? location.split(', ') : [];
-  const labelIds = toRaw(labels).join(',');
+  const { knowledgeName, knowledgeType, content, securityLevel } = formState;
+  // const locationArr = location ? location.split(', ') : [];
+  // const labelIds = toRaw(labels).join(',');
   const relateds = LinkKnowledgeState.knowledgeList
     .map((item: any) => {
       return item.id;
@@ -231,10 +231,10 @@ const genParams = (formState: CreateTopicFormState) => {
     knowledgeName,
     knowledgeType,
     content,
-    labels: labelIds,
+    // labels: labelIds,
     securityLevel,
-    longitude: locationArr.length && locationArr[0],
-    latitude: locationArr.length && locationArr[1],
+    // longitude: locationArr.length && locationArr[0],
+    // latitude: locationArr.length && locationArr[1],
     relateds,
     userId: userStore.userInfo.id,
     parentUserId: userStore.userInfo.pUserId,

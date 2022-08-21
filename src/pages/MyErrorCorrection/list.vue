@@ -13,11 +13,11 @@
               />
             </a-form-item>
           </a-col>
-          <a-col>
+          <!-- <a-col>
             <a-form-item label="标签" name="labelId">
               <search-label-select v-model:value="formState.labelId" />
             </a-form-item>
-          </a-col>
+          </a-col> -->
           <a-col>
             <a-form-item>
               <a-space :size="20">
@@ -147,7 +147,7 @@ const columns = computed(() => {
 
 const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeName: '',
-  labelId: '',
+  // labelId: '',
 });
 
 // 获取数据

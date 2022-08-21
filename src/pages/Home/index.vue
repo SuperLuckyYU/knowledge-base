@@ -23,11 +23,11 @@
               />
             </a-form-item>
           </a-col>
-          <a-col>
+          <!-- <a-col>
             <a-form-item label="标签" name="labelId">
               <search-label-select v-model:value="formState.labelId" />
             </a-form-item>
-          </a-col>
+          </a-col> -->
           <a-col>
             <a-form-item label="项目" name="itemId">
               <search-project-select v-model:value="formState.itemId" />
@@ -110,7 +110,7 @@ import useSearchTableList from '@/composables/useSearchTableList';
 import { getKnowledgeList } from '@/services/home';
 import { knowledgeFlag } from '@/constants/index';
 import TypeTree from './sections/TypeTree.vue';
-import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
+// import SearchLabelSelect from '@/components/SearchLabelSelect/index.vue';
 import SearchProjectSelect from '@/components/SearchProjectSelect/index.vue';
 
 const columns = computed(() => {
@@ -180,7 +180,7 @@ const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeType: '',
   knowledgeName: '',
   author: '',
-  labelId: '',
+  // labelId: '',
   itemId: '',
   dateRange: [],
   sortType: 'createTime',

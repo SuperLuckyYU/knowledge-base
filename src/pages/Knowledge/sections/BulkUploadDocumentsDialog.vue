@@ -42,9 +42,9 @@
         >
         </a-tree-select>
       </a-form-item>
-      <a-form-item label="设置标签" v-bind="validateInfos.label">
+      <!-- <a-form-item label="设置标签" v-bind="validateInfos.label">
         <knowledge-label v-model="modelRef.label" />
-      </a-form-item>
+      </a-form-item> -->
     </a-form>
   </a-modal>
 </template>
@@ -60,7 +60,7 @@ import { message, Form, Modal } from 'ant-design-vue';
 import { UploadImage } from '@/utils/uploadFile';
 import { createDocKnowledge } from '@/services/myKnowledge/knowledge';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
-import KnowledgeLabel from './KnowledgeLabel.vue';
+// import KnowledgeLabel from './KnowledgeLabel.vue';
 
 const emit = defineEmits(['success', 'cancel']);
 
@@ -78,7 +78,7 @@ const layout = reactive({
 const modelRef = reactive<UploadDocumentFormState>({
   fileList: [],
   category: '',
-  label: [],
+  // label: [],
 });
 
 const rulesRef = reactive({
@@ -94,11 +94,11 @@ const rulesRef = reactive({
       message: '请选择知识分类！',
     },
   ],
-  label: [
-    {
-      required: false,
-    },
-  ],
+  // label: [
+  //   {
+  //     required: false,
+  //   },
+  // ],
 });
 
 const categoryData = ref<DictionaryReturnProps>([]);
@@ -168,18 +168,18 @@ const handleRemoveCallBack = (file: UploadFile<any>) => {
 const genParams = ({
   fileList,
   category,
-  label,
-}: {
+}: // label,
+{
   fileList: UploadFile<string>[];
   category: string;
-  label: string[];
+  // label: string[];
 }) => {
   return fileList.map((item) => ({
     accessory: item.response || '',
     knowledgeName: item.name,
     knowledgeType: category,
     knowledgeFlag: '1',
-    labels: label.join(','),
+    // labels: label.join(','),
   }));
 };
 

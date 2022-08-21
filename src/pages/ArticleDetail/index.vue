@@ -18,12 +18,14 @@
             <a-button
               type="link"
               class="mr10"
-              @click="share({
+              @click="
+                share({
                   id: id as string,
                   title: state.knowledgeName,
                   type: state.knowledgeFlag,
                   endTime: state.expirationType === '0' ? '永久有效' : state.endTime,
-                })"
+                })
+              "
               >分享</a-button
             >
             <a-button type="link" class="mr10" @click="handleOpenCorrectDialog">纠错</a-button>
@@ -75,7 +77,7 @@
           </a-col>
         </a-row>
         <a-row class="mb15">
-          <a-col :span="12">
+          <a-col :span="23">
             <span class="label">内容: </span>
             <div class="value" v-html="state.content"></div>
           </a-col>
@@ -159,6 +161,27 @@
             </template>
           </a-table>
         </div>
+        <div class="log">
+          <div class="log-title">日志</div>
+          <a-table
+            rowKey="id"
+            :columns="logColumns"
+            :data-source="dataSource"
+            :pagination="pagination"
+            bordered
+            @change="onTableChange"
+          >
+          </a-table>
+          <!-- <a-table :columns="columns" :data-source="state.logs" bordered>
+            <template #bodyCell="{ column, text, record }">
+              <template v-if="column.dataIndex === 'operation'">
+                <a-button type="link" class="action-btn" @click="handleViewContent(record.content)"
+                  >查看</a-button
+                >
+              </template>
+            </template>
+          </a-table> -->
+        </div>
       </a-col>
     </a-row>
   </a-card>
@@ -194,6 +217,8 @@ import { message } from 'ant-design-vue';
 import { getKnowledgeDetail, getRateState } from '@/services/myKnowledge/knowledge';
 import { collecteKnowledge, cancelCollecteKnowledge } from '@/services/myKnowledge/collection';
 import { download } from '@/utils/downloadFile';
+import { postDownloadLog, getDownloadLog } from '@/services/common';
+import useSearchTableList from '@/composables/useSearchTableList';
 import useShare from '@/composables/useShare';
 import useCorrect from './composables/useCorrect';
 import useViewContent from './composables/useViewContent';
@@ -252,6 +277,31 @@ const columns = [
   },
 ];
 
+const logColumns = [
+  {
+    title: '类型',
+    dataIndex: 'logType',
+    customRender({ text }: { text: number | string }) {
+      return text === 0 ? '分享' : '下载';
+    },
+  },
+  {
+    title: '附件名称',
+    dataIndex: 'accessoryName',
+    customRender({ text }: { text: number | string }) {
+      return text ?? '-';
+    },
+  },
+  {
+    title: '操作人',
+    dataIndex: 'userName',
+  },
+  {
+    title: '操作时间',
+    dataIndex: 'createTime',
+  },
+];
+
 const fileList = ref<string[]>([]);
 
 const rateValue = ref<number>(0);
@@ -295,14 +345,28 @@ const fetchRateState = async () => {
   rateStatus.value = res;
 };
 
+// 获取日志数据
+const { onSearch, pagination, dataSource, getList, onTableChange } = useSearchTableList({
+  fetchData: getDownloadLog,
+  formatParams() {
+    const data: Record<string, any> = { knowledgeId: id as string };
+    return data;
+  },
+});
+
 onMounted(async () => {
   await fetchDetailData();
   await fetchRateState();
 });
 
-const handleUploadFile = (index: number) => {
+const handleUploadFile = async (index: number) => {
   const fileUrlList = state.value.accessory.split(',');
   download(fileUrlList[index], fileList.value[index]);
+  await postDownloadLog({
+    accessoryName: fileList.value[index],
+    knowledgeId: id as string,
+    logType: 1,
+  });
 };
 
 const handleCollecte = async () => {
@@ -348,7 +412,11 @@ const { share } = useShare();
 .user-info {
   text-align: center;
 }
-.version-title {
+.log {
+  margin-top: 20px;
+}
+.version-title,
+.log-title {
   flex: auto;
   overflow: hidden;
   color: #000000d9;

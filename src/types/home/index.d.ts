@@ -3,7 +3,7 @@ export interface FormStateType {
   knowledgeType: string;
   knowledgeName: string;
   author: string;
-  labelId: string;
+  // labelId: string;
   itemId: string;
   dateRange: string[];
   sortType: string;

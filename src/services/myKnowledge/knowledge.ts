@@ -121,7 +121,7 @@ interface CreateDocKnowledgeProps {
   knowledgeType: string;
   knowledgeName: string;
   knowledgeFlag: string;
-  labels: string;
+  // labels: string;
 }
 
 export const createDocKnowledge = (data: CreateDocKnowledgeProps[]) => {

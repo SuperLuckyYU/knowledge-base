@@ -70,6 +70,7 @@ import { cloneDeep } from 'lodash-es';
 import { getBase64, genBase64ToFile } from '@/utils/utils';
 import 'vue-cropper/dist/index.css';
 import { VueCropper } from 'vue-cropper';
+import { drawWaterMark } from '@/utils/utils';
 
 const props = defineProps({
   modelValue: {
@@ -165,6 +166,34 @@ const beforeUpload = (file: FileType) => {
   if (isImage && imgTypeList.indexOf(subType) === -1) {
     message.error('文件格式错误，支持文件格式为：jpg、jpeg、png、gif、bmp');
     return false;
+  }
+
+  // 图片类型文件添加水印
+  if (isImage && imgTypeList.indexOf(subType) > -1) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const img: HTMLImageElement = document.createElement('img');
+        img.src = reader.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+            const config = {
+              font: 'microsoft yahei',
+              textArray: ['北京市海淀区水务局'],
+              density: 3,
+            };
+            drawWaterMark(ctx, img.naturalWidth, img.naturalHeight, config);
+          }
+          canvas.toBlob(resolve);
+        };
+      };
+    });
   }
 
   return true;
