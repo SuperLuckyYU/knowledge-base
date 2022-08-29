@@ -52,20 +52,22 @@ const editorConfig: Partial<IEditorConfig> = {
   placeholder: '请输入内容...',
   MENU_CONF: {
     uploadImage: {
-      server: '/api/file/upload',
+      server: import.meta.env.VITE_APP_API_URL + '/file/upload',
       fieldName: 'file',
+      maxFileSize: 100 * 1024 * 1024,
       customInsert(res: any, insertFn: InsertFnType) {
-        insertFn(res.data)
+        insertFn(res.data);
       },
     },
     uploadVideo: {
-      server: '/api/file/upload',
+      server: import.meta.env.VITE_APP_API_URL + '/file/upload',
       fieldName: 'file',
+      maxFileSize: 100 * 1024 * 1024,
       customInsert(res: any, insertFn: InsertFnType) {
-        insertFn(res.data)
+        insertFn(res.data);
       },
-    }
-  }
+    },
+  },
 };
 
 // 组件销毁时，也及时销毁编辑器

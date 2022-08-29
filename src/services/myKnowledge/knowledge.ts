@@ -37,7 +37,7 @@ export interface listReturnProps {
   id: string;
   itemId: string;
   itemName: string;
-  knowledgeFlag: string;
+  knowledgeFlag: number;
   knowledgeFlagName: string;
   knowledgeName: string;
   knowledgeType: string;

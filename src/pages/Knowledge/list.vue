@@ -214,7 +214,7 @@ const handleOperateKnowledge = (
   record: { id: string; knowledgeFlag?: number },
   type: 'create' | 'update',
 ) => {
-  if (record.knowledgeFlag === 3) {
+  if (record.knowledgeFlag === 5) {
     return router.push({
       name: 'KnowledgeCreateTopic',
       query: record.id

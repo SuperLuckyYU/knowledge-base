@@ -60,7 +60,10 @@ import { message, Form, Modal } from 'ant-design-vue';
 import { UploadImage } from '@/utils/uploadFile';
 import { createDocKnowledge } from '@/services/myKnowledge/knowledge';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
+import { useUserStore } from '@/store/moudles/user';
 // import KnowledgeLabel from './KnowledgeLabel.vue';
+
+const userStore = useUserStore();
 
 const emit = defineEmits(['success', 'cancel']);
 
@@ -178,7 +181,9 @@ const genParams = ({
     accessory: item.response || '',
     knowledgeName: item.name,
     knowledgeType: category,
-    knowledgeFlag: '1',
+    knowledgeFlag: '2',
+    userId: userStore.userInfo.id,
+    parentUserId: userStore.userInfo.pUserId,
     // labels: label.join(','),
   }));
 };

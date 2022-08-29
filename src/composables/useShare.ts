@@ -7,7 +7,7 @@ import { postDownloadLog } from '@/services/common';
 interface InfoType {
   id: string;
   title: string;
-  type: string;
+  type: string | number;
   endTime: string;
 }
 

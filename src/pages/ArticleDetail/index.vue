@@ -74,14 +74,16 @@
             <div class="value editor-content-view" v-html="state.content"></div>
           </a-col>
         </a-row>
-        <a-row class="mb15">
+        <a-row class="mb15" v-if="state.knowledgeFlag !== 5">
           <a-col :span="5">
             <span class="label">附件列表: </span>
           </a-col>
           <a-col :span="19">
             <a-row v-for="(item, index) in fileList">
               <a-col :span="17">
-                <a class="file" :href="state.accessory.split(',')[index]" target="_blank">{{ item }}</a>
+                <a class="file" :href="state.accessory.split(',')[index]" target="_blank">{{
+                  item
+                }}</a>
               </a-col>
               <a-col :span="2">
                 <a-button class="link-btn" type="link" @click="handleUploadFile(index)"
@@ -91,7 +93,7 @@
             </a-row>
           </a-col>
         </a-row>
-        <a-row class="mb15">
+        <a-row class="mb15" v-if="state.knowledgeFlag !== 5">
           <a-col :span="5">
             <span class="label">相关知识: </span>
           </a-col>
@@ -228,7 +230,7 @@ interface StateType {
   createTime: string;
   knowledgeName: string;
   knowledgeTypeName: string;
-  knowledgeFlag: string;
+  knowledgeFlag: number;
   labels: LabelListReturnProps[];
   relateds: any[];
   securityLevelName: string;
@@ -317,17 +319,19 @@ const state = ref<StateType>({
   user: {},
   archiveUserName: '',
   logs: [],
-  knowledgeFlag: '',
+  knowledgeFlag: 0,
 });
 
 const fetchDetailData = async () => {
   const res = await getKnowledgeDetail({ id: id as string });
   state.value = res;
-  const accessoryList = res.accessory.split(',');
-  fileList.value = accessoryList.map((item) => {
-    const arr = item.split('/');
-    return arr[arr.length - 1];
-  });
+  const accessoryList = res.accessory?.split(',');
+  fileList.value =
+    accessoryList &&
+    accessoryList.map((item) => {
+      const arr = item.split('/');
+      return arr[arr.length - 1];
+    });
   state.value.knowledgeTypeName = res.knowledgeTypeName.split(',').join('-');
   rateValue.value = res.evaluate;
 };
