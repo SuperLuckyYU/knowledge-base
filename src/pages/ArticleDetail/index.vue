@@ -46,22 +46,6 @@
         </a-row>
         <a-row class="mb15">
           <a-col :span="12">
-            <span class="label">有效时间: </span>
-            <span class="value">{{
-              state.expirationType === '0' ? '永久有效' : state.endTime
-            }}</span>
-          </a-col>
-          <a-col :span="12">
-            <span class="label">标签: </span>
-            <span class="value">
-              <a-tag v-for="item in state.labels" class="tag-item mr10" color="blue">{{
-                item.labelName
-              }}</a-tag>
-            </span>
-          </a-col>
-        </a-row>
-        <a-row class="mb15">
-          <a-col :span="12">
             <span class="label">创建人: </span>
             <span class="value">{{ state.creator }}</span>
           </a-col>
@@ -72,15 +56,22 @@
         </a-row>
         <a-row class="mb15">
           <a-col :span="12">
+            <span class="label">有效时间: </span>
+            <span class="value">{{
+              state.expirationType === '0' ? '永久有效' : state.endTime
+            }}</span>
+          </a-col>
+        </a-row>
+        <!-- <a-row class="mb15">
+          <a-col :span="12">
             <span class="label">状态: </span>
             <span class="value">{{ state.archiveStatus === 0 ? '未归档' : '已归档' }}</span>
           </a-col>
-        </a-row>
+        </a-row> -->
         <a-row class="mb15">
           <a-col :span="23">
             <span class="label">内容: </span>
-            <div class="value editor-content-view" v-html="state.content">
-            </div>
+            <div class="value editor-content-view" v-html="state.content"></div>
           </a-col>
         </a-row>
         <a-row class="mb15">
@@ -90,7 +81,7 @@
           <a-col :span="19">
             <a-row v-for="(item, index) in fileList">
               <a-col :span="17">
-                <div class="file">{{ item }}</div>
+                <a class="file" :href="state.accessory.split(',')[index]" target="_blank">{{ item }}</a>
               </a-col>
               <a-col :span="2">
                 <a-button class="link-btn" type="link" @click="handleUploadFile(index)"
@@ -438,5 +429,4 @@ const { share } = useShare();
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 </style>

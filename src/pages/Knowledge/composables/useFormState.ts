@@ -29,7 +29,7 @@ export default function useFormState() {
     ],
     file: [
       {
-        required: modelRef.type !== '0',
+        required: false,
         message: '请上传文件',
       },
     ],

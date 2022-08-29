@@ -14,6 +14,7 @@
 
 <script lang="ts" setup>
 import '@wangeditor/editor/dist/css/style.css';
+import type { IEditorConfig } from '@wangeditor/editor';
 import { onBeforeUnmount, ref, shallowRef, toRefs } from 'vue';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 import { cloneDeep } from 'lodash-es';
@@ -21,6 +22,8 @@ import { cloneDeep } from 'lodash-es';
 interface Editor {
   getHtml(): string;
 }
+
+type InsertFnType = (url: string, alt?: string, href?: string) => void;
 
 const props = defineProps({
   modelValue: {
@@ -45,7 +48,25 @@ setTimeout(() => {
 }, 1000);
 
 const toolbarConfig = {};
-const editorConfig = { placeholder: '请输入内容...' };
+const editorConfig: Partial<IEditorConfig> = {
+  placeholder: '请输入内容...',
+  MENU_CONF: {
+    uploadImage: {
+      server: '/api/file/upload',
+      fieldName: 'file',
+      customInsert(res: any, insertFn: InsertFnType) {
+        insertFn(res.data)
+      },
+    },
+    uploadVideo: {
+      server: '/api/file/upload',
+      fieldName: 'file',
+      customInsert(res: any, insertFn: InsertFnType) {
+        insertFn(res.data)
+      },
+    }
+  }
+};
 
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
