@@ -79,7 +79,8 @@
         <a-row class="mb15">
           <a-col :span="23">
             <span class="label">内容: </span>
-            <div class="value" v-html="state.content"></div>
+            <div class="value editor-content-view" v-html="state.content">
+            </div>
           </a-col>
         </a-row>
         <a-row class="mb15">
@@ -437,4 +438,5 @@ const { share } = useShare();
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 </style>
