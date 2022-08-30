@@ -4,7 +4,7 @@
       <!-- 知识内容 -->
       <a-col :span="16">
         <a-row class="mb24">
-          <a-col :span="12" class="title">{{ state.knowledgeName }}</a-col>
+          <a-col :span="24" class="title">{{ state.knowledgeName }}</a-col>
         </a-row>
         <a-row class="mb15">
           <a-col :span="12">
@@ -397,13 +397,13 @@ const { share } = useShare();
 <style lang="less" scoped>
 .title {
   flex: auto;
-  overflow: hidden;
+  // overflow: hidden;
   color: #000000d9;
   font-weight: 700;
   font-size: 16px;
   line-height: 1.5715;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  // white-space: nowrap;
+  // text-overflow: ellipsis;
 }
 .user-info {
   text-align: center;

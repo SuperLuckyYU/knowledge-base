@@ -42,9 +42,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: 'http://47.98.251.91:8662/',
+          // target: 'http://47.98.251.91:8662/',
           // target: 'http://47.98.139.3:8662/',
-          // target: 'http://192.168.1.13:8662/',
+          target: 'http://192.168.1.13:8662/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
