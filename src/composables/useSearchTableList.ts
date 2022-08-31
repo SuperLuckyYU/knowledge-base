@@ -154,8 +154,8 @@ export default function useSearchTableList(props: Props) {
         STATE.total = total;
         return;
       }
-      STATE.dataSource = res.records;
-      STATE.total = res.total;
+      STATE.dataSource = res?.records ?? [];
+      STATE.total = res?.total ?? 0;
     } catch (err) {
       throw err;
     }

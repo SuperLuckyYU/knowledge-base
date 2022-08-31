@@ -98,7 +98,11 @@
             <span class="label">相关知识: </span>
           </a-col>
           <a-col :span="19">
-            <div class="file" v-for="item in state.relateds">{{ item.knowledgeName }}</div>
+            <div class="file" v-for="item in state.relateds">
+              <router-link :to="{ name: 'ArticleDetail', query: { id: item.id } }">{{
+                item.knowledgeName
+              }}</router-link>
+            </div>
           </a-col>
         </a-row>
       </a-col>

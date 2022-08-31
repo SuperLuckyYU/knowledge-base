@@ -82,9 +82,12 @@
           >
             <template #bodyCell="{ column, text, record }">
               <template v-if="column.dataIndex === 'knowledgeName'">
-                <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
-                  text
-                }}</router-link>
+                <a-tooltip>
+                  <template #title>{{ text }}</template>
+                  <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
+                    text
+                  }}</router-link>
+                </a-tooltip>
               </template>
               <template v-if="column.dataIndex === 'deadline'">
                 {{ record.expirationType === '0' ? '永久有效' : record.endTime }}
