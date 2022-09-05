@@ -2,6 +2,7 @@
   <div class="upload-wrapper clearfix">
     <a-upload
       v-if="type === '2'"
+      :multiple="true"
       v-model:file-list="fileList"
       :custom-request="customUpload"
       :before-upload="beforeUpload"
