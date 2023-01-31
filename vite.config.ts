@@ -72,7 +72,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: true,
+          // drop_console: true,
           drop_debugger: true,
         },
       },

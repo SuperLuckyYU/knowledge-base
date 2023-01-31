@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router';
 import type { MenuReturnProps } from '@/services/systemSetter/role';
 import { defineStore } from 'pinia';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { fetchMenuAuth, fetchCurrentUser } from '@/services/user';
 import router, { routes, otherRoutes } from '@/router/index';
 import { cloneDeep } from 'lodash-es';
@@ -29,8 +29,12 @@ const defaultUserInfo = {
   id: '',
 };
 
-const userInfo = Cookies.get('userInfo')
-  ? JSON.parse(Cookies.get('userInfo') as string)
+// const userInfo = Cookies.get('userInfo')
+//   ? JSON.parse(Cookies.get('userInfo') as string)
+//   : defaultUserInfo;
+
+const userInfo = localStorage.getItem('userInfo')
+  ? JSON.parse(localStorage.getItem('userInfo') as string)
   : defaultUserInfo;
 
 export const useUserStore = defineStore({
@@ -48,9 +52,10 @@ export const useUserStore = defineStore({
     // getUser
     async getUserLogged() {
       try {
-        const res = await fetchCurrentUser({ token: Cookies.get('token') ?? '' });
+        const res = await fetchCurrentUser({ token: localStorage.getItem('token') ?? '' });
         this.userInfo = res;
-        Cookies.set('userInfo', JSON.stringify(res));
+        localStorage.setItem('userInfo', JSON.stringify(res))
+        // Cookies.set('userInfo', JSON.stringify(res));
       } catch (error) {
         return false;
       }

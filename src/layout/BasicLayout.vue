@@ -1,34 +1,36 @@
 <template>
   <a-layout class="layout-wrap">
-    <a-layout-header class="header-container">
-      <!-- <menu-unfold-outlined
+    <template v-if="isShowMenu">
+      <a-layout-header class="header-container">
+        <!-- <menu-unfold-outlined
           v-if="collapsed"
           class="trigger"
           @click="() => (collapsed = !collapsed)"
         /> -->
-      <!-- <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" /> -->
-      <router-link class="app-logo" to="/">
-        <h1 class="title" v-if="!collapsed">{{ STATE.title }}</h1>
-      </router-link>
-      <user :name="STATE.name" :avatar="STATE.avatar" />
-    </a-layout-header>
-    <a-layout-sider class="sider-container" v-model:collapsed="collapsed">
-      <!-- <router-link class="app-logo" to="/">
+        <!-- <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" /> -->
+        <router-link class="app-logo" to="/">
+          <h1 class="title" v-if="!collapsed">{{ STATE.title }}</h1>
+        </router-link>
+        <user :name="STATE.name" :avatar="STATE.avatar" />
+      </a-layout-header>
+      <a-layout-sider class="sider-container" v-model:collapsed="collapsed">
+        <!-- <router-link class="app-logo" to="/">
         <h1 class="title" v-if="!collapsed">{{ STATE.title }}</h1>
       </router-link> -->
-      <a-menu
-        :selectedKeys="STATE.selectedKeys"
-        v-model:openKeys="STATE.openKeys"
-        theme="dark"
-        mode="inline"
-        @select="handleSelectMenu"
-      >
-        <template v-for="route of routerList">
-          <Menus :route="route" />
-        </template>
-      </a-menu>
-    </a-layout-sider>
-    <a-layout :style="{ marginLeft: '200px' }">
+        <a-menu
+          :selectedKeys="STATE.selectedKeys"
+          v-model:openKeys="STATE.openKeys"
+          theme="dark"
+          mode="inline"
+          @select="handleSelectMenu"
+        >
+          <template v-for="route of routerList">
+            <Menus :route="route" />
+          </template>
+        </a-menu>
+      </a-layout-sider>
+    </template>
+    <a-layout :style="isShowMenu ? { marginLeft: '200px' } : ''">
       <!-- <a-layout-header class="header-container">
         <menu-unfold-outlined
           v-if="collapsed"
@@ -38,7 +40,7 @@
         <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
         <user :name="STATE.name" :avatar="STATE.avatar" />
       </a-layout-header> -->
-      <a-layout-content id="content-container">
+      <a-layout-content :id="isShowMenu ? 'content-container' : ''">
         <router-view v-slot="{ Component, route }" :key="route.fullPath">
           <keep-alive :include="cacheList">
             <component :is="Component" :key="route.meta.path" />
@@ -99,17 +101,25 @@ const cacheList = computed(() => {
   return keepAliveStore.getCaches.join(',');
 });
 
+const isShowMenu = ref(false);
+
 const handleSelectMenu = ({ key, selectedKeys }: SelectEventHandler) => {
   router.push({ name: key });
   STATE.selectedKeys = selectedKeys;
 };
 
 onMounted(async () => {
-  STATE.selectedKeys = [route.name];
-  STATE.openKeys = [route.path.split('/')[1]];
-  const { userName, photo } = userStore.userInfo;
-  STATE.name = userName;
-  STATE.avatar = photo;
+  let iframeBool = window.self === window.top; /*是否被iframe嵌套 false被嵌套  true否*/
+  if (!iframeBool) {
+    isShowMenu.value = false;
+  } else {
+    isShowMenu.value = true;
+    STATE.selectedKeys = [route.name];
+    STATE.openKeys = [route.path.split('/')[1]];
+    const { userName, photo } = userStore.userInfo;
+    STATE.name = userName;
+    STATE.avatar = photo;
+  }
 });
 </script>
 <style lang="less" scoped>
