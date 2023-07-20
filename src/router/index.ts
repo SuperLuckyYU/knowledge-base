@@ -32,18 +32,18 @@ export const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // {
-  //   path: '/knowledgeMap',
-  //   component: BasicLayout,
-  //   meta: { title: '知识地图', icon: 'DashboardFilled', level: '1', key: 'KnowledgeMap' },
-  //   children: [
-  //     {
-  //       path: '',
-  //       name: 'KnowledgeMap',
-  //       component: KnowledgeMap,
-  //     },
-  //   ],
-  // },
+  {
+    path: '/knowledgeMap',
+    component: BasicLayout,
+    meta: { title: '知识地图', icon: 'DashboardFilled', level: '1', key: 'KnowledgeMap' },
+    children: [
+      {
+        path: '',
+        name: 'KnowledgeMap',
+        component: KnowledgeMap,
+      },
+    ],
+  },
   {
     path: '/myKnowledge',
     name: 'myKnowledge',
@@ -106,16 +106,16 @@ export const routes: Array<RouteRecordRaw> = [
         },
         component: CorrectionList,
       },
-      // {
-      //   path: 'audit',
-      //   name: 'AuditList',
-      //   meta: {
-      //     title: '知识审核',
-      //     keepAlive: true,
-      //     key: 'AuditList',
-      //   },
-      //   component: AuditList,
-      // },
+      {
+        path: 'audit',
+        name: 'AuditList',
+        meta: {
+          title: '知识审核',
+          keepAlive: true,
+          key: 'AuditList',
+        },
+        component: AuditList,
+      },
     ],
   },
   {
@@ -156,25 +156,26 @@ export const routes: Array<RouteRecordRaw> = [
         },
         component: RoleList,
       },
-      // {
-      //   path: 'product',
-      //   name: 'ProductList',
-      //   meta: {
-      //     title: '项目列表',
-      //     keepAlive: true,
-      //   },
-      //   component: ProductList,
-      // },
-      // {
-      //   path: 'label',
-      //   name: 'LabelList',
-      //   meta: {
-      //     title: '知识标签管理',
-      //     keepAlive: true,
-      //     key: 'LabelList',
-      //   },
-      //   component: LabelList,
-      // },
+      {
+        path: 'product',
+        name: 'ProductList',
+        meta: {
+          title: '项目列表',
+          keepAlive: true,
+          key: 'ProductList',
+        },
+        component: ProductList,
+      },
+      {
+        path: 'label',
+        name: 'LabelList',
+        meta: {
+          title: '知识标签管理',
+          keepAlive: true,
+          key: 'LabelList',
+        },
+        component: LabelList,
+      },
       {
         path: 'dictionary',
         name: 'Dictionary',

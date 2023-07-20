@@ -5,7 +5,7 @@ import { use } from 'echarts/core';
 import 'echarts-wordcloud/dist/echarts-wordcloud';
 import App from './App.vue';
 import Clipboard from './plugins/clipboard';
-import DownloadFile from './plugins/DownloadFile';
+import DownloadFile from './plugins/downloadFile';
 import router from '@/router/index';
 import permission from '@/router/permission';
 import { setupStore } from './store';
