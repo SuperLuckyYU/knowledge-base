@@ -14,6 +14,16 @@
             </a-form-item>
           </a-col>
           <a-col>
+            <a-form-item label="内容" name="content">
+              <a-input
+                v-model:value.trim="formState.content"
+                placeholder="请输入内容"
+                autocomplete="off"
+                allow-clear
+              />
+            </a-form-item>
+          </a-col>
+          <a-col>
             <a-form-item label="作者" name="author">
               <a-input
                 v-model:value.trim="formState.author"
@@ -187,6 +197,7 @@ const formState: UnwrapRef<FormStateType> = reactive({
   itemId: '',
   dateRange: [],
   sortType: 'createTime',
+  content: '',
 });
 
 // 获取列表数据

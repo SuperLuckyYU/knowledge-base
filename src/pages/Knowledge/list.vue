@@ -14,6 +14,16 @@
             </a-form-item>
           </a-col>
           <a-col>
+            <a-form-item label="内容" name="content">
+              <a-input
+                v-model:value.trim="formState.content"
+                placeholder="请输入条目标题"
+                autocomplete="off"
+                allow-clear
+              />
+            </a-form-item>
+          </a-col>
+          <a-col>
             <!-- <a-form-item label="标签" name="labelId">
               <search-label-select v-model:value="formState.labelId" />
             </a-form-item> -->
@@ -193,6 +203,7 @@ const formState: UnwrapRef<FormStateType> = reactive({
   knowledgeName: '',
   // labelId: '',
   sortType: 'createTime',
+  content: '',
 });
 
 // 获取数据

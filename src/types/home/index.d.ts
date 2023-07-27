@@ -7,4 +7,5 @@ export interface FormStateType {
   itemId: string;
   dateRange: string[];
   sortType: string;
+  content: string;
 }

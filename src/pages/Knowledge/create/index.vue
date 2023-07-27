@@ -53,9 +53,9 @@
       <a-form-item label="知识内容" v-bind="validateInfos.content">
         <BaseEditor v-model="modelRef.content" />
       </a-form-item>
-      <!-- <a-form-item label="设置标签" v-bind="validateInfos.label">
+      <a-form-item label="设置标签" v-bind="validateInfos.label">
         <knowledge-label v-model="modelRef.label" type="create" />
-      </a-form-item> -->
+      </a-form-item>
       <a-form-item label="安全级别" v-bind="validateInfos.safe_level">
         <a-radio-group v-model:value="modelRef.safe_level" :options="safeLevelOptions" />
       </a-form-item>
@@ -83,7 +83,7 @@
         >
         </a-select>
       </a-form-item> -->
-      <!-- <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
+      <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
         <a-row>
           <a-col :span="20" class="mr15">
             <a-input v-model:value="modelRef.location" />
@@ -97,7 +97,7 @@
             </a-button>
           </a-col>
         </a-row>
-      </a-form-item> -->
+      </a-form-item>
       <a-form-item label="关联知识" v-bind="validateInfos.knowledge">
         <div>
           <a-button class="mr15" type="primary" @click="LinkKnowledgeState.visible = true"
@@ -128,11 +128,11 @@
       </a-row>
     </a-form>
   </a-card>
-  <!-- <location-dialog
+  <location-dialog
     v-if="LocationDialogState.visible"
     v-model="modelRef.location"
     @cancel="handleCancelLocationDialog"
-  /> -->
+  />
   <select-knowledge-dialog
     v-if="LinkKnowledgeState.visible"
     :selected-rows="LinkKnowledgeState.knowledgeList"
@@ -156,8 +156,8 @@ import { EnvironmentOutlined } from '@ant-design/icons-vue';
 import useFormState from '../composables/useFormState';
 import ImgUpload from '@/components/ImgUpload/index.vue';
 import BaseEditor from '@/components/BaseEditor/index.vue';
-// import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
-// import LocationDialog from '../sections/LocationDialog.vue';
+import KnowledgeLabel from '../sections/KnowledgeLabel.vue';
+import LocationDialog from '../sections/LocationDialog.vue';
 import SelectKnowledgeDialog from '../sections/SelectKnowledgeDialog.vue';
 import SelectKnowledgeTable from '../sections/SelectKnowledgeTable.vue';
 import { getDictionaryList } from '@/services/systemSetter/dictionary';
@@ -209,9 +209,9 @@ const fetchDetail = async () => {
     documentNum,
     archiveTime,
     pagination,
-    // location,
+    location,
     content,
-    // labels,
+    labels,
     securityLevel,
     expirationType,
     endTime,
@@ -227,16 +227,16 @@ const fetchDetail = async () => {
   modelRef.doc_number = documentNum;
   modelRef.file_date = archiveTime;
   modelRef.pages_num = pagination;
-  // modelRef.storage_location = location;
+  modelRef.storage_location = location;
   modelRef.content = content;
-  // modelRef.label = labels.map((item) => {
-  //   return item.id;
-  // });
+  modelRef.label = labels.map((item) => {
+    return item.id;
+  });
   modelRef.safe_level = securityLevel ?? '0';
   modelRef.expiration_type = expirationType ?? '0';
   modelRef.expiration_date = endTime;
   // modelRef.project = itemId;
-  // modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
+  modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
   modelRef.file = mockImgUrl(accessory.split(','));
   LinkKnowledgeState.knowledgeList = relateds;
   updateVerision.value = version;
@@ -265,17 +265,17 @@ const fetchCategoryData = async () => {
 
 fetchCategoryData();
 
-// const LocationDialogState = reactive({
-//   visible: false,
-// });
+const LocationDialogState = reactive({
+  visible: false,
+});
 
-// const handleChooseLocation = () => {
-//   LocationDialogState.visible = true;
-// };
+const handleChooseLocation = () => {
+  LocationDialogState.visible = true;
+};
 
-// const handleCancelLocationDialog = () => {
-//   LocationDialogState.visible = false;
-// };
+const handleCancelLocationDialog = () => {
+  LocationDialogState.visible = false;
+};
 
 const LinkKnowledgeState = reactive<{ visible: boolean; knowledgeList: KnowledgeItemType[] }>({
   visible: false,
@@ -324,16 +324,16 @@ const genParmas = (formState: Record<string, any>) => {
     expiration_type,
     file,
     file_date,
-    // label,
-    // location,
+    label,
+    location,
     pages_num,
     // project,
     safe_level,
     storage_location,
     type,
   } = formState;
-  // const locationArr = location ? location.split(', ') : [];
-  // const labels = toRaw(label).join(',');
+  const locationArr = location ? location.split(', ') : [];
+  const labels = toRaw(label).join(',');
   const accessory = toRaw(file)
     .map((item: any) => {
       return item.response;
@@ -354,13 +354,13 @@ const genParmas = (formState: Record<string, any>) => {
     pagination: pages_num,
     location: storage_location,
     content,
-    // labels,
+    labels,
     securityLevel: safe_level,
     endTime: expiration_date,
     // itemId: project,
     itemId: '',
-    // longitude: locationArr.length && locationArr[0],
-    // latitude: locationArr.length && locationArr[1],
+    longitude: locationArr.length && locationArr[0],
+    latitude: locationArr.length && locationArr[1],
     expirationType: expiration_type,
     relateds,
     userId: userStore.userInfo.id,
