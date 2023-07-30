@@ -1,4 +1,12 @@
 <template>
+  <a-row class="mb10">
+    <a-col :span="10" class="mr10">
+      <a-input type="text" v-model:value="keyword" placeholder="请输入要搜索的知识标题" />
+    </a-col>
+    <a-col :span="3">
+      <a-button type="primary" @click="search">搜索</a-button>
+    </a-col>
+  </a-row>
   <div id="knowledge-map"></div>
 </template>
 
@@ -7,15 +15,28 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getMap } from '@/services/myKnowledge/knowledge';
 import { knowledgeFlag } from '@/constants/index';
+import blueMarkerUrl from '../img/markers_blue.png';
+import defaultMarkerUrl from '../img/markers_red.png';
 const router = useRouter();
 
-const markerArr = ref<Record<string, any>>([]);
+const map = ref(null); // 用于保存地图实例的引用
+const pointMarkers = ref([]); // 用于保存标注的数组
+const markerArr = ref<Record<string, any>[]>([]);
+const pointArr = ref<Record<string, any>[]>([]);
+const searchResult = ref<Record<string, any>>([]);
+
+const points = ref<Record<string, any>>([]);
+const keyword = ref('');
 
 const BMap = (window as any).BMap;
 
-const fetchMapData = async () => {
-  const res = await getMap();
-  markerArr.value = res;
+const fetchMapData = async (knowledgeName?: string) => {
+  const res = await getMap(knowledgeName);
+  if (knowledgeName) {
+    searchResult.value = res;
+  } else {
+    markerArr.value = res;
+  }
 };
 
 // 添加信息窗口
@@ -55,17 +76,68 @@ const addInfoWindow = (marker: any, poi: any) => {
   return openInfoWinFun;
 };
 
+// 添加标注
+const addMarker = (point, newIcon) => {
+  // ... 添加标注的逻辑 ...
+  const marker = new BMap.Marker(point, { icon: newIcon });
+  map.value.addOverlay(marker);
+  pointMarkers.value.push(marker); // 将标注保存到数组中
+  return marker;
+};
+
+const addPolyline = (_point?: Record<string, any>, icon?: Record<string, any>) => {
+  const newIcon = icon ? icon : new BMap.Icon(defaultMarkerUrl, new BMap.Size(32, 32));
+  for (let i = 0; i < markerArr.value.length; i++) {
+    const place = JSON.parse(markerArr.value[i].place + '') ?? [];
+    let lineArr = [];
+    for (let j = 0; j < place.length; j++) {
+      const placeItem = place[j][1];
+      const lonArr = placeItem.split(',');
+      const longitude = lonArr[0];
+      const latitude = lonArr[1];
+      const point = _point ? _point : new BMap.Point(longitude, latitude);
+      lineArr.push(point);
+      points.value.push(point);
+      const maker = addMarker(point, newIcon);
+      maker.originalData = markerArr.value[i];
+      pointArr.value.push(maker);
+      addInfoWindow(maker, markerArr.value[i]);
+    }
+
+    // 创建折线对象
+    let lineColor = 'red';
+    for (let q = 0; q < searchResult.value.length; q++) {
+      const searchResultItem = searchResult.value[q];
+      if (searchResultItem.id === markerArr.value[i].id) {
+        lineColor = 'blue';
+      } else {
+        lineColor = 'red';
+      }
+    }
+    const polyline = new BMap.Polyline(lineArr, {
+      strokeColor: lineColor,
+      strokeWeight: 2,
+      strokeOpacity: 0.5,
+    });
+
+    // 添加折线到地图
+    map.value.addOverlay(polyline);
+    lineArr = [];
+  }
+};
+
 onMounted(async () => {
   await fetchMapData();
 
   // 创建地图实例
-  const map = new BMap.Map('knowledge-map');
+  const mapInstance = new BMap.Map('knowledge-map');
+  map.value = mapInstance;
   //设置地图的中心点如合肥的坐标
   const point = new BMap.Point(116.23376, 40.01477);
   // 初始化地图，设置中心点坐标和地图级别
-  map.centerAndZoom(point, 12);
+  mapInstance.centerAndZoom(point, 12);
   // 允许滚轮缩放
-  map.enableScrollWheelZoom();
+  mapInstance.enableScrollWheelZoom();
   //只显示某个省份的关键代码
   const cityName = '北京海淀区';
   const bdary = new BMap.Boundary();
@@ -85,28 +157,51 @@ onMounted(async () => {
         strokeOpacity: 0.5,
       },
     ); //建立多边形覆盖物
-    map.addOverlay(ply1);
+    mapInstance.addOverlay(ply1);
   });
-  // 添加标注
-  const addMarker = (point: string, index: number) => {
-    // var myIcon = new BMap.Icon('http://api.map.baidu.com/img/markers.png', new BMap.Size(23, 25), {
-    //   offset: new BMap.Size(10, 25),
-    //   imageOffset: new BMap.Size(0, 0 - index * 25),
-    // });
-    const marker = new BMap.Marker(point);
-    // , {
-    //   icon: myIcon,
-    // }
-    map.addOverlay(marker);
-    return marker;
-  };
-  //第7步：绘制点
-  for (let i = 0; i < markerArr.value.length; i++) {
-    const { longitude, latitude } = markerArr.value[i];
-    const maker = addMarker(new BMap.Point(longitude, latitude), i);
-    addInfoWindow(maker, markerArr.value[i]);
-  }
+
+  addPolyline();
 });
+
+// 更新标注的图标大小和颜色
+const updateMarkerIcon = () => {
+  map.value?.clearOverlays();
+  addPolyline();
+  for (let i = 0; i < pointArr.value.length; i++) {
+    const point = pointArr.value[i];
+    const {
+      point: { lng, lat },
+    } = point;
+    let isMatched = false;
+    for (let j = 0; j < searchResult.value.length; j++) {
+      const knowledgeItem = searchResult.value[j];
+      const placeArr = JSON.parse(knowledgeItem.place);
+      for (let k = 0; k < placeArr.length; k++) {
+        const placeItem = placeArr[k];
+        if (placeItem[1] === `${lng},${lat}`) {
+          isMatched = true;
+        }
+      }
+    }
+    const iconSize = isMatched ? new BMap.Size(32, 32) : new BMap.Size(32, 32); // 匹配到的标注设置为大图标，未匹配到的设置为小图标
+    const iconUrl = isMatched ? blueMarkerUrl : defaultMarkerUrl; // 自定义图标的 URL
+    const newIcon = new BMap.Icon(iconUrl, iconSize);
+    const maker = addMarker(point.point, newIcon); // 重新添加标注
+    addInfoWindow(maker, point.originalData);
+  }
+};
+
+// 搜索
+const search = async () => {
+  if (!keyword.value) {
+    searchResult.value = [];
+    map.value?.clearOverlays();
+    addPolyline();
+  } else {
+    await fetchMapData(keyword.value);
+    updateMarkerIcon();
+  }
+};
 </script>
 
 <style lang="less" scoped>

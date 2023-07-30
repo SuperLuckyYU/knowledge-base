@@ -62,6 +62,7 @@ export interface listReturnProps {
   user: UserType;
   archiveUserName: string;
   logs: any[];
+  place: string;
 }
 
 export const getMyKnowledgeList = (data: listProps) => {
@@ -140,6 +141,6 @@ export const getRanking = () => {
   return get<ListBaseReturnProps<listReturnProps>>('base/query/ranking');
 };
 
-export const getMap = () => {
-  return get<ListBaseReturnProps<listReturnProps>>('base/query/map');
+export const getMap = (knowledgeName?: string) => {
+  return get<ListBaseReturnProps<listReturnProps>>('base/query/map', { knowledgeName });
 };

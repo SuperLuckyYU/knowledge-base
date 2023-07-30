@@ -250,7 +250,7 @@ interface StateType {
 const route = useRoute();
 const router = useRouter();
 
-const { id = '' } = route.query;
+const { id = '', contentKeyword = '' } = route.query;
 
 const STATE = reactive({
   DEFAULT_AVATAR: appConfig.miscellaneous?.defaultAvatar,
@@ -337,6 +337,13 @@ const fetchDetailData = async () => {
       return arr[arr.length - 1];
     });
   state.value.knowledgeTypeName = res.knowledgeTypeName.split(',').join('-');
+  if (contentKeyword) {
+    const regex = new RegExp(contentKeyword as string, 'gi');
+    state.value.content = res.content.replace(
+      regex,
+      (match) => `<span style="color: rgb(215, 67, 64); font-size: 18px">${match}</span>`,
+    );
+  }
   rateValue.value = res.evaluate;
 };
 

@@ -30,7 +30,7 @@ export interface CreateFormState {
   expiration_type: string;
   expiration_date: string;
   project: string;
-  location: string;
+  address: [];
 }
 
 export interface CreateTopicFormState {

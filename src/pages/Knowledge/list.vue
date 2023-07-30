@@ -63,9 +63,13 @@
           <template v-if="column.dataIndex === 'knowledgeName'">
             <a-tooltip>
               <template #title>{{ text }}</template>
-              <router-link :to="{ name: 'ArticleDetail', query: { id: record.id } }">{{
-                text
-              }}</router-link>
+              <router-link
+                :to="{
+                  name: 'ArticleDetail',
+                  query: { id: record.id, contentKeyword: formState.content },
+                }"
+                >{{ text }}</router-link
+              >
             </a-tooltip>
           </template>
           <template v-if="column.dataIndex === 'operation'">
@@ -121,7 +125,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { reactive, computed, UnwrapRef } from 'vue';
+import { reactive, computed, UnwrapRef, h } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/moudles/user';
@@ -141,6 +145,13 @@ const currentRouteKey = route.meta.key;
 const hasOperateAuth = computed(
   () => userStore.menuOperateAuthMap[currentRouteKey as keyof typeof userStore.menuOperateAuthMap],
 );
+
+const formState: UnwrapRef<FormStateType> = reactive({
+  knowledgeName: '',
+  // labelId: '',
+  sortType: 'createTime',
+  content: '',
+});
 
 const columns = computed(() => {
   const sorted = sortedInfo.value || {};
@@ -176,6 +187,36 @@ const columns = computed(() => {
       },
     },
     {
+      title: '内容',
+      dataIndex: 'content',
+      key: 'content',
+      align: 'center',
+      width: 200,
+      customRender: ({ text }: { text: string }) => {
+        if (text) {
+          if (formState.content) {
+            const sentences = text.replace(/<[^>]+>/g, '').split(/[,.;!？，。；！]/g);
+            // 遍历每个句子，查找是否包含关键字
+            for (const sentence of sentences) {
+              // 使用正则表达式进行不区分大小写的关键字检索
+              const regex = new RegExp(formState.content, 'gi');
+              if (regex.test(sentence)) {
+                const str = sentence.trim().substring(0, 100) + '...';
+                const newStr = str.replace(
+                  regex,
+                  (match) =>
+                    `<span style="color: rgb(215, 67, 64); font-size: 18px">${match}</span>`,
+                );
+                return h('div', { innerHTML: newStr });
+              }
+            }
+          }
+          return text.replace(/<[^>]+>/g, '').substring(0, 100) + '...';
+        }
+        return '';
+      },
+    },
+    {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
@@ -197,13 +238,6 @@ const columns = computed(() => {
     arr.pop();
   }
   return arr;
-});
-
-const formState: UnwrapRef<FormStateType> = reactive({
-  knowledgeName: '',
-  // labelId: '',
-  sortType: 'createTime',
-  content: '',
 });
 
 // 获取数据

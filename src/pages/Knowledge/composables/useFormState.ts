@@ -17,7 +17,7 @@ export default function useFormState() {
     expiration_type: '0',
     expiration_date: '',
     project: '',
-    location: '',
+    address: [],
   });
 
   const rulesRef = computed(() => ({
@@ -95,7 +95,7 @@ export default function useFormState() {
         required: false,
       },
     ],
-    location: [
+    address: [
       {
         required: false,
       },

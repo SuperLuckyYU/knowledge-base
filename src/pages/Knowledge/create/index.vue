@@ -84,7 +84,7 @@
         </a-select>
       </a-form-item> -->
       <a-form-item label="定位" v-bind="validateInfos.location" :wrapperCol="{ span: 6 }">
-        <a-row>
+        <!-- <a-row>
           <a-col :span="20" class="mr15">
             <a-input v-model:value="modelRef.location" />
           </a-col>
@@ -96,7 +96,23 @@
               </template>
             </a-button>
           </a-col>
-        </a-row>
+        </a-row> -->
+        <a-button type="primary" @click="handleChooseLocation">
+          选择定位
+          <template #icon>
+            <environment-outlined />
+          </template>
+        </a-button>
+        <div class="mt10">
+          <div v-for="(item, index) in modelRef.address" :key="index">
+            {{ item[0]
+            }}<delete-outlined
+              class="ml10"
+              style="color: red"
+              @click="handleRemovePlaceItem(index)"
+            />
+          </div>
+        </div>
       </a-form-item>
       <a-form-item label="关联知识" v-bind="validateInfos.knowledge">
         <div>
@@ -130,7 +146,7 @@
   </a-card>
   <location-dialog
     v-if="LocationDialogState.visible"
-    v-model="modelRef.location"
+    v-model="modelRef.address"
     @cancel="handleCancelLocationDialog"
   />
   <select-knowledge-dialog
@@ -152,7 +168,7 @@ import { debounce } from 'lodash-es';
 import { reactive, ref, toRaw, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Form, message } from 'ant-design-vue';
-import { EnvironmentOutlined } from '@ant-design/icons-vue';
+import { EnvironmentOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import useFormState from '../composables/useFormState';
 import ImgUpload from '@/components/ImgUpload/index.vue';
 import BaseEditor from '@/components/BaseEditor/index.vue';
@@ -220,6 +236,7 @@ const fetchDetail = async () => {
     latitude,
     relateds,
     version,
+    place,
   } = res;
   modelRef.entry = knowledgeName;
   modelRef.type = knowledgeFlag + '';
@@ -236,8 +253,9 @@ const fetchDetail = async () => {
   modelRef.expiration_type = expirationType ?? '0';
   modelRef.expiration_date = endTime;
   // modelRef.project = itemId;
-  modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
-  modelRef.file = mockImgUrl(accessory.split(','));
+  // modelRef.location = longitude || latitude ? longitude + ', ' + latitude : '';
+  modelRef.file = accessory ? mockImgUrl(accessory.split(',')) : [];
+  modelRef.address = JSON.parse(place);
   LinkKnowledgeState.knowledgeList = relateds;
   updateVerision.value = version;
 };
@@ -268,6 +286,10 @@ fetchCategoryData();
 const LocationDialogState = reactive({
   visible: false,
 });
+
+const handleRemovePlaceItem = (index: number) => {
+  modelRef.address.splice(index, 1);
+};
 
 const handleChooseLocation = () => {
   LocationDialogState.visible = true;
@@ -331,6 +353,7 @@ const genParmas = (formState: Record<string, any>) => {
     safe_level,
     storage_location,
     type,
+    address,
   } = formState;
   const locationArr = location ? location.split(', ') : [];
   const labels = toRaw(label).join(',');
@@ -359,8 +382,9 @@ const genParmas = (formState: Record<string, any>) => {
     endTime: expiration_date,
     // itemId: project,
     itemId: '',
-    longitude: locationArr.length && locationArr[0],
-    latitude: locationArr.length && locationArr[1],
+    // longitude: locationArr.length && locationArr[0],
+    // latitude: locationArr.length && locationArr[1],
+    address: JSON.stringify(address),
     expirationType: expiration_type,
     relateds,
     userId: userStore.userInfo.id,
