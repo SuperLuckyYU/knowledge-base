@@ -25,6 +25,10 @@ const useKnowledgeTypeCountStatistic = () => {
         name: '知识类型数量统计',
         type: 'bar',
         data: [120, 200, 150, 80],
+        label: {
+          show: true,
+          position: 'top',
+        },
       },
     ],
   });

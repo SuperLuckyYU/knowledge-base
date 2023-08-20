@@ -30,6 +30,10 @@ const useKnowledgeCountStatistic = () => {
         type: 'bar',
         // data: [120, 200, 150, 80, 70, 110, 130],
         data: [0],
+        label: {
+          show: true,
+          position: 'top',
+        },
       },
     ],
   });

@@ -73,14 +73,14 @@
       </a-form>
     </a-card>
     <a-row>
-      <a-col :span="4">
+      <a-col :span="5">
         <type-tree
           v-model:knowledgeType="formState.knowledgeType"
           v-model:knowledgeFlag="formState.knowledgeFlag"
           @change="handleKnowledgeTypeChange"
         />
       </a-col>
-      <a-col :span="20">
+      <a-col :span="19">
         <a-card class="table-box mt20">
           <a-table
             rowKey="id"

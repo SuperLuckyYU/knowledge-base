@@ -27,6 +27,9 @@
         :props="{ label: 'dictName' }"
         @node-click="handleCheckNode"
       >
+        <template v-slot="{ node, data }">
+          <span :data-type="data">{{ `${data.dictName}(${data.knowledgeNum})` }}</span>
+        </template>
       </el-tree>
     </a-card>
   </div>
@@ -43,7 +46,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node';
 import { ref, reactive, toRefs, toRaw } from 'vue';
 import { CATEGORY_OPTIONS } from '@/constants/dictionary';
 import { ElTree, ElEmpty } from 'element-plus';
-import { getDictionaryList } from '@/services/systemSetter/dictionary';
+import { getDictionaryList, getDictionaryTotal } from '@/services/systemSetter/dictionary';
 
 interface Props {
   knowledgeType: string;
@@ -67,8 +70,9 @@ const fetchData = async () => {
   const res = await getDictionaryList({
     type: formState.status,
   });
+  const total = await getDictionaryTotal();
   dataSource.value = res as unknown as DictionaryReturnProps;
-  dataSource.value.unshift({ dictName: '全部', id: '', parentId: '' });
+  dataSource.value.unshift({ dictName: '全部', knowledgeNum: total, id: '', parentId: '' });
 };
 
 fetchData();

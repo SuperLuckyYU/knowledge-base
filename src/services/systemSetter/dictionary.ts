@@ -54,3 +54,9 @@ export const delDictionary: {
 } = (data) => {
   return get('/dict/del', data);
 };
+
+export const getDictionaryTotal: {
+  (): Promise<{ data: number }>;
+} = () => {
+  return get('/dict/tree/query/total');
+};

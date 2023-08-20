@@ -44,7 +44,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         '/api': {
           // target: 'http://47.98.251.91:8662/',
           // target: 'http://liuziyuan.gnway.cc:8000',
-          target: 'http://192.168.3.23:8662/',
+          target: 'http://liuziyuan.gnway.cc:80',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
